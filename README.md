@@ -149,6 +149,27 @@ The function `def get_bg_model(self, frames: np.ndarray)` computes the mean (or 
 
 By default, the function uses **JAX (`jnp`)** to take advantage of GPU acceleration with CUDA. If CUDA is not available, it falls back to **NumPy (`np`)** to ensure compatibility.
 
+***Example:***
+
+To test the background model function, run the following command:
+
+```bash
+python3 base.py
+```
+
+This will process the video frames and calculate the background model for the central pixel. The output should look like this:
+
+```bash
+Mean of the central pixel: 172.02985074626866
+Median of the central pixel: 173.0
+Variance of the central pixel: 19.898362664290488
+```
+
+Here is an image showing the first frame of the video with the central pixel highlighted in red:
+
+![example_frame_pixel](https://github.com/user-attachments/assets/29274e0d-3a4f-48d2-8382-8ab0ef5c65aa)
+
+
 - **Foreground Segmentation:**
 
 The function `def get_mask(self, frame: np.ndarray, opening_size=5, closing_size=5)` segments the foreground by comparing each pixel to the background model.
