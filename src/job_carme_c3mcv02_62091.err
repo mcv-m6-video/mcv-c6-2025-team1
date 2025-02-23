@@ -1,0 +1,15 @@
+[I 2025-02-23 09:04:35,860] A new study created in memory with name: no-name-68f2028e-7e69-443e-8714-fb9e45fad901
+2025-02-23 09:04:40.099251: W external/xla/xla/hlo/transforms/simplifiers/hlo_rematerialization.cc:3021] Can't reduce memory use below 15.89GiB (17062877952 bytes) by rematerialization; only reduced to 16.54GiB (17758310416 bytes), down from 16.54GiB (17758310416 bytes) originally
+2025-02-23 09:04:50.541527: W external/xla/xla/tsl/framework/bfc_allocator.cc:501] Allocator (GPU_0_bfc) ran out of memory trying to allocate 8.26GiB (rounded to 8875008256)requested by op 
+2025-02-23 09:04:50.541652: W external/xla/xla/tsl/framework/bfc_allocator.cc:512] ****************************************____________________________________________________________
+E0223 09:04:50.541679  864635 pjrt_stream_executor_client.cc:3045] Execution of replica 0 failed: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 8875008016 bytes. [tf-allocator-allocation-error='']
+[I 2025-02-23 09:06:02,263] Trial 0 finished with value: 0.19417659833471862 and parameters: {'alpha': 3.7996194003507453, 'area_threshold': 1205, 'aspect_ratio_threshold': 1.2798368320628946, 'use_median': True}. Best is trial 0 with value: 0.19417659833471862.
+2025-02-23 09:06:16.125244: W external/xla/xla/tsl/framework/bfc_allocator.cc:501] Allocator (GPU_0_bfc) ran out of memory trying to allocate 8.26GiB (rounded to 8875008256)requested by op 
+2025-02-23 09:06:16.125394: W external/xla/xla/tsl/framework/bfc_allocator.cc:512] ****************************************____________________________________________________________
+E0223 09:06:16.125418  864635 pjrt_stream_executor_client.cc:3045] Execution of replica 0 failed: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 8875008016 bytes. [tf-allocator-allocation-error='']
+[I 2025-02-23 09:07:26,128] Trial 1 finished with value: 0.0973838072282825 and parameters: {'alpha': 6.616032833700191, 'area_threshold': 1367, 'aspect_ratio_threshold': 1.833647162041415, 'use_median': True}. Best is trial 0 with value: 0.19417659833471862.
+[I 2025-02-23 09:08:21,021] Trial 2 finished with value: 0.1209896078688706 and parameters: {'alpha': 6.068032078707217, 'area_threshold': 1399, 'aspect_ratio_threshold': 1.5221194911370688, 'use_median': False}. Best is trial 0 with value: 0.19417659833471862.
+2025-02-23 09:08:34.861238: W external/xla/xla/tsl/framework/bfc_allocator.cc:501] Allocator (GPU_0_bfc) ran out of memory trying to allocate 8.26GiB (rounded to 8875008256)requested by op 
+2025-02-23 09:08:34.861374: W external/xla/xla/tsl/framework/bfc_allocator.cc:512] ****************************************____________________________________________________________
+E0223 09:08:34.861399  864635 pjrt_stream_executor_client.cc:3045] Execution of replica 0 failed: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 8875008016 bytes. [tf-allocator-allocation-error='']
+slurmstepd: error: *** JOB 62091 ON dcc3090 CANCELLED AT 2025-02-23T09:09:15 ***

@@ -13,11 +13,13 @@ def mean_avg_precision(gt, pred, iou_threshold=0.5):
     Returns:
         float: The mean average precision
     """
-    assert len(gt) > 0 and len(pred) > 0, "Ground truth and prediction lists must not be empty"
+    if len(gt) == 0 or len(pred) == 0:
+        return 1 if len(gt) == len(pred) == 0 else 0
     
     # Initialize variables
     tp = np.zeros(len(pred))
     fp = np.zeros(len(pred))
+    gt_matched = [False] * len(gt)
     
     # Loop through each prediction
     for i, p in enumerate(pred):
@@ -25,17 +27,20 @@ def mean_avg_precision(gt, pred, iou_threshold=0.5):
         if len(ious) == 0:
             fp[i] = 1
             continue
-        max_iou = max(ious)
         
-        if max_iou >= iou_threshold:
+        max_iou_idx = np.argmax(ious)
+        max_iou = ious[max_iou_idx]
+        
+        if max_iou >= iou_threshold and not gt_matched[max_iou_idx]:
             tp[i] = 1
+            gt_matched[max_iou_idx] = True
         else:
             fp[i] = 1
     
     # Calculate precision and recall
     tp = np.cumsum(tp)
     fp = np.cumsum(fp)
-    recall = tp / len(gt)
+    recall = tp / len(gt) # len(gt) is equivalent to TP + FN
     precision = tp / (tp + fp)
     
     # Generate graph with the 11-point interpolated precision-recall curve (Team5-2024)
@@ -47,7 +52,6 @@ def mean_avg_precision(gt, pred, iou_threshold=0.5):
             precision_interp[i] = 0
         else:
             precision_interp[i] = max(precision[recall >= r])
-    
     return np.mean(precision_interp)
 
 def iou(boxA, boxB):
@@ -81,7 +85,7 @@ def iou(boxA, boxB):
     return interArea / unionArea
 
 def read_annotations(annotations_path: str):
-    """Read the annotations from the XML file. From Team5-2024.
+    """Read the annotations from the XML file. From Team 5-2024 (slightly modified).
 
     Args:
         annotations_path (str): Path to the XML file
@@ -89,25 +93,30 @@ def read_annotations(annotations_path: str):
     Returns:
         dict: Dictionary containing the car bounding boxes for each frame
     """
+    # Read the XML file where the annotations (GT) are
     tree = etree.parse(annotations_path)
+    # Take the root element of the XML file
     root = tree.getroot()
+    # Where GT 2DBB are kept
     car_boxes = {}
 
+    # Iterate over all car annotations (label = "car") 
     for track in root.xpath(".//track[@label='car']"):
-        track_id = track.get("id")
+        # Iterate over all 2DBB annotated for the car
         for box in track.xpath(".//box"):
+            # Only interested in moving cars --> If the car is not parked, store the GT 2DBB 
+            # annotation and the corresponding frame id 
             parked_attribute = box.find(".//attribute[@name='parked']")
             if parked_attribute is not None and parked_attribute.text == 'false':
                 frame = box.get("frame")
                 box_attributes = {
-                    "xtl": box.get("xtl"),
-                    "ytl": box.get("ytl"),
-                    "xbr": box.get("xbr"),
-                    "ybr": box.get("ybr"),
+                    "xtl": float(box.get("xtl")),
+                    "ytl": float(box.get("ytl")),
+                    "xbr": float(box.get("xbr")),
+                    "ybr": float(box.get("ybr")),
                 }
                 if frame in car_boxes:
                     car_boxes[frame].append(box_attributes)
                 else:
                     car_boxes[frame] = [box_attributes]
-
-    return car_boxes 
+    return car_boxes

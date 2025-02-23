@@ -3,7 +3,7 @@ import numpy as np
 import argparse
 
 from utils import read_annotations, mean_avg_precision
-from gaussian_modelling.base import GaussianModelling
+from gaussian_modelling.adaptive import AdaptiveGaussianModelling
 
 
 if __name__ == "__main__":
@@ -12,8 +12,9 @@ if __name__ == "__main__":
     parser.add_argument("-v", "--video", help="Path to the video file")
     parser.add_argument("-p", "--bg_percentage", help="Percentage of frames to use for background modelling", default=0.25)
     parser.add_argument("-a", "--alpha", help="Alpha parameter for the Gaussian Modelling algorithm", default=0.01)
-    parser.add_argument("-o", "--output", help="Path to the output video file", default="output.avi")
-    parser.add_argument("-m", "--mask", help="Path to the output mask file", default="mask.avi")
+    parser.add_argument("-rho", "--rho", help="Rho parameter for the Gaussian Modelling algorithm", default=0.01)
+    parser.add_argument("-o", "--output", help="Path to the output video file", default="output_adaptive.avi")
+    parser.add_argument("-m", "--mask", help="Path to the output mask file", default="mask_adaptive.avi")
     parser.add_argument("-t", "--area_threshold", help="Minimum area of the bounding box", default=100)
     parser.add_argument("-r", "--aspect_ratio", help="Aspect Ratio", default=1.0)
     parser.add_argument("-g", "--annotations", help="Path to the ground truth annotations", default=None)
@@ -26,6 +27,7 @@ if __name__ == "__main__":
     video_path = args.video
     bg_percentage = float(args.bg_percentage)
     alpha = float(args.alpha)
+    rho = float(args.rho)
     output_path = args.output
     mask_path = args.mask
     area_threshold = float(args.area_threshold)
@@ -52,7 +54,7 @@ if __name__ == "__main__":
     print(f"Number of frames: {num_frames}")
     print(f"Number of background frames: {n_bg_frames}")
 
-    gaussian_modelling = GaussianModelling(alpha=alpha, use_median=use_median)
+    gaussian_modelling = AdaptiveGaussianModelling(alpha=alpha, rho=rho, use_median=use_median)
     bg_frames = []
     metrics = []
     while True:
@@ -70,6 +72,7 @@ if __name__ == "__main__":
             bg_frames.append(np.array(gray_frame))
             if frame_number == n_bg_frames:
                 gaussian_modelling.get_bg_model(np.array(bg_frames))
+                print(f"BG model done")
         else:
             mask = gaussian_modelling.get_mask(frame, opening_size=opening_size, closing_size=closing_size)
             bounding_box, output_frame = gaussian_modelling.get_bounding_box(
@@ -78,8 +81,11 @@ if __name__ == "__main__":
                 area_threshold=area_threshold,
                 aspect_ratio_threshold=aspect_ratio_threshold
             )
-            
-            # Convert to the same format
+            # If a pixel is bg --> update the mean and variance (of the Gaussian Model) for that pixel 
+            print(f"BG model done")
+            gaussian_modelling.update_model(frame, mask)
+
+            # Convert 2DBB to the same format
             gt_box = gt_boxes.get(str(frame_number), [])
             gt_box = [list(map(int, [box["xtl"], box["ytl"], box["xbr"], box["ybr"]])) for box in gt_box]
             pred_box = [[int(box[0][0]), int(box[0][1]), int(box[1][0]), int(box[1][1])] for box in bounding_box]

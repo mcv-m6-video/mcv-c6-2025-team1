@@ -1,0 +1,4 @@
+2025-02-23 11:42:23.587632: W external/xla/xla/hlo/transforms/simplifiers/hlo_rematerialization.cc:3021] Can't reduce memory use below 15.89GiB (17062877952 bytes) by rematerialization; only reduced to 16.54GiB (17758310416 bytes), down from 16.54GiB (17758310416 bytes) originally
+2025-02-23 11:42:34.028542: W external/xla/xla/tsl/framework/bfc_allocator.cc:501] Allocator (GPU_0_bfc) ran out of memory trying to allocate 8.26GiB (rounded to 8875008256)requested by op 
+2025-02-23 11:42:34.028674: W external/xla/xla/tsl/framework/bfc_allocator.cc:512] ****************************************____________________________________________________________
+E0223 11:42:34.028704  910996 pjrt_stream_executor_client.cc:3045] Execution of replica 0 failed: RESOURCE_EXHAUSTED: Out of memory while trying to allocate 8875008016 bytes. [tf-allocator-allocation-error='']
