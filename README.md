@@ -149,7 +149,23 @@ The function `def get_bg_model(self, frames: np.ndarray)` computes the mean (or 
 
 By default, the function uses **JAX (`jnp`)** to take advantage of GPU acceleration with CUDA. If CUDA is not available, it falls back to **NumPy (`np`)** to ensure compatibility.
 
-- 
+- **Foreground Segmentation:**
+
+The function `def get_mask(self, frame: np.ndarray, opening_size=5, closing_size=5)` segments the foreground by comparing each pixel to the background model.
+
+1. **Convert to Grayscale:**  
+   Since the algorithm operates on intensity values, the input frame (BGR) is converted to grayscale.
+
+2. **Thresholding:**
+   A pixel is classified as foreground if its intensity deviates significantly from the background model. The threshold is determined as:
+
+   $| I(x, y) - \mu(x, y) | \geq \alpha \cdot (\sqrt{\sigma^2(x, y)} + 2)$
+
+   where $I(x, y)$ is the pixel intensity, $\mu(x, y)$ and $\sigma^2(x, y)$ are the mean (or median) and variance of the background model, and $\alpha$ is a tunable parameter.
+
+4. **Morphological Post-Processing:**  
+   To reduce noise, **morphological opening** is applied, followed by **morphological closing** to refine object boundaries. The kernel sizes for these operations are adjustable via `opening_size` and `closing_size`.
+
 
 ### Task 1.2: mAP0.5 vs Alpha
 
