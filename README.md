@@ -154,12 +154,13 @@ By default, the function uses **JAX (`jnp`)** to take advantage of GPU accelerat
 To test the background model function, run the following command:
 
 ```bash
-python3 base.py
+python3 base.py --test background
 ```
 
 This will process the video frames and calculate the background model for the central pixel. The output should look like this:
 
 ```bash
+Total frames: 2141, Using 25.0% for background model (535 frames)
 Mean of the central pixel: 172.02985074626866
 Median of the central pixel: 173.0
 Variance of the central pixel: 19.898362664290488
@@ -187,6 +188,21 @@ The function `def get_mask(self, frame: np.ndarray, opening_size=5, closing_size
 4. **Morphological Post-Processing:**  
    To reduce noise, **morphological opening** is applied, followed by **morphological closing** to refine object boundaries. The kernel sizes for these operations are adjustable via `opening_size` and `closing_size`.
 
+***Example:***
+
+To test the mask function, run the following command:
+
+```bash
+python3 base.py --test mask
+```
+
+This test compares the masks generated with and without morphological operations (opening and closing). The test uses frame 730 from the video with the following parameters: `opening_size=7`, `closing_size=7`, `alpha=3.5`, and `use_median=False`. The masks are saved as `mask_no_morph.jpg` (without operations) and `mask_with_morph.jpg` (with opening and closing operations). The morphological operations refine object boundaries and reduce noise, improving the quality of the mask.
+
+**Results:**
+
+| **Without Morphological Operations** | **With Morphological Operations**  |
+|--------------------------------------|------------------------------------|
+| ![mask_no_morph](https://github.com/user-attachments/assets/5fa62d40-4b5d-4ef1-9f82-dbbf9741976f) | ![mask_with_morph](https://github.com/user-attachments/assets/d4c0413b-3915-4b4a-9329-1dea785841bf) |
 
 ### Task 1.2: mAP0.5 vs Alpha
 
