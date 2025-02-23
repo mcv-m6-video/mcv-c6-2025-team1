@@ -50,7 +50,7 @@ This section will guide you through the installation process of the project and 
 
 ### Prerequisites
 The following prerequisites must be followed:
-- Python >= v3.8
+- Python >= v3.12
 
 ### Setup
 
