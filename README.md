@@ -161,8 +161,8 @@ The function `def get_mask(self, frame: np.ndarray, opening_size=5, closing_size
 
    $| I(x, y) - \mu(x, y) | \geq \alpha \cdot (\sqrt{\sigma^2(x, y)} + 2)$
 
-   where $I(x, y)$ is the pixel intensity, $\mu(x, y)$ and $\sigma^2(x, y)$ are the mean (or median) and variance of the background model, and $\alpha$ is a tunable parameter.
-
+   where $I(x, y)$ is the pixel intensity, $\mu(x, y)$ and $\sigma^2(x, y)$ are the mean (or median) and variance of the background model, and $\alpha$ is a tunable parameter. The pixel will be classified as **foreground** if the equation is satisfied, and as **background** if it is not.
+   
 4. **Morphological Post-Processing:**  
    To reduce noise, **morphological opening** is applied, followed by **morphological closing** to refine object boundaries. The kernel sizes for these operations are adjustable via `opening_size` and `closing_size`.
 
