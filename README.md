@@ -18,9 +18,8 @@ Link Final Presentation:
   - [Prerequisites](#prerequisites)
   - [Setup](#setup)
 - [Project Structure](#project-structure)
-- [Dataset](#dataset)
 - [WEEK 1: Tasks](#week-1-tasks)
-  - [Project Structure](#project-structure-week1)
+  - [Project Structure W1](#project-structure-w1)
   - [Task 1.1: Gaussian Modelling](#task-11-gaussian-modelling)
   - [Task 1.2: mAP@0.5 vs Alpha](#task-12-map05-vs-alpha)
   - [Task 2.1: Adaptive Modelling](#task-21-adaptive-modelling)
@@ -109,7 +108,7 @@ Once downloaded and extracted, the project structure will look like this:
 
 <h2 align="center">WEEK 1: Tasks</h2>
 
-### Project Structure
+### Project Structure W1
 
     week1/
     ├── src/
@@ -122,6 +121,35 @@ Once downloaded and extracted, the project structure will look like this:
     │   └── utils.py
     
 ### Task 1.1: Gaussian modelling
+
+#### Overview
+
+This task implements a Gaussian-based background modeling algorithm to segment the foreground in a video sequence. The method follows these steps:
+
+1. **Model the background**  
+   - The first 25% of the frames are used to estimate the background.
+   - The background model is computed using either the mean or the median of the pixel values.
+   - The variance of each pixel is also computed.
+
+2. **Segment the foreground**  
+   - The remaining 75% of the frames are used for foreground segmentation.
+   - A pixel is classified as foreground if its intensity significantly deviates from the background model based on a threshold.
+
+3. **Post-processing**  
+   - Morphological operations (opening and closing) are applied to reduce noise.
+   - Bounding boxes are computed to detect objects.
+
+#### Implementation
+
+The Gaussian Modelling is implemented in the `GaussianModelling` class, with the following functions:
+
+- **Background Model Calculation:**
+
+The function `def get_bg_model(self, frames: np.ndarray)` computes the mean (or median) and variance for each pixel. In the main function, the parameter `frames` corresponds to the first 25% of the frames of the video.
+
+By default, the function uses **JAX (`jnp`)** to take advantage of GPU acceleration with CUDA. If CUDA is not available, it falls back to **NumPy (`np`)** to ensure compatibility.
+
+- 
 
 ### Task 1.2: mAP0.5 vs Alpha
 
