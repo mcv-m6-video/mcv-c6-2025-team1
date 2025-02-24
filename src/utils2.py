@@ -2,7 +2,7 @@ import numpy as np
 from lxml import etree
 
 
-def mean_avg_precision(gt, pred, iou_threshold=0.5):
+def mean_avg_precision2(gt, pred, iou_threshold=0.5):
     """Calculate the mean average precision for a given ground truth and prediction
 
     Args:
@@ -52,7 +52,9 @@ def mean_avg_precision(gt, pred, iou_threshold=0.5):
             precision_interp[i] = 0
         else:
             precision_interp[i] = max(precision[recall >= r])
-    return np.mean(precision_interp)
+    mAP = np.mean(precision_interp)
+
+    return mAP, precision, recall, tp, fp
 
 def iou(boxA, boxB):
     """Calculate the intersection over union (IoU) of two bounding boxes.
@@ -84,7 +86,7 @@ def iou(boxA, boxB):
     # Calculate the IoU
     return interArea / unionArea
 
-def read_annotations(annotations_path: str):
+def read_annotations2(annotations_path: str):
     """Read the annotations from the XML file. From Team 5-2024 (slightly modified).
 
     Args:
@@ -109,20 +111,12 @@ def read_annotations(annotations_path: str):
             parked_attribute = box.find(".//attribute[@name='parked']")
             if parked_attribute is not None and parked_attribute.text == 'false':
                 frame = box.get("frame")
-                
-                # Check if the box is occluded
-                # is_occluded = box.get("occluded")
-                # if is_occluded == "1":
-                #     continue
-                
                 box_attributes = {
                     "xtl": float(box.get("xtl")),
                     "ytl": float(box.get("ytl")),
                     "xbr": float(box.get("xbr")),
                     "ybr": float(box.get("ybr")),
-                    "occluded": int(box.get("occluded")),
                 }
-                
                 if frame in car_boxes:
                     car_boxes[frame].append(box_attributes)
                 else:

@@ -82,7 +82,7 @@ if __name__ == "__main__":
                 aspect_ratio_threshold=aspect_ratio_threshold
             )
             # If a pixel is bg --> update the mean and variance (of the Gaussian Model) for that pixel 
-            print(f"BG model done")
+            print(f"FG")
             gaussian_modelling.update_model(frame, mask)
 
             # Convert 2DBB to the same format

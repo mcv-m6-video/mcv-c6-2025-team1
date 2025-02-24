@@ -1,8 +1,11 @@
 data/
 src/output_videos
 src/output_videos_adaptive
-mask.avi
-output.avi
+src/output_videos_adaptive_opt
+src/visualization
+*.avi
+*.err
+*.out
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

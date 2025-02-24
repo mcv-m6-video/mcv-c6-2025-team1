@@ -13,19 +13,23 @@ AREA_THRESHOLD=918
 ASPECT_RATIO=2.1155
 OPENING_SIZE=3
 CLOSING_SIZE=13
-OUTPUT_DIR="output_videos_adaptive"
+OUTPUT_DIR="output_videos_adaptive_opt"
 
 # Crear la carpeta de sortida si no existeix
 mkdir -p $OUTPUT_DIR
 
-# Iterar per diferents valors d'alpha
-for ALPHA in 3.5
-do
-    OUTPUT_VIDEO="${OUTPUT_DIR}/output_alpha_${ALPHA}.avi"
-    MASK_VIDEO="${OUTPUT_DIR}/mask_alpha_${ALPHA}.avi"
+# Fixem alpha a 3.5 i variem rho de 0 a 1
+ALPHA=3.5
 
-    echo "Running with alpha=$ALPHA..."
-    python main_adaptive.py -v=$VIDEO_PATH -a=$ALPHA -t=$AREA_THRESHOLD --annotations=$ANNOTATIONS_PATH --use_median --opening_size=$OPENING_SIZE --closing_size=$CLOSING_SIZE -r=$ASPECT_RATIO -o=$OUTPUT_VIDEO -m=$MASK_VIDEO
+for RHO in 0.01 0.02 0.03 0.04 0.05 0.06 0.07 0.08   # Variem rho de 0 a 1 amb un increment de 0.1
+do
+    # Definim els noms dels vídeos d'output i de màscara
+    OUTPUT_VIDEO="${OUTPUT_DIR}/output_alpha_${ALPHA}_rho_${RHO}.avi"
+    MASK_VIDEO="${OUTPUT_DIR}/mask_alpha_${ALPHA}_rho_${RHO}.avi"
+
+    # Executem el script amb el valor de rho corresponent
+    echo "Running with alpha=$ALPHA and rho=$RHO..."
+    python main_adaptive.py -rho $RHO -v $VIDEO_PATH -a $ALPHA -t $AREA_THRESHOLD --annotations $ANNOTATIONS_PATH --use_median --opening_size $OPENING_SIZE --closing_size $CLOSING_SIZE -r $ASPECT_RATIO -o $OUTPUT_VIDEO -m $MASK_VIDEO
 done
 
 echo "Tots els vídeos s'han guardat a la carpeta $OUTPUT_DIR"

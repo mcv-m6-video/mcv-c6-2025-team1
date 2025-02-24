@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 import jax.numpy as jnp
+import os
+import argparse
 
 
 class GaussianModelling:
@@ -57,6 +59,9 @@ class GaussianModelling:
         # then the pixel is foreground (255)
         mask = np.where(np.abs(gray_img - self.mean) >= self.alpha * (np.sqrt(self.variance) + 2), 255, 0).astype(np.uint8)
         
+        # Remove censoring black boxes
+        # mask = np.where((gray_img < 10) & (mask == 255), 0, mask).astype(np.uint8)
+        
         # Apply morphological operations to remove noise
         kernel = np.ones((opening_size, opening_size), np.uint8)
         mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
@@ -64,8 +69,6 @@ class GaussianModelling:
         mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
         
         return mask
-    
-
     
     def get_bounding_box(self, mask: np.ndarray, output_frame: np.ndarray, area_threshold: float=100, aspect_ratio_threshold: float=1.0):
         """Get the bounding box of the mask
@@ -101,3 +104,136 @@ class GaussianModelling:
             cv2.rectangle(output_frame, top_left, bottom_right, (0, 0, 255), 2)
 
         return coords, output_frame
+    
+    
+## TESTS
+
+
+# Function to display and test pixel stats
+def test_background_model(video_path, bg_percentage=0.25):
+    # Read the video
+    cap = cv2.VideoCapture(video_path)
+    
+    # Get the total number of frames
+    num_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    n_bg_frames = int(bg_percentage * num_frames)
+    print(f"Total frames: {num_frames}, Using {bg_percentage*100}% for background model ({n_bg_frames} frames)")
+
+    # Initialize the background model
+    gaussian_modelling = GaussianModelling(alpha=0.01, use_median=False)
+    gaussian_modelling_median = GaussianModelling(alpha=0.01, use_median=True)
+    bg_frames = []
+
+    # Process the background frames
+    frame_number = 0
+    while frame_number <= n_bg_frames:
+        ret, frame = cap.read()
+        if not ret:
+            break
+        
+        if frame_number == 0:
+            # Save the first frame as the example frame
+            example_frame = frame
+            
+        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        bg_frames.append(np.array(gray_frame))
+        frame_number += 1
+
+    # Compute the background model
+    mean, variance = gaussian_modelling.get_bg_model(np.array(bg_frames))
+    median, _ = gaussian_modelling_median.get_bg_model(np.array(bg_frames))
+    
+    # Calculate the central pixel coordinates
+    height, width = example_frame.shape[:2]
+    center_y, center_x = height // 2, width // 2
+
+    # Extract the mean, median, and variance values of the central pixel
+    pixel_mean = mean[center_y, center_x]
+    pixel_median = median[center_y, center_x]
+    pixel_variance = variance[center_y, center_x]
+
+    # Get the mean, median, and variance for the central pixel
+    print(f"Mean of the central pixel: {pixel_mean}")
+    print(f"Median of the central pixel: {pixel_median}")
+    print(f"Variance of the central pixel: {pixel_variance}")
+    
+    # Draw the pixel in red at the center of the image
+    cv2.circle(example_frame, (width // 2, height // 2), 5, (0, 0, 255), -1)  # Draw a red circle
+    
+    # Create a folder called 'tests' if it doesn't exist
+    if not os.path.exists('tests'):
+        os.makedirs('tests')
+
+    # Save the example image with central pixel highlighted
+    example_image_path = os.path.join('tests', 'example_frame_pixel.jpg')
+    cv2.imwrite(example_image_path, example_frame)
+
+    cap.release()
+
+
+
+# Function to test the mask and display the mask with and without morphological operations
+def test_mask(video_path, frame_number=1000, opening_size=5, closing_size=5, alpha=0.01, use_median=False):
+    # Initialize the Gaussian Modelling
+    gaussian_modelling = GaussianModelling(alpha=alpha, use_median=use_median)
+    
+    # Open the video file
+    cap = cv2.VideoCapture(video_path)
+    
+    # Read all frames until frame 1000
+    frames = []
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+        frames.append(frame)
+    
+    # Close the video file after reading the frames
+    cap.release()
+    
+    # Ensure the frame number is valid
+    if frame_number >= len(frames):
+        print(f"Error: The video only has {len(frames)} frames.")
+        return
+    
+    # Get the frames for background model (25% of the total frames)
+    num_frames = int(0.25 * len(frames))
+    bg_frames = [cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) for frame in frames[:num_frames]]
+    gaussian_modelling.get_bg_model(np.array(bg_frames))
+    
+    # Get the frame at frame_number (frame 1000 in this case)
+    frame = frames[frame_number]
+    
+    # Get the mask without morphological operations
+    mask_no_morph = gaussian_modelling.get_mask(frame, opening_size=0, closing_size=0)
+    
+    # Get the mask with morphological operations
+    mask_with_morph = gaussian_modelling.get_mask(frame, opening_size=opening_size, closing_size=closing_size)
+    
+    # Convert the masks to BGR for visualization
+    mask_no_morph_bgr = cv2.cvtColor(mask_no_morph, cv2.COLOR_GRAY2BGR)
+    mask_with_morph_bgr = cv2.cvtColor(mask_with_morph, cv2.COLOR_GRAY2BGR)
+    
+    # Save the masks as images
+    mask_no_morph_path = 'tests/mask_no_morph.jpg'
+    mask_with_morph_path = 'tests/mask_with_morph.jpg'
+    
+    cv2.imwrite(mask_no_morph_path, mask_no_morph)
+    cv2.imwrite(mask_with_morph_path, mask_with_morph)
+
+
+if __name__ == "__main__":
+    # Parse the arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-t", "--test", help="Test mode: 'background' or 'mask'", required=True)
+    args = parser.parse_args()
+
+    video_path = '/ghome/c3mcv02/mcv-c6-2025-team1/data/AICity_data/train/S03/c010/vdo.avi'
+
+    if args.test == "background":
+        test_background_model(video_path)
+    elif args.test == "mask":
+        test_mask(video_path, frame_number=730, opening_size=7, closing_size=7, alpha=3.5, use_median=False)
+    else:
+        print("Invalid test mode. Use 'background' or 'mask'.")
+

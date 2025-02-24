@@ -1,0 +1,30 @@
+#!/bin/bash
+#SBATCH --ntasks-per-node=4 
+#SBATCH --mem=50000  # 50GB de RAM sol·licitats.
+#SBATCH -p mlow  # Partició de màxima prioritat (o canvia a mlow si ho prefereixes)
+#SBATCH --gres=gpu:1  # Demanar una GPU RTX 3090
+#SBATCH -o %x_%u_%j.out  # Fitxer per la sortida STDOUT
+#SBATCH -e %x_%u_%j.err  # Fitxer per la sortida STDERR
+
+# Definició de variables
+VIDEO_PATH="/ghome/c3mcv02/mcv-c6-2025-team1/data/AICity_data/train/S03/c010/vdo.avi"
+ANNOTATIONS_PATH="/ghome/c3mcv02/mcv-c6-2025-team1/data/ai_challenge_s03_c010-full_annotation.xml"
+AREA_THRESHOLD=918
+ASPECT_RATIO=2.1155
+OPENING_SIZE=3
+CLOSING_SIZE=13
+
+# Llistes de valors de rho i alpha
+RHO_VALUES=(0.001 0.003 0.005 0.007 0.01 0.02)
+ALPHA_VALUES=(2 2.25)
+
+# Iterar sobre tots els valors de rho i alpha
+for RHO in "${RHO_VALUES[@]}"; do
+    for ALPHA in "${ALPHA_VALUES[@]}"; do
+        echo "Running with alpha=$ALPHA and rho=$RHO..."
+        python main_adaptive.py -rho $RHO -v $VIDEO_PATH -a $ALPHA -t $AREA_THRESHOLD --annotations $ANNOTATIONS_PATH --use_median --opening_size $OPENING_SIZE --closing_size $CLOSING_SIZE -r $ASPECT_RATIO
+    done
+done
+
+echo "Execució completada per tots els valors de rho i alpha."
+
