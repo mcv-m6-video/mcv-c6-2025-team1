@@ -154,6 +154,7 @@ By default, the function uses **JAX (`jnp`)** to take advantage of GPU accelerat
 To test the background model function, run the following command:
 
 ```bash
+cd src/gaussian_modelling/
 python3 base.py --test background
 ```
 
@@ -241,7 +242,23 @@ For testing we use diferent parameters for `area_threshold` and `aspect_ratio_th
 
 ### Task 1.2: mAP0.5 vs Alpha
 
+
+```bash
+cd src/
+python3 main.py -v=/ghome/c3mcv02/mcv-c6-2025-team1/data/AICity_data/train/S03/c010/vdo.avi -a=3.5 -t=918 --annotations=/ghome/c3mcv02/mcv-c6-2025-team1/data/ai_challenge_s03_c010-full_annotation.xml --use_median --opening_size=3 --closing_size=13 -r=2.11 -o="output_readme.avi" -m="mask_readme.avi"
+```
+
+Mean Average Precision: 0.43533866925279
+
+
 ### Task 2.1: Adaptive modelling
+
+```bash
+cd src/
+python3 main_adaptive.py -v=/ghome/c3mcv02/mcv-c6-2025-team1/data/AICity_data/train/S03/c010/vdo.avi -a=2.5 -o=output_readme_adaptive.avi -m=mask_readme_adaptive.avi -rho=0.01  -t=959 --annotations=/ghome/c3mcv02/mcv-c6-2025-team1/data/ai_challenge_s03_c010-full_annotation.xml --use_median --opening_size=3 --closing_size=13 -r=1.2
+```
+
+Mean Average Precision: 0.7226676165709937
 
 ### Task 2.2: Comparison of adaptive vs. non-adaptive
 
