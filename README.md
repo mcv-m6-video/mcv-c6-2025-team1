@@ -227,7 +227,7 @@ The function `def get_bounding_box(self, mask: np.ndarray, output_frame: np.ndar
 To test the mask function, run the following command:
 
 ```bash
-python3 base.py -t bounding_box
+python3 base.py --test bounding_box
 ```
 
 This test processes frame 730 of the video and applies bounding boxes on objects detected in the mask. The bounding boxes, which are **red**, will be drawn only on objects that pass the area and aspect ratio filters.
