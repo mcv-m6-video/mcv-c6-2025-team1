@@ -267,6 +267,7 @@ Mean Average Precision: 0.7226676165709937
 ```bash
 python3 -m src.stateofart.methods
 ```
+opening_size=3 closing_size=13
 ## Team Members
 
 This project was developed by the following team members:
