@@ -154,6 +154,7 @@ By default, the function uses **JAX (`jnp`)** to take advantage of GPU accelerat
 To test the background model function, run the following command:
 
 ```bash
+cd src/gaussian_modelling/
 python3 base.py --test background
 ```
 
@@ -204,9 +205,60 @@ This test compares the masks generated with and without morphological operations
 |--------------------------------------|------------------------------------|
 | ![mask_no_morph](https://github.com/user-attachments/assets/5fa62d40-4b5d-4ef1-9f82-dbbf9741976f) | ![mask_with_morph](https://github.com/user-attachments/assets/d4c0413b-3915-4b4a-9329-1dea785841bf) |
 
+
+- **Bounding Box Calculation**
+
+The function `def get_bounding_box(self, mask: np.ndarray, output_frame: np.ndarray, area_threshold: float=100, aspect_ratio_threshold: float=1.0)` detects objects in the segmented mask and draws bounding boxes around them.
+
+1. **Connected Components Analysis:**  
+   The function uses `cv2.connectedComponentsWithStats` to identify separate objects in the mask.
+
+2. **Filtering by Area:**  
+   - Small components with an area below `area_threshold` are ignored.
+
+3. **Filtering by Aspect Ratio:**  
+   - Objects with an aspect ratio (height/width) greater than `aspect_ratio_threshold` are discarded.  
+   - This helps filter out elongated objects like bicycles, ensuring that only cars are detected.
+
+4. **Drawing Bounding Boxes:**  
+   - The remaining objects are enclosed in red bounding boxes and drawn on the `output_frame`.
+
+***Example:***
+
+To test the mask function, run the following command:
+
+```bash
+python3 base.py --test bounding_box
+```
+
+This test processes frame 730 of the video and applies bounding boxes on objects detected in the mask. The bounding boxes, which are **red**, will be drawn only on objects that pass the area and aspect ratio filters.
+
+For testing we use diferent parameters for `area_threshold` and `aspect_ratio_threshold`:
+
+| **area_threshold=300 & aspect_ratio_threshold=1.5** | **area_threshold=918 & aspect_ratio_threshold=2.11** |
+|-----------------------------------------------------|-------------------------------------------------------|
+| ![bounding_box_output_with_morph_1](https://github.com/user-attachments/assets/9ac40d07-4b4d-45ea-9c74-0c2e51c592a8) | ![bounding_box_output_with_morph](https://github.com/user-attachments/assets/a548a7c0-ee6a-4fbd-bd60-6ba6dd5683e8) |
+
+
 ### Task 1.2: mAP0.5 vs Alpha
 
+
+```bash
+cd src/
+python3 main.py -v=/ghome/c3mcv02/mcv-c6-2025-team1/data/AICity_data/train/S03/c010/vdo.avi -a=3.5 -t=918 --annotations=/ghome/c3mcv02/mcv-c6-2025-team1/data/ai_challenge_s03_c010-full_annotation.xml --use_median --opening_size=3 --closing_size=13 -r=2.11 -o="output_readme.avi" -m="mask_readme.avi"
+```
+
+Mean Average Precision: 0.43533866925279
+
+
 ### Task 2.1: Adaptive modelling
+
+```bash
+cd src/
+python3 main_adaptive.py -v=/ghome/c3mcv02/mcv-c6-2025-team1/data/AICity_data/train/S03/c010/vdo.avi -a=2.5 -o=output_readme_adaptive.avi -m=mask_readme_adaptive.avi -rho=0.01  -t=959 --annotations=/ghome/c3mcv02/mcv-c6-2025-team1/data/ai_challenge_s03_c010-full_annotation.xml --use_median --opening_size=3 --closing_size=13 -r=1.2
+```
+
+Mean Average Precision: 0.7226676165709937
 
 ### Task 2.2: Comparison of adaptive vs. non-adaptive
 
