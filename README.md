@@ -264,7 +264,9 @@ Mean Average Precision: 0.7226676165709937
 
 ### Task 3: Comparison with state-of-the-art
 
-
+```bash
+python3 -m src.stateofart.methods
+```
 ## Team Members
 
 This project was developed by the following team members:
