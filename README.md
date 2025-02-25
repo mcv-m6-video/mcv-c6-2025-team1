@@ -4,9 +4,9 @@
   <p align="center">
     Project for the Module C6-Video Analysis in Master's in Computer Vision in Barcelona.
 <br>
-    <a href="https://github.com/EymoLabs/eymo-cloud-rs/issues/new?template=bug.md">Report bug</a>
+    <a href="https://github.com/mcv-m6-video/mcv-c6-2025-team1/issues/new?template=bug.md">Report bug</a>
     ·
-    <a href="https://github.com/EymoLabs/eymo-cloud-rs/issues/new?template=feature.md&labels=feature">Request feature</a>
+    <a href="https://github.com/mcv-m6-video/mcv-c6-2025-team1/issues/new?template=feature.md&labels=feature">Request feature</a>
   </p>
 </p>
 
