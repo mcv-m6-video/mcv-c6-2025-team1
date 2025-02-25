@@ -268,6 +268,22 @@ Mean Average Precision: 0.7226676165709937
 python3 -m src.stateofart.methods
 ```
 opening_size=3 closing_size=13
+
+#### ZBS (Zero-shot Background Substraction) method
+To complete the ZBS part, please follow the installation and usage instructions from the [official ZBS repository](https://github.com/CASIA-IVA-Lab/ZBS). Extract the masks for each frame using FG threshold of 0.4 and move threshold of 0.8, with confidence 0.6, altough you may use different setting.
+
+For evaluation, use this command which will output the mAP for the masks predicted by ZBS:
+
+```bash
+python3 -m src.stateofart.eval_zbs -m <ZBS_MASK>.avi -gt <GT_ANNOTATIONS>.xml -v
+```
+
+For further details on other command options use:
+
+```bash
+python3 -m src.stateofart.eval_zbs --help
+```
+
 ## Team Members
 
 This project was developed by the following team members:
