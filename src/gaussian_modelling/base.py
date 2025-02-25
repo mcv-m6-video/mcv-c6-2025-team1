@@ -220,12 +220,34 @@ def test_mask(video_path, frame_number=1000, opening_size=5, closing_size=5, alp
     
     cv2.imwrite(mask_no_morph_path, mask_no_morph)
     cv2.imwrite(mask_with_morph_path, mask_with_morph)
+    
+    return frame, mask_no_morph_bgr, mask_with_morph_bgr
+
+def test_bounding_box(video_path, frame_number=730, opening_size=7, closing_size=7, alpha=3.5, use_median=False, area_threshold=959, aspect_ratio_threshold=2.11):
+    # Initialize the Gaussian Modelling
+    gaussian_modelling = GaussianModelling(alpha=alpha, use_median=use_median)
+    
+    frame, mask_no_morph_bgr, mask_with_morph_bgr = test_mask(video_path, frame_number, opening_size, closing_size, alpha, use_median)
+    
+    mask_with_morph_gray = cv2.cvtColor(mask_with_morph_bgr, cv2.COLOR_BGR2GRAY)
+    
+    bounding_box_with_morph, output_frame_with_morph = gaussian_modelling.get_bounding_box(
+                mask_with_morph_gray, 
+                frame, 
+                area_threshold=area_threshold,
+                aspect_ratio_threshold=aspect_ratio_threshold
+            )
+    
+    # Save the masks as images
+    output_with_morph_path = 'tests/bounding_box_output_with_morph.jpg'
+    
+    cv2.imwrite(output_with_morph_path, output_frame_with_morph)
 
 
 if __name__ == "__main__":
     # Parse the arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("-t", "--test", help="Test mode: 'background' or 'mask'", required=True)
+    parser.add_argument("-t", "--test", help="Test mode: 'background', 'mask', or 'bounding_box'", required=True)
     args = parser.parse_args()
 
     video_path = '/ghome/c3mcv02/mcv-c6-2025-team1/data/AICity_data/train/S03/c010/vdo.avi'
@@ -234,6 +256,8 @@ if __name__ == "__main__":
         test_background_model(video_path)
     elif args.test == "mask":
         test_mask(video_path, frame_number=730, opening_size=7, closing_size=7, alpha=3.5, use_median=False)
+    elif args.test == "bounding_box":
+        test_bounding_box(video_path, frame_number=730, opening_size=7, closing_size=7, alpha=3.5, use_median=False, area_threshold=918, aspect_ratio_threshold=2.11)
     else:
-        print("Invalid test mode. Use 'background' or 'mask'.")
+        print("Invalid test mode. Use 'background', 'mask', or 'bounding_box'.")
 

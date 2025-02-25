@@ -41,7 +41,7 @@ class AdaptiveGaussianModelling(GaussianModelling):
             self.mean[bg_mask] = mean[bg_mask]
             self.variance[bg_mask] = var[bg_mask]
             
-            
+        return self.mean, self.variance 
         #end_time = time.time()  # Record end time
         #elapsed_time = end_time - start_time
         #print(f"Execution time: {elapsed_time:.4f} seconds")
