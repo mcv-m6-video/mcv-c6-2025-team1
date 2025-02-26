@@ -142,15 +142,33 @@ For testing we use diferent parameters for `area_threshold` and `aspect_ratio_th
 | ![bounding_box_output_with_morph_1](https://github.com/user-attachments/assets/9ac40d07-4b4d-45ea-9c74-0c2e51c592a8) | ![bounding_box_output_with_morph](https://github.com/user-attachments/assets/a548a7c0-ee6a-4fbd-bd60-6ba6dd5683e8) |
 
 
-### Task 1.2: mAP0.5 vs Alpha
+### Task 1.2: mAP0.5 vs Alpha 
 
+This experiment evaluates the model's performance by adjusting the **α** parameter and calculating **mAP@0.5**.  
+
+#### **Process:**  
+1. **Load video and annotations**  
+   - Extract frames and load ground truth annotations.  
+2. **Background modeling**  
+   - Use the first **25% of frames** to compute the background model using either the mean or median.  
+3. **Foreground segmentation**  
+   - Classify each pixel as foreground or background based on **α**.  
+   - Apply morphological operations to refine the segmentation.  
+4. **Metrics calculation**  
+   - Detect objects in the generated masks.  
+   - Compare detections with ground truth to compute **Mean Average Precision (mAP@0.5)**.  
+
+#### **Best Performing Parameters:**  
+
+The following command was used to obtain the highest **mAP@0.5** in our experiments: 
 
 ```bash
 cd src/
 python3 main.py -v=/ghome/c3mcv02/mcv-c6-2025-team1/data/AICity_data/train/S03/c010/vdo.avi -a=3.5 -t=918 --annotations=/ghome/c3mcv02/mcv-c6-2025-team1/data/ai_challenge_s03_c010-full_annotation.xml --use_median --opening_size=3 --closing_size=13 -r=2.11 -o="output_readme.avi" -m="mask_readme.avi"
 ```
 
-Mean Average Precision: 0.43533866925279
+#### **Result:** 
+`Mean Average Precision: 0.43533866925279`
 
 
 ### Task 2.1: Adaptive modelling
