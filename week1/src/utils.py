@@ -3,7 +3,7 @@ from lxml import etree
 
 
 def mean_avg_precision(gt, pred, iou_threshold=0.5):
-    """Calculate the mean average precision for a given ground truth and prediction
+    """Calculate the mean average precision for a given ground truth and prediction. From Team 5-2024 (slightly modified).
 
     Args:
         gt (list): List of ground truth bounding boxes
@@ -55,7 +55,7 @@ def mean_avg_precision(gt, pred, iou_threshold=0.5):
     return np.mean(precision_interp)
 
 def iou(boxA, boxB):
-    """Calculate the intersection over union (IoU) of two bounding boxes.
+    """Calculate the intersection over union (IoU) of two bounding boxes. From Team 5-2024 (slightly modified)
     
     Format of bounding boxes is top-left and bottom-right coordinates [x1, y1, x2, y2].
 
@@ -84,8 +84,9 @@ def iou(boxA, boxB):
     # Calculate the IoU
     return interArea / unionArea
 
+
 def read_annotations(annotations_path: str):
-    """Read the annotations from the XML file. From Team 5-2024 (slightly modified).
+    """Read the annotations from the XML file. From Team 6-2024 (slightly modified).
 
     Args:
         annotations_path (str): Path to the XML file
