@@ -92,7 +92,7 @@ if __name__ == "__main__":
                 try:
                     for box in gt_boxes[str(frame_number)]:
                         xtl, ytl, xbr, ybr = int(box["xtl"]), int(box["ytl"]), int(box["xbr"]), int(box["ybr"])
-                        cv2.rectangle(output_frame, (xtl, ytl), (xbr, ybr), (0, 255, 0), 2)
+                        cv2.rectangle(20, (xtl, ytl), (xbr, ybr), (0, 255, 0), 2)
                 except KeyError:
                     pass
             
