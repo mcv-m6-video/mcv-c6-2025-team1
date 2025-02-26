@@ -170,17 +170,63 @@ python3 main.py -v=/ghome/c3mcv02/mcv-c6-2025-team1/data/AICity_data/train/S03/c
 #### **Result:** 
 `Mean Average Precision: 0.43533866925279`
 
+#### References in `utils.py`  
+
+In our implementation, we used and slightly modified functions from previous years' teams:  
+
+- **`mean_avg_precision()`**: Based on Team 5-2024's implementation.  
+- **`iou()`**: Based on Team 5-2024's implementation.  
+- **`read_annotations()`**: Based on Team 6-2024's implementation.  
 
 ### Task 2.1: Adaptive modelling
+
+This task extends the Gaussian-based background modeling by making it adaptive. Unlike the previous approach, which used a fixed background model, this method updates the background over time to handle changes in lighting, shadows, and gradual scene variations.
+
+#### Key Differences from Non-Adaptive Gaussian Modelling:
+
+##### Background Model Update
+- In the non-adaptive model, the background was fixed after the first 25% of frames.  
+- In this adaptive version, the background model is continuously updated using a learning rate (𝜌).
+
+##### Updating Mean and Variance
+- The background model is updated **only for background pixels**, ensuring the adaptation does not affect foreground objects.  
+- The update rule is:
+
+  $\mu_t = \rho \cdot I_t + (1 - \rho) \cdot \mu_{t-1}$
+
+  $\sigma_t^2 = \rho \cdot (I_t - \mu_{t-1})^2 + (1 - \rho) \cdot \sigma_{t-1}^2$
+
+  where:
+  - $\rho$ is the learning rate,
+  - $I_t$ is the pixel intensity,
+  - $\mu, \sigma^2$ are the mean and variance, respectively.  
+
+- This allows the model to gradually adapt to background changes.
+
+#### **Best Performing Parameters:**  
+
+The following command was used to obtain the highest **mAP@0.5** in our experiments: 
 
 ```bash
 cd src/
 python3 main_adaptive.py -v=/ghome/c3mcv02/mcv-c6-2025-team1/data/AICity_data/train/S03/c010/vdo.avi -a=2.5 -o=output_readme_adaptive.avi -m=mask_readme_adaptive.avi -rho=0.01  -t=959 --annotations=/ghome/c3mcv02/mcv-c6-2025-team1/data/ai_challenge_s03_c010-full_annotation.xml --use_median --opening_size=3 --closing_size=13 -r=1.2
 ```
 
-Mean Average Precision: 0.7226676165709937
+#### **Result:** 
+`Mean Average Precision: 0.7226676165709937`
+
+This **adaptive approach** significantly improves detection performance compared to the static Gaussian model, as it can handle gradual background changes effectively.
+
 
 ### Task 2.2: Comparison of adaptive vs. non-adaptive
+
+| Best Non-Adaptive mAP: 0.465| Best Adaptive  mAP: 0.723 |
+|-------------|----------|
+| ![mask_3 5](https://github.com/user-attachments/assets/169eea67-9913-47ae-b7a1-e77850f38b4c) | ![adaptive_mask](https://github.com/user-attachments/assets/668cea3b-a430-4099-8252-e3a94bcf70f0) |
+|  |   |
+
+
+
 
 ### Task 3: Comparison with state-of-the-art
 
