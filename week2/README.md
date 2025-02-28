@@ -100,6 +100,31 @@ python3 detection.py -t faster-rcnn \
 
 #### Qualitative results
 
+- **YOLOv11 and YOLOv12**
+
+- **Faster R-CNN**
+
+- **DeTR**
+
+To qualitatively evaluate the **DEtection TRansformer (DETR)** model, we conducted an experiment using the `detr.py` script. This script runs a forward pass of the DETR model on the first frame of a given video and visualizes the detections.  
+
+```bash
+python3 detr.py
+```
+
+The script processes the input frame by:  
+- Loading a pre-trained DETR model with a ResNet-50 backbone.  
+- Preprocessing the image and running inference to obtain bounding box predictions.  
+- Filtering detections to retain only **cars** and **trucks** based on COCO class IDs (3 and 8).  
+- Drawing the predicted bounding boxes on the image.  
+
+Below is an example output, where the model successfully detects vehicles in the first frame of the input video:  
+
+![first_frame_detr](https://github.com/user-attachments/assets/168790c7-4fb3-422e-b897-edc12f857732)
+
+
+#### SSD
+
 #### Quantitative results
 | Model                | mAP@0.5 | mAP@0.75 |
 |----------------------|--------|---------|
