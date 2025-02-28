@@ -34,8 +34,22 @@ For further detail in the detection script please refer to our help command:
 python3 detection.py --help
 ```
 
-#### YOLOv11
-To be done.
+#### YOLOv11 and YOLOv12
+Our implementation leverages the YOLOv11n, YOLOv11x, and YOLOv12n models, pre-trained using the Ultralytics framework, originally trained on the COCO dataset. These models are optimized for vehicle detection, focussing exclusively on the car and the truck classes.
+
+The YOLOv11n and YOLOv12n models are lightweight versions designed for real-time applications with high computational efficiency, while YOLOv11x is larger and more precise model at the cost of higher computational demand.
+
+You can execute the detection pipeline with:
+
+```bash
+python3 detection.py -t yolo \
+    -m /path/to/model/yolo11n.pt
+    -v /path/to/video/vdo.avi \
+    -a /path/to/annotations.xml \
+    -o /path/to/output/YOLOv11n.avi
+```
+The detection script processes each video frame independently, generating bounding box predictions with confidence scores. The results are displayed in real-time and saved to an output video file. Performance metrics, including mAP@0.50, mAP@0.75, are computed and displayer during execution. 
+
 
 #### Faster R-CNN
 Our implementation utilizes PyTorch's pre-trained Faster R-CNN model with a ResNet-50 backbone, originally trained on the COCO dataset. The model architecture consists of a Region Proposal Network (RPN) coupled with a detection network, specifically optimized for vehicle detection in traffic surveillance scenarios.
@@ -60,7 +74,13 @@ To be done.
 #### Qualitative results
 
 #### Quantitative results
-
+| Model                | mAP@0.5 | mAP@0.75 |
+|----------------------|--------|---------|
+| **YOLOv11x**        | 0.52 | 0.47  |
+| **YOLOv11n**        | 0.49 | 0.44  |
+| **YOLOv12n**        | 0.47 | 0.4388  |
+| **Faster R-CNN (conf. 0.9)** | 0.45 | 0.39  |
+| **Faster R-CNN (conf. 0.5)** | 0.57 | 0.44  |
 
 ### Task 1.2: Fine-tuning to our data
 
