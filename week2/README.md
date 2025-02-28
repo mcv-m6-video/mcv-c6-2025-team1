@@ -81,7 +81,7 @@ python3 detection.py -t detr \
     -b 0.9 \
     -v /path/to/video/vdo.avi \
     -a /path/to/annotations.xml \
-    -o /path/to/output/faster_rcnn.avi
+    -o /path/to/output/detr.avi
 ```
 
 The detection script processes each video frame independently, generating bounding box predictions with confidence scores. The results are visualized in real-time and saved to an output video file. Performance metrics including mAP@0.50, mAP@0.75, precision and recall are computed and displayed during execution.
