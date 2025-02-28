@@ -87,6 +87,7 @@ class SSD_VGG16:
         return image
 
 
+'''
 # Example usage
 if __name__ == "__main__":
     # Let's load the video and get the first frame
@@ -94,7 +95,7 @@ if __name__ == "__main__":
     ret, frame = video.read()
     
     # Initialize the FasterRCNN model
-    model = SSD(box_score_thresh=0.3)
+    model = SSD_VGG16(box_score_thresh=0.3)
     
     # Predict bounding boxes on the first frame
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -105,3 +106,4 @@ if __name__ == "__main__":
     
     # Save the image with bounding boxes
     image.save("ssd_fist_frame.jpg")
+'''

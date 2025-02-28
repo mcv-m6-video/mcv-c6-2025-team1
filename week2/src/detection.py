@@ -1,6 +1,8 @@
 import argparse
-from models.faster_rcnn import FasterRCNN
-from models.ssd_vgg16 import SSD_VGG16
+from models_files.faster_rcnn import FasterRCNN
+from models_files.ssd_vgg16 import SSD_VGG16
+from models_files.detr import DETR
+from torchvision.models.detection import ssd300_vgg16, SSD300_VGG16_Weights
 from ultralytics import YOLO
 import cv2
 import numpy as np
@@ -11,9 +13,9 @@ def get_model(model_type: str, model_path: str, box_score_threshold: float) -> a
     """Get the model based on the model type.
 
     Args:
-        model_type (str): Model type (yolo, faster-rcnn)
-        model_path (str): Path to the model file
-        box_score_threshold (float): Box score threshold for FasterRCNN
+        model_type (str): Model type (yolo, faster-rcnn, ssd, detr)
+        model_path (str): Path to the model file (ignored for DETR)
+        box_score_threshold (float): Box score threshold
 
     Raises:
         ValueError: If the model type is not supported
@@ -25,8 +27,12 @@ def get_model(model_type: str, model_path: str, box_score_threshold: float) -> a
         model = YOLO(model_path)
     elif model_type == "faster-rcnn":
         model = FasterRCNN(box_score_threshold)
+    elif model_type == "ssd-vgg16":
+        model = SSD_VGG16(box_score_threshold)
+    elif model_type == "detr":
+        model = DETR(score_threshold=box_score_threshold)  
     else:
-        raise ValueError("Model type not supported. Please choose 'yolo' or 'faster-rcnn'.")
+        raise ValueError("Model type not supported. Choose 'yolo', 'faster-rcnn', 'ssd-vgg16' or 'detr'.")
     return model
 
 
@@ -48,14 +54,28 @@ def process_video(model_type, model_path, video_path, output_video_path, annotat
 
     # Get the list of class names (ensure it matches the model's classes)
     # and find the class IDs for "car" and "truck"
-    if model_type == "yolo":
+    if model_type == "detr":
+        class_names = model.categories
+    elif model_type == "yolo":
         class_names = model.model.names
-    else:
+    elif model_type == "faster-rcnn":
         class_names = {i: name for i, name in enumerate(model.get_classes())}
-        
+    elif model_type == "ssd-vgg16":
+        weights = SSD300_VGG16_Weights.DEFAULT
+        class_labels = weights.meta["categories"]
+        class_names = {i: name for i, name in enumerate(class_labels)}
+
     try:
-        car_class_id = next(idx for idx, name in class_names.items() if name.lower() == "car")
-        truck_class_id = next(idx for idx, name in class_names.items() if name.lower() == "truck")
+        if isinstance(class_names, list):  # If it is a list
+            try:
+                car_class_id = class_names.index("car")
+                truck_class_id = class_names.index("truck")
+            except ValueError:
+                raise ValueError("Could not find 'car' or 'truck' classes in the model's class names")
+        else:  # If it's a dictionary (like in YOLO or Faster-RCNN)
+            car_class_id = next(idx for idx, name in class_names.items() if name.lower() == "car")
+            truck_class_id = next(idx for idx, name in class_names.items() if name.lower() == "truck")
+
         print(f"Car class ID: {car_class_id}, Truck class ID: {truck_class_id}")
     except StopIteration:
         raise ValueError("Could not find 'car' or 'truck' classes in the model's class names")
@@ -80,9 +100,14 @@ def process_video(model_type, model_path, video_path, output_video_path, annotat
         # Run inference on the current frame
         if model_type == "yolo":
             results = model(frame)
-        else:
+        elif model_type == "detr":
+            results = model.predict(frame)
+            print("DETR Results:", results)
+        elif model_type == "faster-rcnn":
             frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             results = model.predict(frame_gray)
+        elif model_type == "ssd-vgg16":
+            results = model.predict(frame)
 
         # Collect predicted boxes
         pred_boxes = []
@@ -97,6 +122,19 @@ def process_video(model_type, model_path, video_path, output_video_path, annotat
 
                         # Add predicted box to list
                         pred_boxes.append([x1, y1, x2, y2, box.conf[0].item()])
+        if model_type == "detr":
+            boxes = results['boxes']
+            labels = results['labels']
+            scores = results['scores']
+
+            for box, label, score in zip(boxes, labels, scores):
+                if label.item() == car_class_id or label.item() == truck_class_id:
+                    # Scale the box coordinates from [0, 1] to the actual image dimensions
+                    x1, y1, x2, y2 = box.tolist()
+                    x1, y1, x2, y2 = int(x1 * width), int(y1 * height), int(x2 * width), int(y2 * height)
+                    pred_boxes.append([x1, y1, x2, y2, score.item()])
+                    print("DETR pred_boxes:", pred_boxes)
+
         else:  # faster-rcnn
             boxes = results[0]['boxes']
             scores = results[0]['scores']
@@ -152,12 +190,12 @@ def process_video(model_type, model_path, video_path, output_video_path, annotat
 
 if __name__ == "__main__":
     # Set up argument parsing
-    parser = argparse.ArgumentParser(description="Process a video using one of the provided models (FasterRCNN, YOLO, etc...).")
+    parser = argparse.ArgumentParser(description="Process a video using one of the provided models (FasterRCNN, YOLO, detr, etc...).")
     
     # Add arguments for the model, input video, and output video
-    parser.add_argument("-t", "--model_type", type=str, help="Which model to use (faster-rcnn, yolo)", required=True)
+    parser.add_argument("-t", "--model_type", type=str, help="Which model to use (faster-rcnn, yolo, ssd-vgg16, detr)", required=True)
     parser.add_argument("-m","--model_path", type=str, help="Path to the YOLO model file", default=None)
-    parser.add_argument("-b", "--box_score_threshold", type=float, help="Box score threshold for FasterRCNN", default=0.5)
+    parser.add_argument("-b", "--box_score_threshold", type=float, help="Box score threshold for FasterRCNN, ssd-vgg16 and detr", default=0.5)
     parser.add_argument("-v","--video_path", type=str, help="Path to the input video file")
     parser.add_argument("-a","--annotation_path", type=str, help="Path to the ground truth annotations")
     parser.add_argument("-o","--output_video_path", type=str, help="Path to save the output video")
@@ -179,7 +217,7 @@ if __name__ == "__main__":
     print(f"Input video path: {video_path}")
     print(f"Output video path: {output_video_path}")
     print(f"Annotation path: {annotation_path}")
-    if model_type == "faster-rcnn":
+    if model_type in ["faster-rcnn", "ssd-vgg16", "detr"]:
         print(f"Box score threshold: {box_score_threshold}")
         
     # Call the function to process the video
