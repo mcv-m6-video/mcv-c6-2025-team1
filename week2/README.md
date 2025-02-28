@@ -70,15 +70,22 @@ The detection script processes each video frame independently, generating boundi
 
 #### DeTR
 
-You can execute the detection pipeline with:
+Our implementation utilizes the pre-trained DEtection TRansformer (DETR) model with a ResNet-50 backbone, originally trained on the COCO dataset. DETR is an end-to-end object detection model based on transformers, eliminating the need for traditional region proposal networks.  
+
+For our experiments, we process each frame at its original resolution and set a confidence threshold (default of 0.9) to filter detections. The model is optimized to detect only the car and truck classes (COCO class IDs: 3 and 8).  
+
+You can execute the detection pipeline with:  
 
 ```bash
-python3 detection.py -t faster-rcnn \
+python3 detection.py -t detr \
     -b 0.9 \
     -v /path/to/video/vdo.avi \
     -a /path/to/annotations.xml \
     -o /path/to/output/faster_rcnn.avi
 ```
+
+The detection script processes each video frame independently, generating bounding box predictions with confidence scores. The results are visualized in real-time and saved to an output video file. Performance metrics including mAP@0.50, mAP@0.75, precision and recall are computed and displayed during execution.
+
 #### SSD
 
 You can execute the detection pipeline with:
