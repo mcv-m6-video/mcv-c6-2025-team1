@@ -26,7 +26,7 @@
     │   └── ...
     
 ### Task 1.1: Off-the-shelf
-This task focuses on implementing and evaluating various pre-trained object detection models (including YOLOv11, Faster R-CNN, and SSD) for vehicle detection in traffic surveillance videos. Below are the detailed commands and parameters used for each experiment.
+This task focuses on implementing and evaluating various pre-trained object detection models (including YOLOv11, Faster R-CNN,DeTR and SSD) for vehicle detection in traffic surveillance videos. Below are the detailed commands and parameters used for each experiment.
 
 For further detail in the detection script please refer to our help command:
 
@@ -68,6 +68,7 @@ python3 detection.py -t faster-rcnn \
 
 The detection script processes each video frame independently, generating bounding box predictions with confidence scores. The results are visualized in real-time and saved to an output video file. Performance metrics including mAP@0.50, mAP@0.75, precision and recall are computed and displayed during execution.
 
+#### DeTR
 #### SSD
 To be done.
 
