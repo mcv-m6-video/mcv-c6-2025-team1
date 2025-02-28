@@ -130,8 +130,7 @@ The script processes the input frame by:
 
 Below is an example output, where the model successfully detects vehicles in the first frame of the input video:  
 
-![first_frame_detr](https://github.com/user-attachments/assets/168790c7-4fb3-422e-b897-edc12f857732)
-
+![first_frame_detr](https://github.com/user-attachments/assets/46b3662a-695e-4757-8ce8-5a69f6c56401)
 
 - **SSD:**
 
