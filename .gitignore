@@ -1,11 +1,22 @@
+# Data folders
 data/
 src/output_videos
 src/output_videos_adaptive
 src/output_videos_adaptive_opt
 src/visualization
+
+# To avoid including videos
 *.avi
+*.mp4
+*.gif
+
+# Error and output logs
 *.err
 *.out
+
+# For model checkpoints
+*.pth
+*.pt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

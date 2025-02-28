@@ -100,7 +100,11 @@ Once downloaded and extracted, the project structure will look like this:
 
 <h2>WEEK 1</h2>
 
-The contents of the first week are in the folder `week1`. The `README` file can be found in [here](week1/README.md) 
+The contents of the first week are in the folder `week1`. The `README` file can be found in [here](week1/README.md).
+
+<h2>WEEK 2</h2>
+
+The contents of the second week are in the folder `week2`. The `README` file can be found in [here](week2/README.md).
 
 ## Team Members
 
