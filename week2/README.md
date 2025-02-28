@@ -1,4 +1,4 @@
-<h2 align="center">WEEK 1: Tasks</h2>
+<h2 align="center">WEEK 2: Tasks</h2>
 
 ## Table of Contents
 
