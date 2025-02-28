@@ -223,17 +223,40 @@ This **adaptive approach** significantly improves detection performance compared
 | Best Non-Adaptive mAP: 0.465| Best Adaptive  mAP: 0.723 |
 |-------------|----------|
 | ![mask_3 5](https://github.com/user-attachments/assets/169eea67-9913-47ae-b7a1-e77850f38b4c) | ![adaptive_mask](https://github.com/user-attachments/assets/668cea3b-a430-4099-8252-e3a94bcf70f0) |
-|  |   |
+| ![output_3 5_c](https://github.com/user-attachments/assets/ead11841-0bc8-4d31-ae82-ff5057be7824) | ![adaptive_output_c](https://github.com/user-attachments/assets/030d147f-67c9-4369-92f0-4e26d3a482c8) |
 
+#### Conclusions:
 
+- The adaptive method achieves a substantially higher mAP0.5 w.r.t. the non-adaptive method (+0.285) → updating the bg model over time, even with a small ρ value, significantly boosts detection accuracy.
+- Since the non-adaptive approach uses a fixed bg (which is estimated with the 1st set of frames), it struggles to handle gradual changes such as lighting variations or shadows in the scene although α is increased. In contrast, the adaptive approach continuously refines the bg model, allowing it to accommodate scene changes and reduce misclassifications.
+- The optimal α value in the adaptive model can be smaller possibly because the bg model is more accurate, making it possible to minimize false positives without missing true detections. Regarding the ρ optimal value, we see that a small one allows the model to adapt to changes without merging moving objects into the bg.
 
 
 ### Task 3: Comparison with state-of-the-art
 
+#### MOG2, KNN, CNT, GMG and GSOC methods
+
+In this task, we evaluate different state-of-the-art background subtraction methods. The script prompts the user to select one of the available methods and then computes the performance metric.
+
+### Usage
+
+To run the script, use the following command:
+
 ```bash
 python3 -m src.stateofart.methods
 ```
-opening_size=3 closing_size=13
+
+The script will prompt the user to select a background subtraction method and specify kernel sizes for morphological operations:
+
+```
+Choose background subtraction method (MOG2, KNN, CNT, GMG, GSOC): 
+Enter kernel size for opening (default 3): 
+Enter kernel size for closing (default 13): 
+```
+
+For our experiments, we set the kernel sizes as follows:
+- `opening_size = 3`
+- `closing_size = 13`
 
 #### ZBS (Zero-shot Background Substraction) method
 To complete the ZBS part, please follow the installation and usage instructions from the [official ZBS repository](https://github.com/CASIA-IVA-Lab/ZBS). Extract the masks for each frame using FG threshold of 0.4 and move threshold of 0.8, with confidence 0.6, altough you may use different setting.
@@ -250,6 +273,20 @@ For further details on other command options use:
 python3 -m src.stateofart.eval_zbs --help
 ```
 
+### Results
 
+The following table summarizes the performance of each method:
+
+| Method | mAP    |
+|--------|--------|
+| MOG2   | 0.733 |
+| KNN    | **0.761** |
+| CNT    | 0.723 |
+| GMG    | 0.672 |
+| GSOC   | 0.717 |
+| ZBS    | 0.748 |
+|  Adaptive (ours) | 0.723 |
+
+Our adaptive method achieves a competitive mAP of **0.723**, closely matching the performance of established methods like **MOG2 (0.733)** and **CNT (0.723)**, while remaining below the best-performing approach, **KNN (0.761)**.
 
 
