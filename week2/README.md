@@ -35,7 +35,7 @@ python3 detection.py --help
 ```
 
 #### YOLOv11 and YOLOv12
-Our implementation leverages the YOLOv11n, YOLOv11x, and YOLOv12n models, pre-trained using the Ultralytics framework, originally trained on the COCO dataset. These models are optimized for vehicle detection, focussing exclusively on the car and the truck classes.
+Our implementation leverages the YOLOv11n, YOLOv11x, and YOLOv12n models, pre-trained using the Ultralytics framework, originally trained on the COCO dataset. These models are optimized for general object detection across diverse, real-world scenes. We apply these models directly for inference, specifically targeting car and truck classes for vehicle detection.
 
 The YOLOv11n and YOLOv12n models are lightweight versions designed for real-time applications with high computational efficiency, while YOLOv11x is larger and more precise model at the cost of higher computational demand.
 
@@ -52,7 +52,7 @@ The detection script processes each video frame independently, generating boundi
 
 
 #### Faster R-CNN
-Our implementation utilizes PyTorch's pre-trained Faster R-CNN model with a ResNet-50 backbone, originally trained on the COCO dataset. The model architecture consists of a Region Proposal Network (RPN) coupled with a detection network, specifically optimized for vehicle detection in traffic surveillance scenarios.
+Our implementation utilizes PyTorch's pre-trained Faster R-CNN model with a ResNet-50 backbone, originally trained on the COCO dataset. The model architecture consists of a Region Proposal Network (RPN) coupled with a detection network, optimized for general object detection across diverse, real-world scenes. We apply these models directly for inference, specifically for vehicle detection in traffic surveillance scenarios.
 
 For our experiments, we process each frame at original resolution and set a confidence threshold (default of 0.9) for detection filtering. The model focuses exclusively on the car and truck classes (COCO class ID: 3 and 8).
 
@@ -70,7 +70,7 @@ The detection script processes each video frame independently, generating boundi
 
 #### SSD
 
-Our implementations utilizes two versions of PyTorch's pre-trained SSD (Single Shot Detector) model —one with a VGG-16 backbone and another with a ResNet-50 backbone. Both models were originally trained on the COCO dataset. In the SSD architecture, the backbone (either VGG-16 or ResNet-50) extracts multi-scale convolutional features from the input image. These feature maps are then fed into additional convolutional layers that directly predict object class probabilities and bounding box offsets in a single forward pass, eliminating the need for a separate region proposal stage.
+Our implementations utilizes two versions of PyTorch's pre-trained SSD (Single Shot Detector) model —one with a VGG-16 backbone and another with a ResNet-50 backbone. Both models were originally trained on the COCO dataset. In the SSD architecture, the backbone (either VGG-16 or ResNet-50) extracts multi-scale convolutional features from the input image. These feature maps are then fed into additional convolutional layers that directly predict object class probabilities and bounding box offsets in a single forward pass, eliminating the need for a separate region proposal stage. These models are optimized for general object detection across diverse, real-world scenes. We apply them directly for inference, specifically targeting car and truck classes for vehicle detection.
 
 For our experiments, we process each frame at original resolution and set a confidence threshold (default of 0.9) for detection filtering. The model focuses exclusively on the car and truck classes (COCO class ID: 3 and 8).
 
@@ -100,7 +100,7 @@ The detection script processes each video frame independently, generating boundi
 
 Our implementation utilizes the pre-trained DEtection TRansformer (DETR) model with a ResNet-50 backbone, originally trained on the COCO dataset. DETR is an end-to-end object detection model based on transformers, eliminating the need for traditional region proposal networks.  
 
-For our experiments, we process each frame at its original resolution and set a confidence threshold (default of 0.9) to filter detections. The model is optimized to detect only the car and truck classes (COCO class IDs: 3 and 8).  
+For our experiments, we process each frame at its original resolution and set a confidence threshold (default of 0.9) to filter detections. The model is optimized for general object detection across diverse, real-world scenes, and we apply it directly for inference, specifically targeting car and truck classes for vehicle detection (COCO class IDs: 3 and 8).  
 
 You can execute the detection pipeline with:  
 
