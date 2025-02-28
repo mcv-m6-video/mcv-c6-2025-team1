@@ -68,7 +68,7 @@ python3 detection.py -t faster-rcnn \
 
 The detection script processes each video frame independently, generating bounding box predictions with confidence scores. The results are visualized in real-time and saved to an output video file. Performance metrics including mAP@0.50, mAP@0.75, precision and recall are computed and displayed during execution.
 
-#### DeTR
+#### DETR
 
 Our implementation utilizes the pre-trained DEtection TRansformer (DETR) model with a ResNet-50 backbone, originally trained on the COCO dataset. DETR is an end-to-end object detection model based on transformers, eliminating the need for traditional region proposal networks.  
 
@@ -114,7 +114,7 @@ python3 detection.py -t faster-rcnn \
 
 - **Faster R-CNN:**
 
-- **DeTR:**
+- **DETR:**
 
 To qualitatively evaluate the **DEtection TRansformer (DETR)** model, we conducted an experiment using the `detr.py` script. This script runs a forward pass of the DETR model on the first frame of a given video and visualizes the detections.  
 
