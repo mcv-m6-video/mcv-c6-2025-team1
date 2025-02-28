@@ -78,9 +78,11 @@ To be done.
 |----------------------|--------|---------|
 | **YOLOv11x**        | 0.52 | 0.47  |
 | **YOLOv11n**        | 0.49 | 0.44  |
-| **YOLOv12n**        | 0.47 | 0.4388  |
-| **Faster R-CNN (conf. 0.9)** | 0.45 | 0.39  |
+| **YOLOv12n**        | 0.47 | 0.44  |
 | **Faster R-CNN (conf. 0.5)** | 0.57 | 0.44  |
+| **Faster R-CNN (conf. 0.7)** | 0.59 | 0.44  |
+| **Faster R-CNN (conf. 0.9)** | 0.45 | 0.39  |
+
 
 ### Task 1.2: Fine-tuning to our data
 
