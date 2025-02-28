@@ -68,6 +68,34 @@ python3 detection.py -t faster-rcnn \
 
 The detection script processes each video frame independently, generating bounding box predictions with confidence scores. The results are visualized in real-time and saved to an output video file. Performance metrics including mAP@0.50, mAP@0.75, precision and recall are computed and displayed during execution.
 
+#### SSD
+
+Our implementations utilizes two versions of PyTorch's pre-trained SSD (Single Shot Detector) model —one with a VGG-16 backbone and another with a ResNet-50 backbone. Both models were originally trained on the COCO dataset. In the SSD architecture, the backbone (either VGG-16 or ResNet-50) extracts multi-scale convolutional features from the input image. These feature maps are then fed into additional convolutional layers that directly predict object class probabilities and bounding box offsets in a single forward pass, eliminating the need for a separate region proposal stage.
+
+For our experiments, we process each frame at original resolution and set a confidence threshold (default of 0.9) for detection filtering. The model focuses exclusively on the car and truck classes (COCO class ID: 3 and 8).
+
+You can execute the detection pipeline with:
+
+(SSD with VGG-16 backbone)
+```bash
+python3 detection.py -t ssd-vgg16 \
+    -b 0.9 \
+    -v /path/to/video/vdo.avi \
+    -a /path/to/annotations.xml \
+    -o /path/to/output/ssd_vgg16.avi
+```
+
+(SSD with ResNet-50 backbone)
+```bash
+python3 detection.py -t ssd-resnet50 \
+    -b 0.9 \
+    -v /path/to/video/vdo.avi \
+    -a /path/to/annotations.xml \
+    -o /path/to/output/ssd_resnet50.avi
+```
+
+The detection script processes each video frame independently, generating bounding box predictions with confidence scores. The results are visualized in real-time and saved to an output video file. Performance metrics including mAP@0.50, mAP@0.75, precision and recall are computed and displayed during execution.
+
 #### DETR
 
 Our implementation utilizes the pre-trained DEtection TRansformer (DETR) model with a ResNet-50 backbone, originally trained on the COCO dataset. DETR is an end-to-end object detection model based on transformers, eliminating the need for traditional region proposal networks.  
