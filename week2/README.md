@@ -116,14 +116,21 @@ The detection script processes each video frame independently, generating boundi
 
 
 #### Quantitative results
-| Model                | mAP@0.5 | mAP@0.75 |
-|----------------------|--------|---------|
-| **YOLOv11x**        | 0.52 | 0.47  |
-| **YOLOv11n**        | 0.49 | 0.44  |
-| **YOLOv12n**        | 0.47 | 0.44  |
-| **Faster R-CNN (conf. 0.5)** | 0.57 | 0.44  |
-| **Faster R-CNN (conf. 0.7)** | 0.59 | 0.44  |
-| **Faster R-CNN (conf. 0.9)** | 0.45 | 0.39  |
+| Model                                  | mAP@0.5 | mAP@0.75 |
+|----------------------------------------|--------|---------|
+| **YOLOv11x**                           | 0.52   | 0.47    |
+| **YOLOv11n**                           | 0.49   | 0.44    |
+| **YOLOv12n**                           | 0.47   | 0.44    |
+| **Faster R-CNN (conf. 0.5)**           | 0.57   | 0.44    |
+| **Faster R-CNN (conf. 0.7)**           | 0.59   | 0.44    |
+| **Faster R-CNN (conf. 0.9)**           | 0.45   | 0.39    |
+| **SSD (Backbone: ResNet50, conf. 0.1)**  | 0.49 | 0.32  |
+| **SSD (Backbone: ResNet50, conf. 0.25)** | 0.39 | 0.31  |
+| **SSD (Backbone: ResNet50, conf. 0.5)**  | 0.32 | 0.3035  |
+| **SSD (Backbone: VGG16, conf. 0.25)**    | 0.39 | 0.31  |
+| **SSD (Backbone: VGG16, conf. 0.5)**     | 0.30 | 0.29 |
+| **SSD (Backbone: VGG16, conf. 0.9)**     | 0.16 | 0.16  |
+
 
 #### Qualitative results
 
