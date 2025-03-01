@@ -142,9 +142,19 @@ Overall, **DeTR** proves to be the most effective model in this comparison, whil
 
 #### Qualitative results
 
+In all cases depicted below, green boxes always refer to GT boxes and red ones are predicted boxes.
+
+> [!WARNING]
+> Some Ground Truth bounding boxes are not correctly placed due to some human errors in the annotations. Take that into account when comparing predicted and GT boxes.
+
 - **YOLOv11 and YOLOv12:**
 
 - **Faster R-CNN:**
+
+The image shown represents one of the first frames in the sequence. Some parked cars in the background are not correctly detected due to occlusions, and several bounding boxes don't align precisely with the Ground Truth annotations, despite the cars themselves being successfully detected.
+
+![image](https://github.com/user-attachments/assets/323513b9-a217-4e8f-86eb-0de5dc544eca)
+
 
 - **DETR:**
 
