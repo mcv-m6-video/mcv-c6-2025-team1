@@ -172,6 +172,17 @@ Below is an example output, where the model successfully detects vehicles in the
 ### Task 1.3: K-Fold Cross Validation
 
 ### Task 2.1: Tracking by overlap
+The tracking-by-overlap algorithm assigns unique track IDs to objects across frames based on the **Intersection over Union (IoU)** metric. The goal is to track objects consistently over time while ensuring each each object has a unique ID.
+
+1. **Initialization:** The algorithm starts by initializing a counter for **track_id**, which is used to assign unique IDs to objects in the video sequence. The list **active_tracks** holds the active tracked objects, and **track_eval_format** is where the results are stored in the required evaluation format. Finally, **frame_groups** is a dictionary used to group detections by their respective frame IDs.
+2. **Grouping detections:** The first step is to group all detections by their corresponding frame IDs. This allows the algorithm to process detections sequentially by frame.
+3. **First frame (Initialization of Tracks):** For the first frame, there are no prior tracks to match to, so every detection in this frame is assigned a unique **track_id**. Each detection is added to the **active_tracks** list with its corresponding **track_id** and bounding box.
+4. **Subsequent frames (Tracking with IoU):** In subsequent frames, the algorithm matches new detections with existing tracks based on the highest IoU between the bounding boxes. For each detection in the current frame, the algorithm computes the IoU with all active tracks from the previous frames. If the IoU between a detection and an active track is above a threshold (0.5 in this case), the detection is considered a match to that track. The track ID of the matched detection is then updated, and the detection is assigned to that track. If there are multiple matches, the algorithm selects the one with the highest IoU.
+5. **New detections:** If a detection does not match any active track, a new unique **track_id** is assigned to that detection.
+
+The results of the tracking process are stored in the **track_eval_format** list. Each entry consists of the frame ID, track ID, bounding box coordinates, confidence score, etc. in the format required for evaluation.
+
+
 
 ### Task 2.2: Tracking with KF
 
