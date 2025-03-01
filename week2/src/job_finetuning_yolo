@@ -16,9 +16,6 @@ export PYTHONUNBUFFERED=1
 echo "Job started at: $(date)"
 echo "Running on node: $(hostname)"
 
-python3 detection.py -t ssd-vgg16 -b 0.7 \
-    -v /ghome/c3mcv02/mcv-c6-2025-team1/data/AICity_data/train/S03/c010/vdo.avi \
-    -a /ghome/c3mcv02/mcv-c6-2025-team1/data/ai_challenge_s03_c010-full_annotation.xml \
-    -o /ghome/c3mcv02/mcv-c6-2025-team1/week2/output_videos/ssd_vgg16_0.7.avi 
+python3 finetuning_yolo.py
 
 echo "Job finished at: $(date)"

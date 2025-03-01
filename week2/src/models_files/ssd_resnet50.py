@@ -1,4 +1,3 @@
-from torchvision.models.detection import ssd300_vgg16, SSD300_VGG16_Weights
 from torchvision.utils import draw_bounding_boxes
 from torchvision.transforms.functional import to_pil_image
 from PIL import Image
@@ -63,7 +62,7 @@ class SSD_ResNet50:
         # 3 and 8 (car and truck)
         classes_to_labels = self.utils.get_coco_object_dictionary()
         
-        return best_results_per_input, classes_to_labels
+        return best_results_per_input
 
     def draw_predictions(self, image: torch.Tensor | np.ndarray, BB, confidences) -> Image:
         """Draw bounding boxes on an image.
@@ -114,7 +113,7 @@ if __name__ == "__main__":
     model = SSD_ResNet50(box_score_thresh=0.1)
     
     # Predict bounding boxes on the first frame
-    predictions, classes_to_labels = model.predict(frame)
+    predictions = model.predict(frame)
     print(f"Predictions: {predictions}")
     bboxes, classes, confidences = predictions[0]
     print(f"bboxes: {bboxes}, classes: {classes}, confidences: {confidences}")   

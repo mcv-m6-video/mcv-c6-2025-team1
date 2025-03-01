@@ -1,11 +1,14 @@
 import torch
 import cv2
 import numpy as np
+
 from torchvision.utils import draw_bounding_boxes
 from torchvision.transforms.functional import to_pil_image
 from torchvision.ops import box_convert
 from PIL import ImageDraw, ImageFont
 from PIL import Image
+from typing import Iterator
+
 
 class DETR:
     def __init__(self, score_threshold: float = 0.9):
@@ -17,7 +20,8 @@ class DETR:
         self.score_threshold = score_threshold
         
         # Load pretrained DETR model on COCO dataset
-        self.model = torch.hub.load('facebookresearch/detr:main', 'detr_resnet50', pretrained=True, force_reload=True)
+        self.model = torch.hub.load('facebookresearch/detr:main', 'detr_resnet50', 
+                                    pretrained=True, force_reload=True)
         self.model.eval()
         
         # COCO categories
@@ -37,11 +41,13 @@ class DETR:
             'scissors', 'teddy bear', 'hair drier', 'toothbrush'
         ]
 
+
     def decode_img(self, image: np.ndarray) -> torch.Tensor:
         """Preprocess the image for DETR (BGR -> RGB, normalization, and conversion to tensor)."""
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # OpenCV uses BGR, we change it to RGB
         image = torch.from_numpy(image).permute(2, 0, 1).float() / 255.0  # (H, W, C) -> (C, H, W)
         return image.unsqueeze(0)  # Add batch dimension
+
 
     def predict(self, image: np.ndarray) -> dict:
         """Make predictions on the image and filter only 'car' and 'truck'."""
@@ -72,8 +78,10 @@ class DETR:
             'scores': scores[selected]
         }
     
+    
     def draw_predictions(self, image: np.ndarray, prediction: dict) -> Image:
         """Draw the bounding boxes on the image."""
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image_tensor = torch.from_numpy(image).permute(2, 0, 1)  # Convert to tensor format (C, H, W)
 
         labels = [self.categories[i] for i in prediction["labels"]]
@@ -91,6 +99,32 @@ class DETR:
             font_size=30
         )
         return to_pil_image(image_with_boxes)
+    
+    
+    def prepare_for_finetuning(self) -> Iterator[torch.nn.Parameter]:
+        """Prepare the model for finetuning by freezing the backbone and unfreezing the classification head.
+
+        Returns:
+            torch.nn.Parameter: Parameters of the classification head
+        """
+        # Freeze parameters
+        for param in self.model.parameters():
+            param.requires_grad = False
+        
+        # Unfreeze classification head
+        self.model.class_embed = torch.nn.Linear(in_features=256, out_features=2)
+        for param in self.model.class_embed.parameters():
+            param.requires_grad = True
+        
+        # Set model to training mode
+        self.model.train()
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        print(f"Using device: {device}")
+        self.model.to(device)
+        
+        # Update categories for binary classification
+        self.categories = ['__background__', 'car']
+        return self.model.class_embed.parameters()
 
 
 # Example usage with a video

@@ -1,6 +1,7 @@
 import argparse
 from models_files.faster_rcnn import FasterRCNN
 from models_files.ssd_vgg16 import SSD_VGG16
+from models_files.ssd_resnet50 import SSD_ResNet50
 from models_files.detr import DETR
 from torchvision.models.detection import ssd300_vgg16, SSD300_VGG16_Weights
 from ultralytics import YOLO
@@ -29,6 +30,8 @@ def get_model(model_type: str, model_path: str, box_score_threshold: float) -> a
         model = FasterRCNN(box_score_threshold)
     elif model_type == "ssd-vgg16":
         model = SSD_VGG16(box_score_threshold)
+    elif model_type == "ssd-resnet50":
+        model = SSD_ResNet50(box_score_threshold)
     elif model_type == "detr":
         model = DETR(score_threshold=box_score_threshold)  
     else:
@@ -37,7 +40,6 @@ def get_model(model_type: str, model_path: str, box_score_threshold: float) -> a
 
 
 def process_video(model_type, model_path, video_path, output_video_path, annotations_path, box_score_threshold=0.9):
-    # Load the YOLOv8 model
     model = get_model(model_type, model_path, box_score_threshold)
 
     # Open the video file
@@ -64,6 +66,8 @@ def process_video(model_type, model_path, video_path, output_video_path, annotat
         weights = SSD300_VGG16_Weights.DEFAULT
         class_labels = weights.meta["categories"]
         class_names = {i: name for i, name in enumerate(class_labels)}
+    elif model_type == "ssd-resnet50":
+        class_names = ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light', 'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard', 'surfboard', 'tennis racket', 'bottle', 'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch', 'potted plant', 'bed', 'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase', 'scissors', 'teddy bear', 'hair drier', 'toothbrush']
 
     try:
         if isinstance(class_names, list):  # If it is a list
@@ -108,6 +112,8 @@ def process_video(model_type, model_path, video_path, output_video_path, annotat
             results = model.predict(frame_gray)
         elif model_type == "ssd-vgg16":
             results = model.predict(frame)
+        elif model_type == "ssd-resnet50":
+            results = model.predict(frame)
 
         # Collect predicted boxes
         pred_boxes = []
@@ -135,6 +141,16 @@ def process_video(model_type, model_path, video_path, output_video_path, annotat
                     pred_boxes.append([x1, y1, x2, y2, score.item()])
                     print("DETR pred_boxes:", pred_boxes)
 
+        if model_type == "ssd-resnet50":
+            #print(f"results: {results}")
+            boxes, labels, scores = results[0]
+            print(f"labels: {labels}")
+            for box, score, label in zip(boxes, scores, labels):
+                if label == (car_class_id+1) or label == (truck_class_id+1):
+                    x1, y1, x2, y2 = box.tolist()
+                    x1, y1, x2, y2 = int(x1 * width), int(y1 * height), int(x2 * width), int(y2 * height)
+                    pred_boxes.append([x1, y1, x2, y2, score.item()])
+                    print("SSD-ResNet50 pred_boxes:", pred_boxes)
         else:  # faster-rcnn
             boxes = results[0]['boxes']
             scores = results[0]['scores']
@@ -193,9 +209,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process a video using one of the provided models (FasterRCNN, YOLO, detr, etc...).")
     
     # Add arguments for the model, input video, and output video
-    parser.add_argument("-t", "--model_type", type=str, help="Which model to use (faster-rcnn, yolo, ssd-vgg16, detr)", required=True)
+    parser.add_argument("-t", "--model_type", type=str, help="Which model to use (faster-rcnn, yolo, ssd-vgg16, ssd-resnet50, detr)", required=True)
     parser.add_argument("-m","--model_path", type=str, help="Path to the YOLO model file", default=None)
-    parser.add_argument("-b", "--box_score_threshold", type=float, help="Box score threshold for FasterRCNN, ssd-vgg16 and detr", default=0.5)
+    parser.add_argument("-b", "--box_score_threshold", type=float, help="Box score threshold for FasterRCNN, ssd-vgg16, ssd-resnet50 and detr", default=0.5)
     parser.add_argument("-v","--video_path", type=str, help="Path to the input video file")
     parser.add_argument("-a","--annotation_path", type=str, help="Path to the ground truth annotations")
     parser.add_argument("-o","--output_video_path", type=str, help="Path to save the output video")
@@ -217,7 +233,7 @@ if __name__ == "__main__":
     print(f"Input video path: {video_path}")
     print(f"Output video path: {output_video_path}")
     print(f"Annotation path: {annotation_path}")
-    if model_type in ["faster-rcnn", "ssd-vgg16", "detr"]:
+    if model_type in ["faster-rcnn", "ssd-vgg16", "ssd-resnet50", "detr"]:
         print(f"Box score threshold: {box_score_threshold}")
         
     # Call the function to process the video
