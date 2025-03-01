@@ -116,6 +116,9 @@ The detection script processes each video frame independently, generating boundi
 
 
 #### Quantitative results
+
+This section presents the quantitative results of various object detection models evaluated using **mAP@0.5** and **mAP@0.75**. The **mAP (Mean Average Precision)** values indicate the model's performance in terms of average precision at different IoU thresholds, where **mAP@0.5** corresponds to an IoU of 0.5 and **mAP@0.75** to an IoU of 0.75. 
+
 | Model                                  | mAP@0.5 | mAP@0.75 |
 |----------------------------------------|--------|---------|
 | **YOLOv11x**                           | 0.52   | 0.47    |
@@ -134,6 +137,7 @@ The detection script processes each video frame independently, generating boundi
 | **DETR (conf. 0.7)**                    | 0.75 | 0.49  |
 | **DETR (conf. 0.5)**                    | **0.78** | **0.49**  |
 
+Overall, **DeTR** proves to be the most effective model in this comparison, while YOLO remains a competitive choice for applications requiring a good balance between speed and accuracy. 
 
 
 #### Qualitative results
