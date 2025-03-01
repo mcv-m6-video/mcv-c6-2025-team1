@@ -187,4 +187,12 @@ The results of the tracking process are stored in the **track_eval_format** list
 ### Task 2.2: Tracking with KF
 
 ### Task 2.3: IDF1, HOTA scores
+To evaluate the performance of the tracking algorithm, we use the **TrackEval** framework. TrackEval is a tool designed to compute various tracking performance metrics, including **IDF1** and **HOTA** scores, which are commonly used in multi-object tracking (MOT) tasks.
+
+#### **IDF1 (Identification F1 Score):**
+IDF1 measures the ability of the tracking algorithm to consistently assign the same track ID to the same object across frames. It takes into account both **precision** and **recall** by evaluating how well the tracking system can identify and maintain the same ID across frames. A higher IDF1 score indicates better tracking consistency.
+
+#### **HOTA (Higher Order Tracking Accuracy):**
+HOTA is a comprehensive metric that evaluates tracking performance by combining both **tracking quality** (how well objects are tracked) and **association quality** (how well object detections are associated with true objects). It is considered more robust than other metrics like **MOTA** because it accounts for both false positives and false negatives, as well as ID switches and missed detections.
+
 
