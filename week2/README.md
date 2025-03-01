@@ -169,7 +169,41 @@ Below is an example output, where the model successfully detects vehicles in the
 
 ### Task 1.2: Fine-tuning to our data
 
+#### Data preparation
+The `prepare_data` script converts your custom dataset into YOLO's required format for training. The following command will process the data and save the annotations in the specified path:
+
+```bash
+python3 -m src.finetuning_yolo.prepare_data -a <ANNOTATIONS_PATH> -y <YOLO_GT_PATH>
+```
+
+This script converts annotation data from an XML format to YOLO format for object detection training. It takes an input XML annotations file and outputs YOLO-compatible text files in a specified directory. For each frame in the dataset, the script creates a corresponding text file containing normalized bounding box coordinates (center x, center y, width, height) for each detected object. 
+
+The script assumes all objects belong to a single class (cars) and handles the conversion of coordinate systems from top-left/bottom-right format to the center-based format required by YOLO. Image dimensions are set to 1920x1080 pixels for normalization purposes.
+
+#### Training process
+This script implements a comprehensive YOLO object detection training pipeline with three configurable dataset splitting strategies: 
+- Strategy A (simple 25/75 train/validation split)
+- Strategy B (standard K-fold cross-validation with 4 folds)
+- Strategy C (randomized K-fold cross-validation).
+
+The pipeline handles the entire training workflow, including dataset organization, YAML configuration generation, model training using YOLOv11x architecture, and result evaluation. Training runs for 50 epochs with early stopping (patience=20) and batch size of 8, utilizing CUDA acceleration. 
+
+For K-fold strategies, the script automatically trains models across all folds and provides aggregated performance metrics. The implementation is designed to be run with a command-line argument to specify the desired splitting strategy (--strategy A|B|C).
+
+```bash
+python3 -m src.finetuning_yolo --strategy <A|B|C>
+```
+
+#### Results with Strategy A
+The following table shows the results for the training strategy A:
+
+| Epoch | Time (s) | Training Losses (Box/Cls/DFL) | Precision | Recall  | mAP50   | mAP50-95 | Validation Losses (Box/Cls/DFL) | Learning Rates (pg0/pg1/pg2)    |
+|-------|----------|-------------------------------|-----------|---------|---------|----------|----------------------------------|----------------------------------|
+| 50    | 1437.8   | 0.20237 / 0.15533 / 0.76793  | 0.98477   | 0.93714 | 0.97813 | 0.91076  | 0.3312 / 0.22667 / 0.74787       | 5.96e-05 / 5.96e-05 / 5.96e-05  |
+
+
 ### Task 1.3: K-Fold Cross Validation
+To be done...
 
 ### Task 2.1: Tracking by overlap
 The tracking-by-overlap algorithm assigns unique track IDs to objects across frames based on the **Intersection over Union (IoU)** metric. The goal is to track objects consistently over time while ensuring each each object has a unique ID.
@@ -181,8 +215,6 @@ The tracking-by-overlap algorithm assigns unique track IDs to objects across fra
 5. **New detections:** If a detection does not match any active track, a new unique **track_id** is assigned to that detection.
 
 The results of the tracking process are stored in the **track_eval_format** list. Each entry consists of the frame ID, track ID, bounding box coordinates, confidence score, etc. in the format required for evaluation.
-
-
 
 ### Task 2.2: Tracking with KF
 
