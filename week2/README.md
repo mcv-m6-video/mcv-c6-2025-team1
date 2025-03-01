@@ -126,7 +126,7 @@ The detection script processes each video frame independently, generating boundi
 | **Faster R-CNN (conf. 0.9)**           | 0.45   | 0.39    |
 | **SSD (Backbone: ResNet50, conf. 0.1)**  | 0.49 | 0.32  |
 | **SSD (Backbone: ResNet50, conf. 0.25)** | 0.39 | 0.31  |
-| **SSD (Backbone: ResNet50, conf. 0.5)**  | 0.32 | 0.3035  |
+| **SSD (Backbone: ResNet50, conf. 0.5)**  | 0.32 | 0.30  |
 | **SSD (Backbone: VGG16, conf. 0.25)**    | 0.39 | 0.31  |
 | **SSD (Backbone: VGG16, conf. 0.5)**     | 0.30 | 0.29 |
 | **SSD (Backbone: VGG16, conf. 0.9)**     | 0.16 | 0.16  |
