@@ -195,4 +195,19 @@ IDF1 measures the ability of the tracking algorithm to consistently assign the s
 #### **HOTA (Higher Order Tracking Accuracy):**
 HOTA is a comprehensive metric that evaluates tracking performance by combining both **tracking quality** (how well objects are tracked) and **association quality** (how well object detections are associated with true objects). It is considered more robust than other metrics like **MOTA** because it accounts for both false positives and false negatives, as well as ID switches and missed detections.
 
+To evaluate the tracking performance using **TrackEval**, we use the following command:
 
+```bash
+python TrackEval/scripts/run_mot_challenge.py \
+  --GT_FOLDER /ghome/c3mcv02/mcv-c6-2025-team1/week2/src/tracking/TrackEval/data/gt/mot_challenge \
+  --TRACKERS_FOLDER /ghome/c3mcv02/mcv-c6-2025-team1/week2/src/tracking/TrackEval/data/trackers/mot_challenge \
+  --BENCHMARK week2 \
+  --SEQ_INFO s03 \
+  --DO_PREPROC=False
+```
+**Parameters:**
+- **`--GT_FOLDER`**: Path to the ground truth annotations (actual object positions and IDs).
+- **`--TRACKERS_FOLDER`**: Path to the tracker’s output (predicted object positions and IDs).
+- **`--BENCHMARK`**: The benchmark (e.g., `week2`) for the evaluation.
+- **`--SEQ_INFO`**: The sequence being evaluated (e.g., `s03`).
+- **`--DO_PREPROC=False`**: Disables preprocessing of the data.
