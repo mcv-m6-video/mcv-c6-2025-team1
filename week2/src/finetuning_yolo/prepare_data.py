@@ -1,16 +1,26 @@
-from utils import read_annotations
+from ..utils import read_annotations
 import os
+import argparse
 
 
 IMG_WIDTH = 1920
 IMG_HEIGHT = 1080
 
 if __name__ == '__main__':
+    # Parse arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-a', '--annotations_path', required=True, help="Path to the annotations XML file.", type=str)
+    parser.add_argument('-y', '--yolo_gt_path', required=True, help="Path where you want to save YOLO annotations file.", type=str)
+    args = parser.parse_args()
+    
+    # Get the argument values
+    annotations_path = args.annotations_path
+    annotations_dir = args.yolo_gt_path
+    
     # Read annotations
-    annotations = read_annotations('/ghome/c3mcv02/mcv-c6-2025-team1/data/ai_challenge_s03_c010-full_annotation.xml')
+    annotations = read_annotations(annotations_path)
     
     # Directory where you want to save YOLO annotation files
-    annotations_dir = '/ghome/c3mcv02/mcv-c6-2025-team1/data/train/labels'
     os.makedirs(annotations_dir, exist_ok=True)
     
     for frame_id, bboxes in annotations.items():
