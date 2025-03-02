@@ -279,3 +279,10 @@ python TrackEval/scripts/run_mot_challenge.py \
 - **`--BENCHMARK`**: The benchmark (e.g., `week2`) for the evaluation.
 - **`--SEQ_INFO`**: The sequence being evaluated (e.g., `s03`).
 - **`--DO_PREPROC=False`**: Disables preprocessing of the data.
+
+  The table below presents the **HOTA** and **IDF1** scores for two different tracking algorithms:
+
+| Tracker | HOTA Score | IDF1 Score |
+|---------|------------|------------|
+| Tracking by overlap | 82.62 | 80.49 |
+| Tracking with KF | XX.XX | XX.XX |
