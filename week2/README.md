@@ -303,7 +303,7 @@ The above structure is essential for **TrackEval** to correctly locate the groun
 To evaluate the tracker's performance, the following comand was executed:
 
 ```bash
-python TrackEval/scripts/run_mot_challenge.py \
+python tracking/TrackEval/scripts/run_mot_challenge.py \
   --GT_FOLDER /ghome/c3mcv02/mcv-c6-2025-team1/week2/src/tracking/TrackEval/data/gt/mot_challenge \
   --TRACKERS_FOLDER /ghome/c3mcv02/mcv-c6-2025-team1/week2/src/tracking/TrackEval/data/trackers/mot_challenge \
   --BENCHMARK week2 \
