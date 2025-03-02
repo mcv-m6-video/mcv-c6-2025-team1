@@ -213,7 +213,21 @@ The following table shows the results for the training strategy A:
 
 
 ### Task 1.3: K-Fold Cross Validation
-To be done...
+
+#### K-Fold results evaluation
+In order to evaluate K-Fold results, you may use the following script:
+
+```bash
+python3 -m src.evaluate_kfold -p <PATH_TO_YOUR_KFOLD_RESULTS> (--is_random)
+```
+
+The flag `--is_random` is used to evaluate random fold (if not used, then it will evaluate fixed fold cases). The script will output the K-Fold mean and standard deviation of all metrics as in this table:
+
+| Strategy | Precision | Recall | mAP@50 |
+|----------|-----------|--------|--------|
+| B (fixed) | 0.9844 ± 0.0012 | 0.9512 ± 0.0083 | 0.9791 ± 0.0021 |
+| C (random) | 0.9929 ± 0.0009 | 0.9768 ± 0.0022 | 0.9889 ± 0.0009 |
+
 
 ### Task 2.1: Tracking by overlap
 The tracking-by-overlap algorithm assigns unique track IDs to objects across frames based on the **Intersection over Union (IoU)** metric. The goal is to track objects consistently over time while ensuring each each object has a unique ID.
