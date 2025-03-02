@@ -239,6 +239,7 @@ The flag `--is_random` is used to evaluate random fold (if not used, then it wil
 | C (random) | 0.9929 ± 0.0009 | 0.9768 ± 0.0022 | 0.9889 ± 0.0009 |
 
 ## Task 2: Object tracking
+In this task, we focus on object tracking, specially using the **tracking-by-detection** approach. This method relies on object detections obtained through inference from the best-performing model in **Task 1.3 (Strategy C)**. The primary goal is to consistenly track objects across frames while ensuring that each object retains a unique ID throughout the sequence. 
 
 ### Task 2.1: Tracking by overlap
 The tracking-by-overlap algorithm assigns unique track IDs to objects across frames based on the **Intersection over Union (IoU)** metric. The goal is to track objects consistently over time while ensuring each each object has a unique ID.
