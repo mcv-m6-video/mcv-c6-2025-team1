@@ -240,6 +240,11 @@ The flag `--is_random` is used to evaluate random fold (if not used, then it wil
 
 ## Task 2: Object tracking
 In this task, we focus on object tracking, specially using the **tracking-by-detection** approach. This method relies on object detections obtained through inference from the best-performing model in **Task 1.3 (Strategy C)**. The primary goal is to consistenly track objects across frames while ensuring that each object retains a unique ID throughout the sequence. 
+To extract detections, run the following command:
+
+```bash
+python tracking/get_detections.py
+```
 
 ### Task 2.1: Tracking by overlap
 The tracking-by-overlap algorithm assigns unique track IDs to objects across frames based on the **Intersection over Union (IoU)** metric. The goal is to track objects consistently over time while ensuring each each object has a unique ID.
@@ -280,7 +285,7 @@ python TrackEval/scripts/run_mot_challenge.py \
 - **`--SEQ_INFO`**: The sequence being evaluated (e.g., `s03`).
 - **`--DO_PREPROC=False`**: Disables preprocessing of the data.
 
-  The table below presents the **HOTA** and **IDF1** scores for two different tracking algorithms:
+The table below presents the **HOTA** and **IDF1** scores for two different tracking algorithms:
 
 | Tracker | HOTA Score | IDF1 Score |
 |---------|------------|------------|
