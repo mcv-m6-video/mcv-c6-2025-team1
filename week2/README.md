@@ -276,23 +276,23 @@ HOTA is a comprehensive metric that evaluates tracking performance by combining 
 
 To evaluate the tracking performance using **TrackEval**, we use the following command:
 
-TrackEval/
-    ├── data/
-    │   ├── gt/
-    │   │   ├── mot_challenge/
-    │   │   │   ├── seqmaps/
-    │   │   │   │   └── week2-train.txt
-    │   │   │   ├── week2-train/
-    │   │   │   │   ├── s03/
-    │   │   │   │   │   ├── seq.info.ini
-    │   │   │   │   │   ├── gt/
-    │   │   │   │   │   │   └── gt.txt
-    │   ├── trackers/
-    │   │   ├── mot_challenge/
-    │   │   │   ├── week2-train/
-    │   │   │   │   ├── s03/
-    │   │   │   │   │   └── tracker_output.txt
-    │   └── ...
+    TrackEval/
+        ├── data/
+        │   ├── gt/
+        │   │   ├── mot_challenge/
+        │   │   │   ├── seqmaps/
+        │   │   │   │   └── week2-train.txt
+        │   │   │   ├── week2-train/
+        │   │   │   │   ├── s03/
+        │   │   │   │   │   ├── seq.info.ini
+        │   │   │   │   │   ├── gt/
+        │   │   │   │   │   │   └── gt.txt
+        │   ├── trackers/
+        │   │   ├── mot_challenge/
+        │   │   │   ├── week2-train/
+        │   │   │   │   ├── s03/
+        │   │   │   │   │   └── tracker_output.txt
+        │   └── ...
 
 
 
