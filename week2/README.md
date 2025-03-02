@@ -262,7 +262,7 @@ To extract tracking results, run the following command:
 
 ```bash
 python tracking/overlap.py
-
+```
 ### Task 2.2: Tracking with KF
 
 ### Task 2.3: IDF1, HOTA scores
@@ -275,6 +275,26 @@ IDF1 measures the ability of the tracking algorithm to consistently assign the s
 HOTA is a comprehensive metric that evaluates tracking performance by combining both **tracking quality** (how well objects are tracked) and **association quality** (how well object detections are associated with true objects). It is considered more robust than other metrics like **MOTA** because it accounts for both false positives and false negatives, as well as ID switches and missed detections.
 
 To evaluate the tracking performance using **TrackEval**, we use the following command:
+
+TrackEval/
+    ├── data/
+    │   ├── gt/
+    │   │   ├── mot_challenge/
+    │   │   │   ├── seqmaps/
+    │   │   │   │   └── week2-train.txt
+    │   │   │   ├── week2-train/
+    │   │   │   │   ├── s03/
+    │   │   │   │   │   ├── seq.info.ini
+    │   │   │   │   │   ├── gt/
+    │   │   │   │   │   │   └── gt.txt
+    │   ├── trackers/
+    │   │   ├── mot_challenge/
+    │   │   │   ├── week2-train/
+    │   │   │   │   ├── s03/
+    │   │   │   │   │   └── tracker_output.txt
+    │   └── ...
+
+
 
 ```bash
 python TrackEval/scripts/run_mot_challenge.py \
