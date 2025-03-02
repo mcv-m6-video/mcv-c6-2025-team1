@@ -240,6 +240,7 @@ The flag `--is_random` is used to evaluate random fold (if not used, then it wil
 
 ## Task 2: Object tracking
 In this task, we focus on object tracking, specially using the **tracking-by-detection** approach. This method relies on object detections obtained through inference from the best-performing model in **Task 1.3 (Strategy C)**. The primary goal is to consistenly track objects across frames while ensuring that each object retains a unique ID throughout the sequence. 
+
 To extract detections, run the following command:
 
 ```bash
@@ -256,6 +257,11 @@ The tracking-by-overlap algorithm assigns unique track IDs to objects across fra
 5. **New detections:** If a detection does not match any active track, a new unique **track_id** is assigned to that detection.
 
 The results of the tracking process are stored in the **track_eval_format** list. Each entry consists of the frame ID, track ID, bounding box coordinates, confidence score, etc. in the format required for evaluation.
+
+To extract tracking results, run the following command:
+
+```bash
+python tracking/overlap.py
 
 ### Task 2.2: Tracking with KF
 
