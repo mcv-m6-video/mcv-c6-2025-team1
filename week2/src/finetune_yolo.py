@@ -290,20 +290,26 @@ def train_yolo(yaml_path: Path, epochs: int=50, batch_size: int=8, imgsz: int=64
 
 
 def main():
-    # Define paths
-    BASE_DIR = '/ghome/c3mcv02/mcv-c6-2025-team1'
-    SOURCE_FRAMES = f'{BASE_DIR}/data/train/frames'
-    SOURCE_LABELS = f'{BASE_DIR}/data/train/labels'
-    DATASET_PATH = f'{BASE_DIR}/week2/dataset'
-    
-    # TODO: Change strategy
+    # Parse arguments through CLI
     parser = argparse.ArgumentParser(description='Train YOLO with different splitting strategies')
-    parser.add_argument('--strategy', type=str, choices=['A', 'B', 'C'], required=True,
+    parser.add_argument('-s', '--strategy', type=str, choices=['A', 'B', 'C'], required=True,
                         help='Splitting strategy: A (simple split), B (K-fold), C (K-Fold, random)')
+    parser.add_argument('-b', '--base_dir', help="Base directory of the project with the data.", required=True, type=str)
+    parser.add_argument('-f', '--source_frames', help="Directory where the frames are located", required=True, type=str)
+    parser.add_argument('-l', '--source_labels', help="Directory where the labels are located", required=True, type=str)
+    parser.add_argument('-d', '--dataset_path', help="Path where the dataset will be stored", required=False, default=None, type=str)
     args = parser.parse_args()
     
     strategy = args.strategy
     print(f"Using strategy {strategy}")
+    
+    # Define paths
+    BASE_DIR = args.base_dir
+    SOURCE_FRAMES = args.source_frames
+    SOURCE_LABELS = args.source_labels
+    DATASET_PATH = f'{BASE_DIR}/week2/dataset'
+    if args.dataset_path:
+        DATASET_PATH = args.dataset_path
     
     # Create directory structure
     create_dir_structure(DATASET_PATH, strategy=strategy)

@@ -205,7 +205,13 @@ The pipeline handles the entire training workflow, including dataset organizatio
 For K-fold strategies, the script automatically trains models across all folds and provides aggregated performance metrics. The implementation is designed to be run with a command-line argument to specify the desired splitting strategy (--strategy A|B|C).
 
 ```bash
-python3 -m src.finetuning_yolo --strategy <A|B|C>
+python3 -m src.finetune_yolo -s <A|B|C> -b <BASE_DIR> -f <SOURCE_FRAMES_PATH> -l <SOURCE_LABELS_PATH> -d <OUTPUT_DATASET_PATH>
+```
+
+In here, `SOURCE_FRAMES_PATH` refers to a path where all frames have been extracted from the video, it can be done by using `ffmpeg` with the following command:
+
+```bash
+ffmpeg -i <VIDEO_INPUT> -frame_pts 1 <SOURCE_FRAMES_PATH>/frame_%d.jpg
 ```
 
 #### Results with Strategy A
@@ -222,7 +228,7 @@ The following table shows the results for the training strategy A:
 In order to evaluate K-Fold results, you may use the following script:
 
 ```bash
-python3 -m src.evaluate_kfold -p <PATH_TO_YOUR_KFOLD_RESULTS> (--is_random)
+python3 -m src.finetuning_yolo.evaluate_kfold -p <PATH_TO_YOUR_KFOLD_RESULTS> (--is_random)
 ```
 
 The flag `--is_random` is used to evaluate random fold (if not used, then it will evaluate fixed fold cases). The script will output the K-Fold mean and standard deviation of all metrics as in this table:
