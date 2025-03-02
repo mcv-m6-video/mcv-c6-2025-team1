@@ -1,8 +1,0 @@
-#!/bin/bash
-#SBATCH --ntasks-per-node=4 
-#SBATCH --mem 32000 # 32GB solicitados.
-#SBATCH -p mlow # or mlow Partition to submit to master low prioriy queue
-#SBATCH --gres gpu:1 # Para pedir RTX 3090
-#SBATCH -o %x_%u_%j.out # File to which STDOUT will be written
-#SBATCH -e %x_%u_%j.err # File to which STDERR will be written
-python ssd.py
