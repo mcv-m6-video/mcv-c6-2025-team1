@@ -321,5 +321,5 @@ The table below presents the **HOTA** and **IDF1** scores for two different trac
 
 | Tracker | HOTA Score | IDF1 Score |
 |---------|------------|------------|
-| Tracking by overlap | 82.62 | 80.49 |
+| Tracking by overlap (iou=0.4) | 83.21 | 80.92 |
 | Tracking with KF | XX.XX | XX.XX |
