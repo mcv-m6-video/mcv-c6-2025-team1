@@ -250,61 +250,6 @@ def create_dataset_yml(base_path: str, num_classes: int = 1, class_names: list =
         
     return yaml_path
 
-def evaluate_kfold_results(base_path: str, k=4):
-    """
-    Evaluate results from K-Fold cross-validation using CSV files.
-    
-    Args:
-        base_path (str): Base path where training outputs are stored
-        k (int, optional): Number of folds. Defaults to 4.
-        
-    Returns:
-        dict: Aggregated metrics across all folds
-    """
-    import os
-    import pandas as pd
-    import numpy as np
-    
-    all_metrics = []
-    
-    for fold in range(k):
-        results_path = os.path.join(base_path, f'yolo_train_fold_{fold}', 'results.csv')
-        if os.path.exists(results_path):
-            # Read the CSV file
-            df = pd.read_csv(results_path)
-            
-            # Get the final epoch results (last row)
-            final_epoch = df.iloc[-1].to_dict()
-            final_epoch['fold'] = fold
-            all_metrics.append(final_epoch)
-    
-    # Calculate average metrics
-    if all_metrics:
-        # Find all metric columns (those that start with 'metrics/')
-        metrics_keys = [key for key in all_metrics[0].keys() if isinstance(key, str) and key.startswith('metrics/')]
-        avg_metrics = {}
-        
-        for key in metrics_keys:
-            values = [metrics[key] for metrics in all_metrics if key in metrics]
-            avg_metrics[f'avg_{key}'] = np.mean(values)
-            avg_metrics[f'std_{key}'] = np.std(values)
-        
-        # Print summary
-        print("=== K-Fold Cross-Validation Results ===")
-        for key, value in avg_metrics.items():
-            if key.startswith('avg_'):
-                metric_name = key[4:]  # Remove 'avg_' prefix
-                std_key = f'std_{metric_name}'
-                if std_key in avg_metrics:
-                    print(f"{metric_name}: {value:.4f} ± {avg_metrics[std_key]:.4f}")
-                else:
-                    print(f"{metric_name}: {value:.4f}")
-        
-        return avg_metrics
-    else:
-        print("No results found for K-fold evaluation.")
-        return {}
-
 
 def train_yolo(yaml_path: Path, epochs: int=50, batch_size: int=8, imgsz: int=640, fold=None, strategy = 'B'):
     if not os.path.exists(yaml_path):
@@ -356,6 +301,7 @@ def main():
     parser.add_argument('--strategy', type=str, choices=['A', 'B', 'C'], required=True,
                         help='Splitting strategy: A (simple split), B (K-fold), C (K-Fold, random)')
     args = parser.parse_args()
+    
     strategy = args.strategy
     print(f"Using strategy {strategy}")
     
@@ -427,9 +373,6 @@ def main():
             all_results.append(results)
             print(f"Fold {fold+1}/{k} training completed!")
             print(f"Results saved in: {results.save_dir}")
-        
-        # Evaluate K-fold results
-        evaluate_kfold_results(BASE_DIR, k=k)
     else:
         raise NotImplementedError()
 

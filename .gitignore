@@ -1,3 +1,7 @@
+# Job stuff
+jobs/
+job_*
+
 # Data folders
 data/
 src/output_videos
@@ -10,8 +14,8 @@ week2/dataset/
 week2/dataset_strategyA/
 week2/dataset_strategyB/
 week2/dataset_strategyC/
-week2/src/runs/
-week2/src/yolo_train_fold_*/
+week2/runs/
+week2/kfold_results/
 
 # To avoid including videos
 *.avi

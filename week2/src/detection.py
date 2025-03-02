@@ -78,7 +78,12 @@ def process_video(model_type, model_path, video_path, output_video_path, annotat
                 raise ValueError("Could not find 'car' or 'truck' classes in the model's class names")
         else:  # If it's a dictionary (like in YOLO or Faster-RCNN)
             car_class_id = next(idx for idx, name in class_names.items() if name.lower() == "car")
-            truck_class_id = next(idx for idx, name in class_names.items() if name.lower() == "truck")
+            try:
+                truck_class_id = next(idx for idx, name in class_names.items() if name.lower() == "truck")
+            except StopIteration:
+                # If truck class is not found, use car class ID
+                truck_class_id = car_class_id
+                print("Warning: Truck class not found, using car class ID instead")
 
         print(f"Car class ID: {car_class_id}, Truck class ID: {truck_class_id}")
     except StopIteration:
@@ -128,7 +133,7 @@ def process_video(model_type, model_path, video_path, output_video_path, annotat
 
                         # Add predicted box to list
                         pred_boxes.append([x1, y1, x2, y2, box.conf[0].item()])
-        if model_type == "detr":
+        elif model_type == "detr":
             boxes = results['boxes']
             labels = results['labels']
             scores = results['scores']
@@ -140,8 +145,7 @@ def process_video(model_type, model_path, video_path, output_video_path, annotat
                     x1, y1, x2, y2 = int(x1 * width), int(y1 * height), int(x2 * width), int(y2 * height)
                     pred_boxes.append([x1, y1, x2, y2, score.item()])
                     print("DETR pred_boxes:", pred_boxes)
-
-        if model_type == "ssd-resnet50":
+        elif model_type == "ssd-resnet50":
             #print(f"results: {results}")
             boxes, labels, scores = results[0]
             print(f"labels: {labels}")
