@@ -3,12 +3,14 @@
 ## Table of Contents
 
 - [Project Structure W2](#project-structure-w2)
-- [Task 1.1: Off-the-shelf](#task-11-off-the-shelf)
-- [Task 1.2: Fine-tuning to our data](#task-12-fine-tuning-to-our-data)
-- [Task 1.3: K-Fold Cross Validation](#task-13-k-fold-cross-validation)
-- [Task 2.1: Tracking by overlap](#task-21-tracking-by-overlap)
-- [Task 2.2: Tracking with KF](#task-22-tracking-with-kf)
-- [Task 2.3: IDF1, HOTA scores](#task-23-idf1-hota-scores)
+- [Task 1: Object detection](#task-1-object-detection)
+    - [Task 1.1: Off-the-shelf](#task-11-off-the-shelf)
+    - [Task 1.2: Fine-tuning to our data](#task-12-fine-tuning-to-our-data)
+    - [Task 1.3: K-Fold Cross Validation](#task-13-k-fold-cross-validation)
+- [Task 2: Object tracking](#task-2-object-tracking)
+    - [Task 2.1: Tracking by overlap](#task-21-tracking-by-overlap)
+    - [Task 2.2: Tracking with KF](#task-22-tracking-with-kf)
+    - [Task 2.3: IDF1, HOTA scores](#task-23-idf1-hota-scores)
 
 
 ### Project Structure W2
@@ -24,6 +26,8 @@
     │   ├── detection.py
     │   ├── utils.py
     │   └── ...
+
+## Task 1: Object detection
     
 ### Task 1.1: Off-the-shelf
 This task focuses on implementing and evaluating various pre-trained object detection models (including YOLOv11, Faster R-CNN,DeTR and SSD) for vehicle detection in traffic surveillance videos. Below are the detailed commands and parameters used for each experiment.
@@ -213,7 +217,22 @@ The following table shows the results for the training strategy A:
 
 
 ### Task 1.3: K-Fold Cross Validation
-To be done...
+
+#### K-Fold results evaluation
+In order to evaluate K-Fold results, you may use the following script:
+
+```bash
+python3 -m src.evaluate_kfold -p <PATH_TO_YOUR_KFOLD_RESULTS> (--is_random)
+```
+
+The flag `--is_random` is used to evaluate random fold (if not used, then it will evaluate fixed fold cases). The script will output the K-Fold mean and standard deviation of all metrics as in this table:
+
+| Strategy | Precision | Recall | mAP@50 |
+|----------|-----------|--------|--------|
+| B (fixed) | 0.9844 ± 0.0012 | 0.9512 ± 0.0083 | 0.9791 ± 0.0021 |
+| C (random) | 0.9929 ± 0.0009 | 0.9768 ± 0.0022 | 0.9889 ± 0.0009 |
+
+## Task 2: Object tracking
 
 ### Task 2.1: Tracking by overlap
 The tracking-by-overlap algorithm assigns unique track IDs to objects across frames based on the **Intersection over Union (IoU)** metric. The goal is to track objects consistently over time while ensuring each each object has a unique ID.
