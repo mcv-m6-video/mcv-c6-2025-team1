@@ -49,6 +49,10 @@ The following prerequisites must be followed:
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/yeray142/mcv-c6-2025-team1
+   cd mcv-c6-team1
+
+   # To install all third party tools
+   git submodule update --init --recursive
    ```
 
 2. **Navigate to the corresponding week's folder:**
