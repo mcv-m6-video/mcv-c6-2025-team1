@@ -241,6 +241,12 @@ The flag `--is_random` is used to evaluate random fold (if not used, then it wil
 ## Task 2: Object tracking
 In this task, we focus on object tracking, specially using the **tracking-by-detection** approach. This method relies on object detections obtained through inference from the best-performing model in **Task 1.3 (Strategy C)**. The primary goal is to consistenly track objects across frames while ensuring that each object retains a unique ID throughout the sequence. 
 
+To extract detections, run the following command:
+
+```bash
+python tracking/get_detections.py
+```
+
 ### Task 2.1: Tracking by overlap
 The tracking-by-overlap algorithm assigns unique track IDs to objects across frames based on the **Intersection over Union (IoU)** metric. The goal is to track objects consistently over time while ensuring each each object has a unique ID.
 
@@ -252,6 +258,11 @@ The tracking-by-overlap algorithm assigns unique track IDs to objects across fra
 
 The results of the tracking process are stored in the **track_eval_format** list. Each entry consists of the frame ID, track ID, bounding box coordinates, confidence score, etc. in the format required for evaluation.
 
+To extract tracking results, run the following command:
+
+```bash
+python tracking/overlap.py
+```
 ### Task 2.2: Tracking with KF
 
 ### Task 2.3: IDF1, HOTA scores
@@ -263,10 +274,36 @@ IDF1 measures the ability of the tracking algorithm to consistently assign the s
 #### **HOTA (Higher Order Tracking Accuracy):**
 HOTA is a comprehensive metric that evaluates tracking performance by combining both **tracking quality** (how well objects are tracked) and **association quality** (how well object detections are associated with true objects). It is considered more robust than other metrics like **MOTA** because it accounts for both false positives and false negatives, as well as ID switches and missed detections.
 
-To evaluate the tracking performance using **TrackEval**, we use the following command:
+Before running the evaluation, we organized the data as follows:
+
+    TrackEval/
+        ├── data/
+        │   ├── gt/
+        │   │   ├── mot_challenge/
+        │   │   │   ├── seqmaps/
+        │   │   │   │   └── week2-train.txt
+        │   │   │   ├── week2-train/
+        │   │   │   │   ├── s03/
+        │   │   │   │   │   ├── seq.info.ini
+        │   │   │   │   │   ├── gt/
+        │   │   │   │   │   │   └── gt.txt
+        │   ├── trackers/
+        │   │   ├── mot_challenge/
+        │   │   │   ├── week2-train/
+        │   │   │   │   ├── kalman/
+        │   │   │   │   │   └── data/
+        │   │   │   │   │       └── s03.txt
+        │   │   │   │   ├── overlap/
+        │   │   │   │   │   └── data/
+        │   │   │   │   │       └── s03.txt
+        │   └── ...
+
+The above structure is essential for **TrackEval** to correctly locate the ground truth and tracker output files for comparison.
+
+To evaluate the tracker's performance, the following comand was executed:
 
 ```bash
-python TrackEval/scripts/run_mot_challenge.py \
+python tracking/TrackEval/scripts/run_mot_challenge.py \
   --GT_FOLDER /ghome/c3mcv02/mcv-c6-2025-team1/week2/src/tracking/TrackEval/data/gt/mot_challenge \
   --TRACKERS_FOLDER /ghome/c3mcv02/mcv-c6-2025-team1/week2/src/tracking/TrackEval/data/trackers/mot_challenge \
   --BENCHMARK week2 \
@@ -279,3 +316,10 @@ python TrackEval/scripts/run_mot_challenge.py \
 - **`--BENCHMARK`**: The benchmark (e.g., `week2`) for the evaluation.
 - **`--SEQ_INFO`**: The sequence being evaluated (e.g., `s03`).
 - **`--DO_PREPROC=False`**: Disables preprocessing of the data.
+
+The table below presents the **HOTA** and **IDF1** scores for two different tracking algorithms:
+
+| Tracker | HOTA Score | IDF1 Score |
+|---------|------------|------------|
+| Tracking by overlap (iou=0.4) | 83.21 | 80.92 |
+| Tracking with KF | XX.XX | XX.XX |
