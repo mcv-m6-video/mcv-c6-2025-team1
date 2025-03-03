@@ -1,6 +1,7 @@
 # Job stuff
 jobs/
 job_*
+week2/src/tracking/job
 
 # Data folders
 data/
@@ -16,6 +17,7 @@ week2/dataset_strategyB/
 week2/dataset_strategyC/
 week2/runs/
 week2/kfold_results/
+week2/yolo_finetuning_results
 
 # To avoid including videos
 *.avi

@@ -251,7 +251,7 @@ def create_dataset_yml(base_path: str, num_classes: int = 1, class_names: list =
     return yaml_path
 
 
-def train_yolo(yaml_path: Path, epochs: int=50, batch_size: int=8, imgsz: int=640, fold=None, strategy = 'B'):
+def train_yolo(yaml_path: Path, epochs: int=50, batch_size: int=8, imgsz: int=640, fold=None, strategy = 'B', layers_to_freeze: int = 10):
     if not os.path.exists(yaml_path):
         raise FileNotFoundError(f"Dataset YAML file not found: {yaml_path}")
         
@@ -283,7 +283,8 @@ def train_yolo(yaml_path: Path, epochs: int=50, batch_size: int=8, imgsz: int=64
         imgsz=imgsz,
         device='cuda',
         patience=20,  # Early stopping patience,
-        project=project_name
+        project=project_name,
+        freeze=layers_to_freeze
     )
     
     return results
@@ -298,10 +299,13 @@ def main():
     parser.add_argument('-f', '--source_frames', help="Directory where the frames are located", required=True, type=str)
     parser.add_argument('-l', '--source_labels', help="Directory where the labels are located", required=True, type=str)
     parser.add_argument('-d', '--dataset_path', help="Path where the dataset will be stored", required=False, default=None, type=str)
+    parser.add_argument('--freeze', help="Number of layers to freeze.", required=False, type=int)
     args = parser.parse_args()
     
     strategy = args.strategy
+    layers_to_freeze = args.freeze
     print(f"Using strategy {strategy}")
+    print(f"Freezing {layers_to_freeze} layers")
     
     # Define paths
     BASE_DIR = args.base_dir
@@ -338,7 +342,8 @@ def main():
             yaml_path,
             epochs=50,
             batch_size=8,
-            imgsz=640
+            imgsz=640,
+            layers_to_freeze=layers_to_freeze
         )
         
         print("Training completed!")
@@ -373,7 +378,8 @@ def main():
                 batch_size=8,
                 imgsz=640,
                 fold=fold,
-                strategy=strategy
+                strategy=strategy,
+                layers_to_freeze=layers_to_freeze
             )
             
             all_results.append(results)

@@ -43,11 +43,11 @@ def write_results_to_txt(track_eval_format, output_path):
 
 
 
-detections, detections_vect = read_detections_from_txt('/ghome/c3mcv02/mcv-c6-2025-team1/data/AICity_data/train/S03/c010/det/det_yolo3.txt')  
+detections, detections_vect = read_detections_from_txt('/ghome/c3mcv02/mcv-c6-2025-team1/week2/src/tracking/detections_yolo_backbone.txt')  
 #print(f"Detections: {detections}")
 
 # Create instance of the SORT tracker (default params: max_age=1, min_hits=3, iou_threshold=0.3)
-mot_tracker = Sort() 
+mot_tracker = Sort(max_age = 21, min_hits=3, iou_threshold=0.1) 
 
 # Open the video
 cap = cv2.VideoCapture("/ghome/c3mcv02/mcv-c6-2025-team1/data/AICity_data/train/S03/c010/vdo.avi")
@@ -87,7 +87,7 @@ while cap.isOpened():
         # Returns a similar np.array, where the last column is the object ID
         tracked_cars = mot_tracker.update(actual_bb)
 
-        print(f"Tracking info for frame {frame_number}: {tracked_cars}")
+        #print(f"Tracking info for frame {frame_number}: {tracked_cars}")
 
     else:
         # Must be called once per frame
@@ -114,7 +114,7 @@ while cap.isOpened():
 cap.release()
 out.release()
 
-write_results_to_txt(track_eval_format, '/ghome/c3mcv02/mcv-c6-2025-team1/week2/src/tracking/TrackEval/data/trackers/mot_challenge/week2-train/overlap/data/s03.txt')
+write_results_to_txt(track_eval_format, '/ghome/c3mcv02/mcv-c6-2025-team1/week2/src/tracking/TrackEval/data/trackers/mot_challenge/week2-train/kalman/data/s03.txt')
 
 print(f"Annotated video with bounding boxes and track IDs saved")
 
