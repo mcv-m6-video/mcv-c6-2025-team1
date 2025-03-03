@@ -52,32 +52,46 @@ The following prerequisites must be followed:
    ```
 
 2. **Navigate to the corresponding week's folder:**
-   
    For example, to enter the folder for week 1:
    ```bash
    cd week1
    ```
-   
-4. **Create a virtual environment:**
+
+3. **Choose one of the following methods to set up your environment:**
+
+#### Option A: Using Python Virtual Environment
+
+1. **Create a virtual environment:**
    ```bash
    python -m venv env
    ```
 
-5. **Activate the virtual environment:**
-    - On Windows:
-      ```bash
-      .\env\Scripts\activate
-      ```
-    - On MacOS/Linux:
-      ```bash
-      source env/bin/activate
-      ```
+2. **Activate the virtual environment:**
+   - On Windows:
+     ```bash
+     .\env\Scripts\activate
+     ```
+   - On MacOS/Linux:
+     ```bash
+     source env/bin/activate
+     ```
 
-6. **Install the dependencies:**
-  ```bash
-  pip install -r requirements.txt
-  ```
+3. **Install the dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
+#### Option B: Using Conda Environment (Recommended)
+
+1. **Create a conda environment from the environment.yml file:**
+   ```bash
+   conda env create -f environment.yml
+   ```
+
+2. **Activate the conda environment:**
+   ```bash
+   conda activate mcv-c6-2025
+   ```
    
 ## Project Structure
 
