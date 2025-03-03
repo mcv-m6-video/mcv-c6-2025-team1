@@ -11,13 +11,11 @@ src/output_videos_adaptive_opt
 src/visualization
 
 # YOLO stuff
-week2/dataset/
-week2/dataset_strategyA/
-week2/dataset_strategyB/
-week2/dataset_strategyC/
+week2/dataset
 week2/runs/
 week2/kfold_results/
 week2/yolo_finetuning_results
+week2/yolo*
 
 # To avoid including videos
 *.avi

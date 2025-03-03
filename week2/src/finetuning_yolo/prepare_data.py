@@ -25,7 +25,7 @@ if __name__ == '__main__':
     
     for frame_id, bboxes in annotations.items():
         # Create a text file for the current frame (e.g., 690.txt for frame '690')
-        file_path = os.path.join(annotations_dir, f"{int(frame_id) + 1}.txt")
+        file_path = os.path.join(annotations_dir, f"{int(frame_id)}.txt")
         with open(file_path, 'w') as f:
             for bbox in bboxes:
                 # Optionally, you could filter by occlusion. For example, if
