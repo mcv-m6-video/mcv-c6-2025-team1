@@ -1,7 +1,6 @@
 import argparse
 import cv2
 import random
-import numpy as np
 
 from models_files.faster_rcnn import FasterRCNN
 from models_files.ssd_vgg16 import SSD_VGG16
@@ -113,7 +112,7 @@ def process_video(model_type, model_path, video_path, output_video_path, annotat
 		print(f"Processing frame {frame_number}")
 
 		# Skip frame if it is part of the validation set
-		if frame_number - 1 not in validation_fold:
+		if validation_fold and (frame_number - 1 not in validation_fold):
 			print(f"Skipping frame {frame_number} as it is part of the validation set")
 			continue
 
