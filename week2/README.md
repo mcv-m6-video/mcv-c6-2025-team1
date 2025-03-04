@@ -184,6 +184,12 @@ Below is an example output, where the model successfully detects vehicles in the
 
 - **SSD:**
 
+Unlike the previous models, **SSD** detects fewer objects in this scenario. In the image shown, it only identifies **two** cars, whereas models like **DETR** manage to detect up to **six** vehicles in the same frame.
+
+This result suggests that SSD might be less sensitive to certain objects in the scene, possibly due to its multi-scale detection approach with predefined anchor boxes, which can affect its performance in scenarios with small or partially occluded objects.
+
+![ssd_fist_frame](https://github.com/user-attachments/assets/adfdda12-24c6-4813-9e0f-8f9581808090)
+
 
 ### Task 1.2: Fine-tuning to our data
 
