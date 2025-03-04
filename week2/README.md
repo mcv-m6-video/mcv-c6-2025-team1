@@ -151,7 +151,9 @@ In all cases depicted below, green boxes always refer to GT boxes and red ones a
 > [!WARNING]
 > Some Ground Truth bounding boxes are not correctly placed due to some human errors in the annotations. Take that into account when comparing predicted and GT boxes.
 
-- **YOLOv11 and YOLOv12:**
+- **YOLOv11:**
+- The image shown represents one of the first frames in the sequence. Some parked cars in the background are not correctly detected due to occlusions, and several bounding boxes don't align precisely with the Ground Truth annotations, despite the cars themselves being successfully detected.
+![image](https://github.com/user-attachments/assets/516e27a8-dbe5-4c5e-84cf-300f9fbded5f)
 
 - **Faster R-CNN:**
 
