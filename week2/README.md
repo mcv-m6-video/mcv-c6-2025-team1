@@ -217,9 +217,10 @@ ffmpeg -i <VIDEO_INPUT> -frame_pts 1 <SOURCE_FRAMES_PATH>/frame_%d.jpg
 #### Results with Strategy A
 The following table shows the results for the training strategy A:
 
-| Epoch | Time (s) | Training Losses (Box/Cls/DFL) | Precision | Recall  | mAP50   | mAP50-95 | Validation Losses (Box/Cls/DFL) | Learning Rates (pg0/pg1/pg2)    |
-|-------|----------|-------------------------------|-----------|---------|---------|----------|----------------------------------|----------------------------------|
-| 50    | 1437.8   | 0.20237 / 0.15533 / 0.76793  | 0.98477   | 0.93714 | 0.97813 | 0.91076  | 0.3312 / 0.22667 / 0.74787       | 5.96e-05 / 5.96e-05 / 5.96e-05  |
+| Strategy | Precision | Recall  | mAP50   | mAP50-95 |
+|------------------|---------|---------|----------|----------------------------------|
+| Fully unfrozen    | 0.98477   | 0.93714 | 0.97813 | 0.91076  |
+| Backbone frozen    | 0.98257   | 0.95637 | 0.98614 | 0.91917  |
 
 
 ### Task 1.3: K-Fold Cross Validation
@@ -233,10 +234,12 @@ python3 -m src.finetuning_yolo.evaluate_kfold -p <PATH_TO_YOUR_KFOLD_RESULTS> (-
 
 The flag `--is_random` is used to evaluate random fold (if not used, then it will evaluate fixed fold cases). The script will output the K-Fold mean and standard deviation of all metrics as in this table:
 
-| Strategy | Precision | Recall | mAP@50 |
-|----------|-----------|--------|--------|
-| B (fixed) | 0.9844 ± 0.0012 | 0.9512 ± 0.0083 | 0.9791 ± 0.0021 |
-| C (random) | 0.9929 ± 0.0009 | 0.9768 ± 0.0022 | 0.9889 ± 0.0009 |
+Fine tuning strategy | Data Strategy | Precision | Recall | mAP@50 |
+|--------------------|----------|-----------|--------|--------|
+| Fully unfrozen | B (fixed) | 0.9844 ± 0.0012 | 0.9512 ± 0.0083 | 0.9791 ± 0.0021 |
+| Backbone frozen | B (fixed) | 0.9826 ± 0.0014 | 0.9632 ± 0.0050 | 0.9867 ± 0.0004 |
+| Fully unfrozen | C (random) | 0.9929 ± 0.0009 | 0.9768 ± 0.0022 | 0.9889 ± 0.0009 |
+| Backbone frozen | C (random) | 0.9954 ± 0.0007 |0.9791 ± 0.0018 | 0.9915 ± 0.0013 |
 
 ## Task 2: Object tracking
 In this task, we focus on object tracking, specially using the **tracking-by-detection** approach. This method relies on object detections obtained through inference from the best-performing model in **Task 1.3 (Strategy C)**. The primary goal is to consistenly track objects across frames while ensuring that each object retains a unique ID throughout the sequence. 
