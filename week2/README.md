@@ -229,7 +229,7 @@ The following table shows the results for the training strategy A:
 In order to evaluate K-Fold results, you may use the following script:
 
 ```bash
-python3 -m src.finetuning_yolo.evaluate_kfold -p <PATH_TO_YOUR_KFOLD_RESULTS> (--is_random)
+python3 -m src.finetuning_yolo.evaluate_kfold -p <PATH_TO_YOUR_KFOLD_RESULTS> [--is_random]
 ```
 
 The flag `--is_random` is used to evaluate random fold (if not used, then it will evaluate fixed fold cases). The script will output the K-Fold mean and standard deviation of all metrics as in this table:
