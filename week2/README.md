@@ -326,7 +326,14 @@ python tracking/TrackEval/scripts/run_mot_challenge.py \
 
 The table below presents the **HOTA** and **IDF1** scores for two different tracking algorithms:
 
-| Tracker | HOTA Score | IDF1 Score |
-|---------|------------|------------|
-| Tracking by overlap (iou=0.4) | 83.21 | 80.92 |
-| Tracking with KF | XX.XX | XX.XX |
+| Tracker                                | Training Strategy  | HOTA Score | IDF1 Score |
+|----------------------------------------|--------------------|------------|------------|
+| Tracking by overlap (IoU=0.5)         | Fully Unfrozen     | 82.624     | 80.494     |
+| Tracking by overlap (IoU=0.45)        | Fully Unfrozen     | 82.793     | 80.917     |
+| Tracking by overlap (IoU=0.4)         | Fully Unfrozen     | 83.205     | 82.079     |
+| Tracking by overlap (IoU=0.5)         | Backbone Frozen    | 75.846     | 70.764     |
+| Tracking by overlap (IoU=0.45)        | Backbone Frozen    | 75.906     | 70.94      |
+| Tracking by overlap (IoU=0.4)         | Backbone Frozen    | 75.747     | 71.574     |
+| Tracking with KF                      | -                  | XX.XX      | XX.XX      |
+
+
