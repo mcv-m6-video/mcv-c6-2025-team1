@@ -41,7 +41,7 @@ with open(args.a, 'r') as f:
         tracking_data[frame_id].append((track_id, bbox_left, bbox_top, bbox_width, bbox_height))
 
 # Process each frame of the video
-frame_id = 0
+frame_id = 1
 while True:
     ret, frame = cap.read()
     
