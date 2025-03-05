@@ -276,7 +276,32 @@ To extract tracking results, run the following command:
 ```bash
 python tracking/overlap.py
 ```
-### Task 2.2: Tracking with KF
+### Task 2.2: Tracking with Kalman Filter (KF)  
+
+**Tracking with KF** assigns unique track IDs to objects across frames using a **Kalman Filter (KF)** to predict motion and associates detections based on spatial overlap.  
+
+#### Algorithm  
+We use the `Sort(object)` class from [`sort.py`](https://github.com/abewley/sort/tree/master). Each tracked object is represented as a **7-element vector**:  
+`[xc, yc, s, r, vx, vy, vs]`, where `[xc, yc]` is the 2D bounding box (2DBB) center, `s` is the scale (area), `r` is the aspect ratio, and `[vx, vy, vs]` are velocities (aspect ratio remains constant).  
+
+#### Kalman Filter Steps  
+
+1. **Prediction:** Estimates object position using a constant velocity model.  
+2. **Update:** Computes IoU, matches detections to active trackers, updates matched trackers, creates new ones, and removes unmatched ones.  
+
+#### Initialization Parameters  
+
+- **max_age:** Max frames a tracker stays active without updates.  
+- **min_hits:** Min frames an object must be detected to be considered valid.  
+- **iou_threshold:** IoU threshold for matching detections to trackers.  
+
+The tracking results are stored in the required evaluation format, including **frame ID, track ID, bounding box coordinates, confidence score, etc.**  
+
+To extract tracking results, run the following command:  
+
+```bash
+python tracking/tracking_kf.py
+```
 
 ### Task 2.3: IDF1, HOTA scores
 To evaluate the performance of the tracking algorithm, we use the **TrackEval** framework. TrackEval is a tool designed to compute various tracking performance metrics, including **IDF1** and **HOTA** scores, which are commonly used in multi-object tracking (MOT) tasks.
