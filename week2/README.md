@@ -281,13 +281,14 @@ python tracking/overlap.py
 **Tracking with KF** assigns unique track IDs to objects across frames using a **Kalman Filter (KF)** to predict motion and associates detections based on spatial overlap.  
 
 #### Algorithm  
-We use the `Sort(object)` class from [`sort.py`](https://github.com/abewley/sort/tree/master). Each tracked object is represented as a **7-element vector**:  
+We use the `Sort(object)` class from [`sort.py`](https://github.com/abewley/sort/tree/master). The state of each tracked object is represented as a **7-element vector**:  
 `[xc, yc, s, r, vx, vy, vs]`, where `[xc, yc]` is the 2D bounding box (2DBB) center, `s` is the scale (area), `r` is the aspect ratio, and `[vx, vy, vs]` are velocities (aspect ratio remains constant).  
 
 #### Kalman Filter Steps  
 
-1. **Prediction:** Estimates object position using a constant velocity model.  
-2. **Update:** Computes IoU, matches detections to active trackers, updates matched trackers, creates new ones, and removes unmatched ones.  
+The KF approach can be summarized into 2 main steps. For each object:
+1. **Prediction:** Estimates object position in the current frame of all active trackers using a linear constant velocity motion model.  
+2. **Update:** Computes IoU between active trackers' predicted poses and current detections. Based on IoU, detections are associated/matched to active trackers, so matched trackers' states are updated. New trackers are created for all unmatched detections, and unmatched trackers are removed (if they have not been updated for max. number of consecutive frames).  
 
 #### Initialization Parameters  
 
