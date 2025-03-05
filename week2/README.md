@@ -340,6 +340,11 @@ The table below presents the **HOTA** and **IDF1** scores for two different trac
 | Tracking by overlap (IoU=0.5)         | Backbone Frozen    | 75.846     | 70.764     |
 | Tracking by overlap (IoU=0.45)        | Backbone Frozen    | 75.906     | 70.94      |
 | Tracking by overlap (IoU=0.4)         | Backbone Frozen    | 75.747     | 71.574     |
-| Tracking with KF                      | -                  | XX.XX      | XX.XX      |
+| Tracking with Kalman Filter (KF, max_age=21, min_hits=2, IoU=0.2) | Fully Unfrozen     | 88.69 | 93.77 |
+| Tracking with Kalman Filter (KF, max_age=21, min_hits=2, IoU=0.1) | Fully Unfrozen     | 88.66 | 93.70 |
+| Tracking with Kalman Filter (KF, max_age=21, min_hits=3, IoU=0.1) | Fully Unfrozen     | 88.58 | 93.69 |
+| Tracking with Kalman Filter (KF, max_age=21, min_hits=2, IoU=0.2) | Backbone Frozen    | 86.54 | 89.17 |
+| Tracking with Kalman Filter (KF, max_age=21, min_hits=2, IoU=0.1) | Backbone Frozen    | 86.57 | 89.24 |
+| Tracking with Kalman Filter (KF, max_age=21, min_hits=3, IoU=0.1) | Backbone Frozen    | 86.51 | 89.22 |
 
 
