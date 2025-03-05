@@ -9,7 +9,7 @@
     - [Task 1.3: K-Fold Cross Validation](#task-13-k-fold-cross-validation)
 - [Task 2: Object tracking](#task-2-object-tracking)
     - [Task 2.1: Tracking by overlap](#task-21-tracking-by-overlap)
-    - [Task 2.2: Tracking with KF](#task-22-tracking-with-kf)
+    - [Task 2.2: Tracking with Kalman Filter (KF)](#task-22-tracking-with-kalman-filter-kf)
     - [Task 2.3: IDF1, HOTA scores](#task-23-idf1-hota-scores)
 
 
