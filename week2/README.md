@@ -294,7 +294,7 @@ The KF approach can be summarized into 2 main steps. For each object:
 
 - **max_age:** Max frames a tracker stays active without updates.  
 - **min_hits:** Min frames an object must be detected to be considered valid.  
-- **iou_threshold:** IoU threshold for matching detections to trackers.  
+- **iou_threshold:** IoU threshold for matching detections to trackers.
 
 The tracking results are stored in the required evaluation format, including **frame ID, track ID, bounding box coordinates, confidence score, etc.**  
 
@@ -303,6 +303,7 @@ To extract tracking results, run the following command:
 ```bash
 python tracking/tracking_kf.py
 ```
+The initialization parameters can be set to different values in line 50 (`mot_tracker = Sort(max_age = 21, min_hits=3, iou_threshold=0.1)`) of `tracking_kf.py`. 
 
 ### Task 2.3: IDF1, HOTA scores
 To evaluate the performance of the tracking algorithm, we use the **TrackEval** framework. TrackEval is a tool designed to compute various tracking performance metrics, including **IDF1** and **HOTA** scores, which are commonly used in multi-object tracking (MOT) tasks.
