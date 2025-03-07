@@ -58,7 +58,7 @@ def track_overlap(detections):
                     track_frame_id, existing_track_id, track_bbox_left, track_bbox_top, track_bbox_width, track_bbox_height, track_confidence = track
                     overlap = iou([bbox_left, bbox_top, bbox_width, bbox_height], [track_bbox_left, track_bbox_top, track_bbox_width, track_bbox_height])
 
-                    if overlap > 0.45 and overlap > max_iou:
+                    if overlap > 0.4 and overlap > max_iou:
                         max_iou = overlap
                         best_match = track
 
@@ -95,12 +95,12 @@ def write_results_to_txt(track_eval_format, output_path):
 
 
 
-frames = read_detections_from_txt('/ghome/c3mcv02/mcv-c6-2025-team1/week2/src/tracking/detections_yolo_backbone.txt')  
+frames = read_detections_from_txt('/ghome/c3mcv02/mcv-c6-2025-team1/week2/src/tracking/detections_yolo.txt')  
 
 track_eval_format = track_overlap(frames)
 
-write_results_to_txt(track_eval_format, '/ghome/c3mcv02/mcv-c6-2025-team1/week2/src/tracking/TrackEval/data/trackers/mot_challenge/week2-train/overlap/data/s03.txt')
-
+write_results_to_txt(track_eval_format, '/ghome/c3mcv02/mcv-c6-2025-team1/week2/src/tracking/s03.txt')
+#write_results_to_txt(track_eval_format, '/ghome/c3mcv02/mcv-c6-2025-team1/week2/src/tracking/TrackEval/data/trackers/mot_challenge/week2-train/overlap/data/s03.txt')
 
 
 

@@ -43,8 +43,14 @@ def split_dataset(source_frames: str, source_labels: str, dest_base_path: str, t
         dest_base_path (str): Destination path for the dataset
         train_ratio (float, optional): Train ratio in splitting. Defaults to 0.25.
     """
+    def natural_sort_key(s):
+        """Return a key for natural sorting of filenames with numbers."""
+        import re
+        return [int(text) if text.isdigit() else text.lower()
+                for text in re.split(r'(\d+)', s)]
+
     # Get sorted list of frame numbers
-    frame_files = sorted(os.listdir(source_frames))
+    frame_files = sorted(os.listdir(source_frames), key=natural_sort_key)
     
     if strategy == 'A':
         split_idx = int(len(frame_files) * train_ratio)
@@ -55,7 +61,10 @@ def split_dataset(source_frames: str, source_labels: str, dest_base_path: str, t
 
         # Copy frames and their corresponding labels for training set
         for frame in train_frames:
-            frame_number = frame.split('_')[1].split('.')[0]
+            try:
+                frame_number = frame.split('_')[1].split('.')[0]
+            except IndexError:
+                frame_number = frame.split('.')[0]  # If frame_XXXX.jpg is not present
             
             # Copy image with the same filename as source
             shutil.copy2(
@@ -75,7 +84,10 @@ def split_dataset(source_frames: str, source_labels: str, dest_base_path: str, t
 
         # Copy frames and their corresponding labels for validation set
         for frame in val_frames:
-            frame_number = frame.split('_')[1].split('.')[0]  # Gets XXXX from frame_XXXX.jpg
+            try:
+                frame_number = frame.split('_')[1].split('.')[0]  # Gets XXXX from frame_XXXX.jpg
+            except IndexError:
+                frame_number = frame.split('.')[0]  # If frame_XXXX.jpg is not present
             
             # Copy image
             shutil.copy2(
@@ -112,7 +124,10 @@ def split_dataset(source_frames: str, source_labels: str, dest_base_path: str, t
             # Process training set for this fold
             for idx in train_indices:
                 frame = frame_files[idx]
-                frame_number = frame.split('_')[1].split('.')[0]
+                try:
+                    frame_number = frame.split('_')[1].split('.')[0]
+                except IndexError:
+                    frame_number = frame.split('.')[0]
                 
                 # Copy image
                 shutil.copy2(
@@ -132,7 +147,10 @@ def split_dataset(source_frames: str, source_labels: str, dest_base_path: str, t
             # Process validation set for this fold
             for idx in val_indices:
                 frame = frame_files[idx]
-                frame_number = frame.split('_')[1].split('.')[0]
+                try:
+                    frame_number = frame.split('_')[1].split('.')[0]
+                except IndexError:
+                    frame_number = frame.split('.')[0]
                 
                 # Copy image
                 shutil.copy2(
@@ -170,7 +188,10 @@ def split_dataset(source_frames: str, source_labels: str, dest_base_path: str, t
             # Process training set for this fold (25%)
             for idx in train_indices:
                 frame = frame_files[idx]
-                frame_number = frame.split('_')[1].split('.')[0]
+                try:
+                    frame_number = frame.split('_')[1].split('.')[0]
+                except IndexError:
+                    frame_number = frame.split('.')[0]
                 
                 # Copy image
                 shutil.copy2(
@@ -190,7 +211,10 @@ def split_dataset(source_frames: str, source_labels: str, dest_base_path: str, t
             # Process validation set for this fold (75%)
             for idx in val_indices:
                 frame = frame_files[idx]
-                frame_number = frame.split('_')[1].split('.')[0]
+                try:
+                    frame_number = frame.split('_')[1].split('.')[0]
+                except IndexError:
+                    frame_number = frame.split('.')[0]
                 
                 # Copy image
                 shutil.copy2(
@@ -211,7 +235,7 @@ def create_dataset_yml(base_path: str, num_classes: int = 1, class_names: list =
     """Create the dataset YAML file.
 
     Args:
-        dest_base_path (str): Destination path for the dataset.
+        base_path (str): Destination path for the dataset.
         num_classes (int, optional): Number of classes. Defaults to 1.
         class_names (list, optional): List of class names. Defaults to ['car'].
     """

@@ -43,7 +43,7 @@ def write_results_to_txt(track_eval_format, output_path):
 
 
 
-detections, detections_vect = read_detections_from_txt('/ghome/c3mcv02/mcv-c6-2025-team1/week2/src/tracking/detections_yolo_backbone.txt')  
+detections, detections_vect = read_detections_from_txt('/ghome/c3mcv02/mcv-c6-2025-team1/week2/src/tracking/detections_yolo.txt')  
 #print(f"Detections: {detections}")
 
 # Create instance of the SORT tracker (default params: max_age=1, min_hits=3, iou_threshold=0.3)

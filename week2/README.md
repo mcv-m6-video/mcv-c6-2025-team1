@@ -9,7 +9,7 @@
     - [Task 1.3: K-Fold Cross Validation](#task-13-k-fold-cross-validation)
 - [Task 2: Object tracking](#task-2-object-tracking)
     - [Task 2.1: Tracking by overlap](#task-21-tracking-by-overlap)
-    - [Task 2.2: Tracking with KF](#task-22-tracking-with-kf)
+    - [Task 2.2: Tracking with Kalman Filter (KF)](#task-22-tracking-with-kalman-filter-kf)
     - [Task 2.3: IDF1, HOTA scores](#task-23-idf1-hota-scores)
 
 
@@ -151,7 +151,11 @@ In all cases depicted below, green boxes always refer to GT boxes and red ones a
 > [!WARNING]
 > Some Ground Truth bounding boxes are not correctly placed due to some human errors in the annotations. Take that into account when comparing predicted and GT boxes.
 
-- **YOLOv11 and YOLOv12:**
+- **YOLOv11:**
+
+The image shown represents one of the first frames in the sequence. Some parked cars in the background are not correctly detected due to occlusions, and several bounding boxes don't align precisely with the Ground Truth annotations, despite the cars themselves being successfully detected.
+
+![image](https://github.com/user-attachments/assets/516e27a8-dbe5-4c5e-84cf-300f9fbded5f)
 
 - **Faster R-CNN:**
 
@@ -179,6 +183,12 @@ Below is an example output, where the model successfully detects vehicles in the
 ![first_frame_detr](https://github.com/user-attachments/assets/46b3662a-695e-4757-8ce8-5a69f6c56401)
 
 - **SSD:**
+
+Unlike the previous models, **SSD** detects fewer objects in this scenario. In the image shown, it only identifies **two** cars, whereas models like **DETR** manage to detect up to **six** vehicles in the same frame.
+
+This result suggests that SSD might be less sensitive to certain objects in the scene, possibly due to its multi-scale detection approach with predefined anchor boxes, which can affect its performance in scenarios with small or partially occluded objects.
+
+![ssd_fist_frame](https://github.com/user-attachments/assets/adfdda12-24c6-4813-9e0f-8f9581808090)
 
 
 ### Task 1.2: Fine-tuning to our data
@@ -217,9 +227,10 @@ ffmpeg -i <VIDEO_INPUT> -frame_pts 1 <SOURCE_FRAMES_PATH>/frame_%d.jpg
 #### Results with Strategy A
 The following table shows the results for the training strategy A:
 
-| Epoch | Time (s) | Training Losses (Box/Cls/DFL) | Precision | Recall  | mAP50   | mAP50-95 | Validation Losses (Box/Cls/DFL) | Learning Rates (pg0/pg1/pg2)    |
-|-------|----------|-------------------------------|-----------|---------|---------|----------|----------------------------------|----------------------------------|
-| 50    | 1437.8   | 0.20237 / 0.15533 / 0.76793  | 0.98477   | 0.93714 | 0.97813 | 0.91076  | 0.3312 / 0.22667 / 0.74787       | 5.96e-05 / 5.96e-05 / 5.96e-05  |
+| Strategy | Precision | Recall  | mAP50   | mAP50-95 |
+|------------------|---------|---------|----------|----------------------------------|
+| Fully unfrozen    | 0.98477   | 0.93714 | 0.97813 | 0.91076  |
+| Backbone frozen    | 0.98257   | 0.95637 | 0.98614 | 0.91917  |
 
 
 ### Task 1.3: K-Fold Cross Validation
@@ -228,15 +239,17 @@ The following table shows the results for the training strategy A:
 In order to evaluate K-Fold results, you may use the following script:
 
 ```bash
-python3 -m src.finetuning_yolo.evaluate_kfold -p <PATH_TO_YOUR_KFOLD_RESULTS> (--is_random)
+python3 -m src.finetuning_yolo.evaluate_kfold -p <PATH_TO_YOUR_KFOLD_RESULTS> [--is_random]
 ```
 
 The flag `--is_random` is used to evaluate random fold (if not used, then it will evaluate fixed fold cases). The script will output the K-Fold mean and standard deviation of all metrics as in this table:
 
-| Strategy | Precision | Recall | mAP@50 |
-|----------|-----------|--------|--------|
-| B (fixed) | 0.9844 ± 0.0012 | 0.9512 ± 0.0083 | 0.9791 ± 0.0021 |
-| C (random) | 0.9929 ± 0.0009 | 0.9768 ± 0.0022 | 0.9889 ± 0.0009 |
+Fine tuning strategy | Data Strategy | Precision | Recall | mAP@50 |
+|--------------------|----------|-----------|--------|--------|
+| Fully unfrozen | B (fixed) | 0.9844 ± 0.0012 | 0.9512 ± 0.0083 | 0.9791 ± 0.0021 |
+| Backbone frozen | B (fixed) | 0.9826 ± 0.0014 | 0.9632 ± 0.0050 | 0.9867 ± 0.0004 |
+| Fully unfrozen | C (random) | 0.9929 ± 0.0009 | 0.9768 ± 0.0022 | 0.9889 ± 0.0009 |
+| Backbone frozen | C (random) | 0.9954 ± 0.0007 |0.9791 ± 0.0018 | 0.9915 ± 0.0013 |
 
 ## Task 2: Object tracking
 In this task, we focus on object tracking, specially using the **tracking-by-detection** approach. This method relies on object detections obtained through inference from the best-performing model in **Task 1.3 (Strategy C)**. The primary goal is to consistenly track objects across frames while ensuring that each object retains a unique ID throughout the sequence. 
@@ -263,7 +276,34 @@ To extract tracking results, run the following command:
 ```bash
 python tracking/overlap.py
 ```
-### Task 2.2: Tracking with KF
+### Task 2.2: Tracking with Kalman Filter (KF)  
+
+**Tracking with KF** assigns unique track IDs to objects across frames using a **Kalman Filter (KF)** to predict motion and associates detections based on spatial overlap.  
+
+#### Algorithm  
+We use the `Sort(object)` class from [`sort.py`](https://github.com/abewley/sort/tree/master). The state of each tracked object is represented as a **7-element vector**:  
+`[xc, yc, s, r, vx, vy, vs]`, where `[xc, yc]` is the 2D bounding box (2DBB) center, `s` is the scale (area), `r` is the aspect ratio, and `[vx, vy, vs]` are velocities (aspect ratio remains constant).  
+
+#### Kalman Filter Steps  
+
+The KF approach can be summarized into 2 main steps. For each object:
+1. **Prediction:** Estimates object position in the current frame of all active trackers using a linear constant velocity motion model.  
+2. **Update:** Computes IoU between active trackers' predicted poses and current detections. Based on IoU, detections are associated/matched to active trackers, so matched trackers' states are updated. New trackers are created for all unmatched detections, and unmatched trackers are removed (if they have not been updated for max. number of consecutive frames).  
+
+#### Initialization Parameters  
+
+- **max_age:** Max frames a tracker stays active without updates.  
+- **min_hits:** Min frames an object must be detected to be considered valid.  
+- **iou_threshold:** IoU threshold for matching detections to trackers.
+
+The tracking results are stored in the required evaluation format, including **frame ID, track ID, bounding box coordinates, confidence score, etc.**  
+
+To extract tracking results, run the following command:  
+
+```bash
+python tracking/tracking_kf.py
+```
+The initialization parameters can be set to different values in line 50 (`mot_tracker = Sort(max_age = 21, min_hits=3, iou_threshold=0.1)`) of `tracking_kf.py`. 
 
 ### Task 2.3: IDF1, HOTA scores
 To evaluate the performance of the tracking algorithm, we use the **TrackEval** framework. TrackEval is a tool designed to compute various tracking performance metrics, including **IDF1** and **HOTA** scores, which are commonly used in multi-object tracking (MOT) tasks.
@@ -319,7 +359,19 @@ python tracking/TrackEval/scripts/run_mot_challenge.py \
 
 The table below presents the **HOTA** and **IDF1** scores for two different tracking algorithms:
 
-| Tracker | HOTA Score | IDF1 Score |
-|---------|------------|------------|
-| Tracking by overlap (iou=0.4) | 83.21 | 80.92 |
-| Tracking with KF | XX.XX | XX.XX |
+| Tracker                                | Training Strategy  | HOTA Score | IDF1 Score |
+|----------------------------------------|--------------------|------------|------------|
+| Tracking by overlap (IoU=0.5)         | Fully Unfrozen     | 82.624     | 80.494     |
+| Tracking by overlap (IoU=0.45)        | Fully Unfrozen     | 82.793     | 80.917     |
+| Tracking by overlap (IoU=0.4)         | Fully Unfrozen     | 83.205     | 82.079     |
+| Tracking by overlap (IoU=0.5)         | Backbone Frozen    | 75.846     | 70.764     |
+| Tracking by overlap (IoU=0.45)        | Backbone Frozen    | 75.906     | 70.94      |
+| Tracking by overlap (IoU=0.4)         | Backbone Frozen    | 75.747     | 71.574     |
+| Tracking with Kalman Filter (KF, max_age=21, min_hits=2, IoU=0.2) | Fully Unfrozen     | 88.69 | 93.77 |
+| Tracking with Kalman Filter (KF, max_age=21, min_hits=2, IoU=0.1) | Fully Unfrozen     | 88.66 | 93.70 |
+| Tracking with Kalman Filter (KF, max_age=21, min_hits=3, IoU=0.1) | Fully Unfrozen     | 88.58 | 93.69 |
+| Tracking with Kalman Filter (KF, max_age=21, min_hits=2, IoU=0.2) | Backbone Frozen    | 86.54 | 89.17 |
+| Tracking with Kalman Filter (KF, max_age=21, min_hits=2, IoU=0.1) | Backbone Frozen    | 86.57 | 89.24 |
+| Tracking with Kalman Filter (KF, max_age=21, min_hits=3, IoU=0.1) | Backbone Frozen    | 86.51 | 89.22 |
+
+

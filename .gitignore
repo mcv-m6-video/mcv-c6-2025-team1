@@ -11,13 +11,11 @@ src/output_videos_adaptive_opt
 src/visualization
 
 # YOLO stuff
-week2/dataset/
-week2/dataset_strategyA/
-week2/dataset_strategyB/
-week2/dataset_strategyC/
+week2/dataset
 week2/runs/
 week2/kfold_results/
 week2/yolo_finetuning_results
+week2/yolo*
 
 # To avoid including videos and images
 *.avi
@@ -201,7 +199,7 @@ cython_debug/
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
-#.idea/
+.idea/
 
 # PyPI configuration file
 .pypirc
