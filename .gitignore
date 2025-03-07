@@ -19,10 +19,12 @@ week2/runs/
 week2/kfold_results/
 week2/yolo_finetuning_results
 
-# To avoid including videos
+# To avoid including videos and images
 *.avi
 *.mp4
 *.gif
+*.png
+*.jpg
 
 # Error and output logs
 *.err
