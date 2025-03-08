@@ -12,9 +12,9 @@
     - [Task 2.2: Evaluate your best tracking algorithm in SEQ03 of AI City Challenge](#task-22-tracking-with-kalman-filter-kf)
 
 
-### Project Structure W2
+### Project Structure W3
 
-    week2/
+    week3/
     ├── src/
     │   ├── optical_flow/
     │   │   ├── of.py
@@ -24,4 +24,4 @@
     │   ├── utils.py
     │   └── ...
 
-## Task 1: Object detection
+## Task 1: Optical flow
