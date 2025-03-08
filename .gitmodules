@@ -4,3 +4,6 @@
 [submodule "week3/src/optical_flow/pyflow"]
 	path = week3/src/optical_flow/pyflow
 	url = https://github.com/pathak22/pyflow.git
+[submodule "week3/src/tracking/TrackEval"]
+	path = week3/src/tracking/TrackEval
+	url = https://github.com/JonathonLuiten/TrackEval.git
