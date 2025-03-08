@@ -44,8 +44,9 @@ These are the off-the-shelf optical flow methods that we have tested in the Sequ
 **6. DIP**: An end-to-end deep learning method based on Patchmatch, designed for high-resolution optical flow prediction. It introduces a novel inverse propagation module to enhance motion estimation in complex scenes.
 
 To run any of the above methods, use the following command:
+
 ```bash
-python optical_flow/of.py <method>
+python optical_flow/of.py -m <METHOD> -gt <GT_PATH> -im1 <PATH_TO_FIRST_IMG> -im2 <PATH_TO_SECOND_IMG> 
 ```
 
 ### Task 1.2: Improve Tracking with Optical Flow

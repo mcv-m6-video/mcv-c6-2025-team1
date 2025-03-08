@@ -1,10 +1,17 @@
 import numpy as np
 import png
-def read_png_file(flow_file):  # from https://github.com/liruoteng/OpticalFlowToolkit/tree/master
-    """
-    Read from KITTI .png file
-    :param flow_file: name of the flow file
-    :return: optical flow data in matrix
+
+
+def read_png_file(flow_file: str) -> np.ndarray:
+    """Read from KITTI .png file.
+    
+    Taken from: https://github.com/liruoteng/OpticalFlowToolkit/blob/master/lib/flowlib.py#L559 
+    
+    Args:
+        flow_file (str): Name of the flow file
+
+    Returns:
+        np.ndarray: Optical flow data in matrix
     """
     flow_object = png.Reader(filename=flow_file)
     flow_direct = flow_object.asDirect()
@@ -23,36 +30,18 @@ def read_png_file(flow_file):  # from https://github.com/liruoteng/OpticalFlowTo
     flow[invalid_idx, 1] = 0
     return flow
 
-def compute_flow_metrics(flow, gt): #Team 1 2024 :)
-    # Binary mask to discard non-occluded areas
-    # non_occluded_areas = gt[:,:,2] != 0
 
-    # Only for the first 2 channels
-    square_error_matrix = (flow[:, :, 0:2] - gt[:, :, 0:2]) ** 2
-    square_error_matrix_valid = square_error_matrix * np.stack(
-        (gt[:, :, 2], gt[:, :, 2]), axis=2
-    )
-    # 
-    # square_error_matrix_valid = square_error_matrix[non_occluded_areas]
+# Team 6 2024 
+def calculate_msen(gt_flow: np.ndarray, pred_flow: np.ndarray) -> float:
+    """Calculates the MSEN metric given a GT and predicted flows.
 
-    # non_occluded_pixels = np.shape(square_error_matrix_valid)[0]
-    non_occluded_pixels = np.sum(gt[:, :, 2] != 0)
+    Args:
+        gt_flow (np.ndarray): GT optical flow
+        pred_flow (np.ndarray): Predicted optical flow
 
-    # Compute MSEN
-    pixel_error_matrix = np.sqrt(
-        np.sum(square_error_matrix_valid, axis=2)
-    )  # Pixel error for both u and v
-    msen = (1 / non_occluded_pixels) * np.sum(
-        pixel_error_matrix
-    )  # Average error for all non-occluded pixels
-
-    # Compute PEPN
-    erroneous_pixels = np.sum(pixel_error_matrix > 3)
-    pepn = erroneous_pixels / non_occluded_pixels
-
-    return msen, pepn, pixel_error_matrix
-
-def calculate_msen(gt_flow, pred_flow):
+    Returns:
+        float: Result of the MSEN metric.
+    """
     mask = gt_flow[:, :, 2] == 1 # mask of the valid points
     error_u = gt_flow[:, :, 0] - pred_flow[:, :, 0]
     error_v = gt_flow[:, :, 1] - pred_flow[:, :, 1]
@@ -64,7 +53,17 @@ def calculate_msen(gt_flow, pred_flow):
     return msen
 
 
-def calculate_pepn(gt_flow, pred_flow, th=3):
+def calculate_pepn(gt_flow: np.ndarray, pred_flow: np.ndarray, th: int=3) -> float:
+    """Calculates the PEPN metric given a GT and predicted flow under a threshold.
+
+    Args:
+        gt_flow (np.ndarray): Ground Truth optical flow
+        pred_flow (np.ndarray): Predicted optical flow
+        th (int, optional): Threshold for the PEPN sqrt error metric. Defaults to 3.
+
+    Returns:
+        float: Result of the PEPN metric.
+    """
     mask = gt_flow[:, :, 2] == 1 # mask of the valid points
     error_u = gt_flow[:, :, 0] - pred_flow[:, :, 0]
     error_v = gt_flow[:, :, 1] - pred_flow[:, :, 1]
