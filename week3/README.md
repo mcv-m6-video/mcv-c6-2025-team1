@@ -45,7 +45,7 @@ These are the off-the-shelf optical flow methods that we have tested in the Sequ
 
 To run any of the above methods, use the following command:
 ```bash
-python optical_flow/of.py <method>
+python optical_flow/of.py --m <method>
 ```
 
 ### Task 1.2: Improve Tracking with Optical Flow
