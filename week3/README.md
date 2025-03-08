@@ -2,14 +2,14 @@
 
 ## Table of Contents
 
-- [Project Structure W3](#project-structure-w2)
-- [Task 1: Optical flow](#task-1-object-detection)
-    - [Task 1.1: Off-the-shelf](#task-11-off-the-shelf)
-    - [Task 1.2: Improve tracking with optical flow](#task-12-fine-tuning-to-our-data)
+- [Project Structure W3](#project-structure-w3)
+- [Task 1: Optical flow](#task-1-optical-flow)  
+    - [Task 1.1: Off-the-shelf](#task-11-off-the-shelf)  
+    - [Task 1.2: Improve tracking with optical flow](#task-12-improve-tracking-with-optical-flow)  
 
-- [Task 2: Multi-Target Single-Camera tracking](#task-2-object-tracking)
-    - [Task 2.1: Evaluate your best tracking algorithm in SEQ01 of AI City Challenge](#task-21-tracking-by-overlap)
-    - [Task 2.2: Evaluate your best tracking algorithm in SEQ03 of AI City Challenge](#task-22-tracking-with-kalman-filter-kf)
+- [Task 2: Multi-Target Single-Camera tracking](#task-2-multi-target-single-camera-tracking)  
+    - [Task 2.1: Evaluate your best tracking algorithm in SEQ01 of AI City Challenge](#task-21-evaluate-your-best-tracking-algorithm-in-seq01-of-ai-city-challenge)  
+    - [Task 2.2: Evaluate your best tracking algorithm in SEQ03 of AI City Challenge](#task-22-evaluate-your-best-tracking-algorithm-in-seq03-of-ai-city-challenge)  
 
 
 ### Project Structure W3
@@ -25,3 +25,5 @@
     │   └── ...
 
 ## Task 1: Optical flow
+
+### Task 1.1.: Off-the-shelf
