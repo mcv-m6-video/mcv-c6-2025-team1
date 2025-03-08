@@ -24,6 +24,15 @@
     │   ├── utils.py
     │   └── ...
 
-## Task 1: Optical flow
+## Task 1: Optical Flow
 
-### Task 1.1.: Off-the-shelf
+### Task 1.1: Off-the-Shelf
+
+### Task 1.2: Improve Tracking with Optical Flow
+
+## Task 2: Multi-Target Single-Camera Tracking
+
+### Task 2.1: Evaluate Your Best Tracking Algorithm in SEQ01 of AI City Challenge
+
+### Task 2.2: Evaluate Your Best Tracking Algorithm in SEQ03 of AI City Challenge
+
