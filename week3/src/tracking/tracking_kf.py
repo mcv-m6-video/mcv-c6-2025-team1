@@ -1,178 +1,121 @@
-from utils import iou
-from collections import defaultdict
 import cv2
 import numpy as np
-from sort import Sort
-import ptlflow
-from ptlflow.utils.io_adapter import IOAdapter
+import argparse
+import time
 
-def compute_optical_flow(img1, img2):
-    """
-    Compute optical flow using RAFT (Recurrent All-Pairs Field Transforms) between two images.
-
-    Args:
-        img1 (np.array): The first image (prev_frame).
-        img2 (np.array): The second image (curr_frame).
-
-    Returns:
-        np.array: Optical flow in the form of (u, v) components stacked together.
-    """
-    img1_rgb = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
-    img2_rgb = cv2.cvtColor(img2, cv2.COLOR_BGR2RGB)
-
-    model_ptlflow = ptlflow.get_model('rpknet', ckpt_path='things')
-    io_adapter = IOAdapter(model_ptlflow, img1_rgb.shape[:2])
-    inputs = io_adapter.prepare_inputs([img1_rgb, img2_rgb])
-
-    predictions = model_ptlflow(inputs)
-    flow = predictions['flows'][0, 0]  # Remove batch and sequence dimensions
-    flow = flow.permute(1, 2, 0)  # Convert from CHW to HWC format
-
-    u = flow[:, :, 0].detach().numpy()  # Horizontal flow component
-    v = flow[:, :, 1].detach().numpy()  # Vertical flow component
-
-    return np.dstack((u, v))
+from src.tracking.utils import write_results_to_txt, read_detections_from_txt
+from src.tracking.sort import Sort
+from src.optical_flow.of import OpticalFlow
 
 
-def read_detections_from_txt(file_path):
-    detections = {}
-    detections_vect = []
-    with open(file_path, 'r') as file:
-        for line in file:
-            data = line.strip().split(',')
-            frame_id = int(data[0])
-            bbox_left = float(data[2])
-            bbox_top = float(data[3])
-            bbox_width = float(data[4])
-            bbox_height = float(data[5])
-            confidence_score = float(data[6])
-
-            # Store in dictionary with frame_id as key
-            if frame_id not in detections:
-                detections[frame_id] = []
-            
-            detections[frame_id].append({
-                "bb_left": bbox_left,
-                "bb_top": bbox_top,
-                "bb_w": bbox_width,
-                "bb_h": bbox_height,
-                "score": confidence_score
-            })
-
-            detections_vect.append([frame_id, bbox_left, bbox_top,bbox_width,bbox_height, confidence_score])
-
-    return detections, detections_vect
-
-
-def write_results_to_txt(track_eval_format, output_path):
-    with open(output_path, 'w') as file:
-        file.writelines(track_eval_format)
-    print(f"Results written to {output_path}")
-
-
-
-
-
-detections, detections_vect = read_detections_from_txt('/ghome/c5mcv01/mcv-c6-2025-team1/week3/src/tracking/detections_yolo.txt')  
-#print(f"Detections: {detections}")
-
-# Create instance of the SORT tracker (default params: max_age=1, min_hits=3, iou_threshold=0.3)
-mot_tracker = Sort(max_age = 21, min_hits=2, iou_threshold=0.2) 
-
-# Open the video
-cap = cv2.VideoCapture("/ghome/c5mcv01/mcv-c6-2025-team1/data/AICity_data/train/S03/c010/vdo.avi")
-
-# Get video information (frame size, fps, etc.)
-fps = cap.get(cv2.CAP_PROP_FPS)
-frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-
-# Prepare the output video writer
-fourcc = cv2.VideoWriter_fourcc(*'XVID')
-out = cv2.VideoWriter("/ghome/c5mcv01/mcv-c6-2025-team1/week3/src/tracking/kf.avi", fourcc, fps, (frame_width, frame_height))
-
-# Initialize variables for optical flow
-prev_frame = None
-prev_gray = None
-prev_points = None
-
-# Process each frame of the video
-track_eval_format = []
-while cap.isOpened():
-    ret, frame = cap.read()
-    if not ret:
-        break
-
-    # Convert the frame to grayscale for optical flow calculation
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-    # Get the current frame number
-    frame_number = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
-    print("-" * 50)
-    print(f"Processing frame {frame_number}")
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Kalman-filter algorithm for tracking with optical flow.")
+    parser.add_argument("-d", "--detection_file_path", help="Path to the object detections TXT file.", required=True, type=str)
+    parser.add_argument("-v", "--video_path", help="Path to the video file.", type=str, required=True)
+    parser.add_argument("-ov", "--output_video_path", help="Path to the output video.", required=True, type=str)
+    parser.add_argument("-o", "--output_path", help="Path to TXT file where the results will be stored", required=True, type=str)
+    parser.add_argument("-m", "--of_model", help="Optical flow model to use.", required=False, default="rpknet", type=str, choices=["pyflow", "diclflow", "memflow", "rapidflow", "rpknet", "dip"])
+    parser.add_argument("--max_age", required=False, default=21, type=int, help="Max age for SORT.")
+    parser.add_argument("--min_hit", help="Min hit for SORT.", required=False, default=2, type=int)
+    parser.add_argument("--iou_threshold", help="IoU threshold for SORT.", required=False, type=float, default=0.2)
+    args = parser.parse_args()
     
-    actual_bb = [detection[1:5] for detection in detections_vect if detection[0] == frame_number]  
-    actual_bb = np.array(actual_bb)
+    
+    #detections, detections_vect = read_detections_from_txt('/ghome/c5mcv01/mcv-c6-2025-team1/week3/src/tracking/detections_yolo.txt')  
+    detections, detections_vect = read_detections_from_txt(args.detection_file_path)
 
-    if prev_frame is not None:
-        # Use optical flow to track motion between frames
-        flow = compute_optical_flow(prev_frame, frame)
+    # Create instance of the SORT tracker (default params: max_age=1, min_hits=3, iou_threshold=0.3)
+    mot_tracker = Sort(max_age = args.max_age, min_hits=args.min_hit, iou_threshold=args.iou_threshold) 
+
+    # Open the video
+    # cap = cv2.VideoCapture("/ghome/c5mcv01/mcv-c6-2025-team1/data/AICity_data/train/S03/c010/vdo.avi")
+    cap = cv2.VideoCapture(args.video_path)
+
+    # Get video information (frame size, fps, etc.)
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+    # Prepare the output video writer
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    out = cv2.VideoWriter(args.output_video_path, fourcc, fps, (frame_width, frame_height))
+
+    # Initialize variables for optical flow
+    prev_frame = None
+    prev_gray = None
+    prev_points = None
+    
+    # Define optical flow model
+    optical_flow = OpticalFlow(args.of_model)
+
+    # Process each frame of the video
+    track_eval_format = []
+    while cap.isOpened():
+        ret, frame_bgr = cap.read()
+        if not ret:
+            break
+
+        # Convert the frame to grayscale for optical flow calculation
+        frame = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2GRAY)
+
+        # Get the current frame number
+        frame_number = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
+        print("-" * 50)
+        print(f"Processing frame {frame_number}")
+        init_time_frame = time.time()
         
-        # Use the optical flow to adjust bounding box positions
-        for i, bbox in enumerate(actual_bb):
-            x1, y1, w, h = bbox
-            flow_x = flow[int(y1), int(x1)][0]  # Horizontal flow component at top-left corner
-            flow_y = flow[int(y1), int(x1)][1]  # Vertical flow component at top-left corner
-            actual_bb[i, 0] += flow_x  # Update x-coordinate based on flow
-            actual_bb[i, 1] += flow_y  # Update y-coordinate based on flow
+        actual_bb = [detection[1:5] for detection in detections_vect if detection[0] == frame_number]  
+        actual_bb = np.array(actual_bb)
 
-    # Use SORT tracker for object tracking
-    if len(actual_bb) > 0:
-        actual_bb[:, 2] += actual_bb[:, 0]  # x2 = x1 + w
-        actual_bb[:, 3] += actual_bb[:, 1]  # y2 = y1 + h
+        if prev_frame is not None:
+            # Use optical flow to track motion between frames
+            init_time_of = time.time()
+            flow = optical_flow.compute_flow(prev_frame, frame)
+            print(f"Optical flow computed in {time.time() - init_time_of} seconds.")
+            
+            # Use the optical flow to adjust bounding box positions
+            for i, bbox in enumerate(actual_bb):
+                x1, y1, w, h = bbox
+                flow_x = flow[int(y1), int(x1)][0]  # Horizontal flow component at top-left corner
+                flow_y = flow[int(y1), int(x1)][1]  # Vertical flow component at top-left corner
+                actual_bb[i, 0] += flow_x 
+                actual_bb[i, 1] += flow_y
 
-        # Run the SORT tracker
-        tracked_cars = mot_tracker.update(actual_bb)
-    else:
-        tracked_cars = mot_tracker.update(np.empty((0, 5)))
+        # Use SORT tracker for object tracking
+        init_time_sort = time.time()
+        if len(actual_bb) > 0:
+            actual_bb[:, 2] += actual_bb[:, 0]  # x2 = x1 + w
+            actual_bb[:, 3] += actual_bb[:, 1]  # y2 = y1 + h
 
-    # Draw tracked 2D bounding boxes and optical flow vectors
-    for obj in tracked_cars:
-        x1, y1, x2, y2, track_id = map(int, obj)
+            # Run the SORT tracker
+            tracked_cars = mot_tracker.update(actual_bb)
+        else:
+            tracked_cars = mot_tracker.update(np.empty((0, 5)))
+        print(f"SORT processed in {time.time() - init_time_sort} seconds.")
 
-        # Draw bounding box (red)
-        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 255), 2)
-        cv2.putText(frame, f"ID: {track_id}", (x1, y1 - 10), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+        # Draw tracked 2D bounding boxes and optical flow vectors
+        for obj in tracked_cars:
+            x1, y1, x2, y2, track_id = map(int, obj)
 
-        # Store tracking information for output
-        track_eval_format.append(f"{frame_number}, {track_id}, {x1}, {y1}, {x2-x1}, {y2-y1}, -1, -1, -1, -1\n")
+            # Draw bounding box (red)
+            cv2.rectangle(frame_bgr, (x1, y1), (x2, y2), (0, 0, 255), 2)
+            cv2.putText(frame_bgr, f"ID: {track_id}", (x1, y1 - 10), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
 
-    # Write the frame with bounding boxes and tracking info to the output video
-    out.write(frame)
+            # Store tracking information for output
+            track_eval_format.append(f"{frame_number}, {track_id}, {x1}, {y1}, {x2-x1}, {y2-y1}, -1, -1, -1, -1\n")
 
-    # Update previous frame for the next iteration
-    prev_frame = frame
+        # Write the frame with bounding boxes and tracking info to the output video
+        out.write(frame_bgr)
 
-# Release resources
-cap.release()
-out.release()
+        # Update previous frame for the next iteration
+        prev_frame = frame
+        print(f"Frame processed in {time.time() - init_time_frame} seconds.")
 
-# Save the tracking results to a text file
-write_results_to_txt(track_eval_format, '/ghome/c5mcv01/mcv-c6-2025-team1/week3/src/tracking/s03_with_of.txt')
+    # Release resources
+    cap.release()
+    out.release()
 
-print("Annotated video with bounding boxes, track IDs, and optical flow vectors saved.")
-
-
-
-
-
-
-
-
-
-
-
-
-                
-                
+    # Save the tracking results to a text file
+    write_results_to_txt(track_eval_format, args.output_path)
+    print("Annotated video with bounding boxes, track IDs, and optical flow vectors saved.")

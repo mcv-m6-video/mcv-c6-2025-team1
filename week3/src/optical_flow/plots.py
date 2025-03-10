@@ -1,4 +1,5 @@
 import cv2
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
@@ -6,21 +7,36 @@ import matplotlib.cm as cm
 from matplotlib.colors import Normalize
 
 
-def hsv_plot(flow: np.ndarray, filename: str): # Team 1 2024 
+def hsv_plot(flow: np.ndarray, filename: str):
     """Computes the HSV plot given an opticalflow into a file given a filename.
 
     Args:
         flow (np.ndarray): Optical flow matrix.
         filename (str): Output file name.
     """
-    w, h, _ = flow.shape
-    hsv = np.zeros((w, h, 3), dtype=np.uint8)
+    results_dir = './results'
+    if not os.path.exists(results_dir):
+        os.makedirs(results_dir)
+    
+    # The shape should be h, w, _ (height first, width second)
+    h, w, _ = flow.shape  # Fixed: swapped w and h
+    
+    # Create HSV array with correct dimensions (h, w) not (w, h)
+    hsv = np.zeros((h, w, 3), dtype=np.uint8)
     hsv[..., 1] = 255
-    mag, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1])
+    
+    # Ensure flow components are float32
+    flow_x = flow[..., 0].astype(np.float32)
+    flow_y = flow[..., 1].astype(np.float32)
+    
+    # Calculate magnitude and angle
+    mag, ang = cv2.cartToPolar(flow_x, flow_y)
+    
     hsv[..., 0] = ang * 180 / np.pi / 2
     hsv[..., 2] = cv2.normalize(mag, None, 0, 255, cv2.NORM_MINMAX)
     rgb = cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)
-    output_path = f'./results/magnitude_{filename}.png'
+    
+    output_path = f'{results_dir}/magnitude_{filename}.png'
     cv2.imwrite(output_path, rgb)
 
 

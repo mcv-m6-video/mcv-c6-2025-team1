@@ -1,4 +1,5 @@
 import numpy as np
+
 from lxml import etree
 
 
@@ -124,3 +125,53 @@ def read_annotations(annotations_path: str):
                 car_boxes[frame] = [box_attributes]
     
     return car_boxes
+
+
+def write_results_to_txt(track_eval_format: list, output_path: str):
+    """Write the results to a TXT file.
+
+    Args:
+        track_eval_format (list): List of track evaluations.
+        output_path (str): Output path to save the evaluations as TXT.
+    """
+    with open(output_path, 'w') as file:
+        file.writelines(track_eval_format)
+    print(f"Results written to {output_path}")
+
+
+def read_detections_from_txt(file_path: str) -> tuple[dict, list]:
+    """Reads the detections from txt file.
+
+    Args:
+        file_path (str): File path.
+
+    Returns:
+        tuple[dict, list]: Dictionary and list of frame detections from TXT file. Format: [FrameID, X, Y, W, H, score]
+    """
+    detections = {}
+    detections_vect = []
+    with open(file_path, 'r') as file:
+        for line in file:
+            data = line.strip().split(',')
+            frame_id = int(data[0])
+            bbox_left = float(data[2])
+            bbox_top = float(data[3])
+            bbox_width = float(data[4])
+            bbox_height = float(data[5])
+            confidence_score = float(data[6])
+
+            # Store in dictionary with frame_id as key
+            if frame_id not in detections:
+                detections[frame_id] = []
+            
+            detections[frame_id].append({
+                "bb_left": bbox_left,
+                "bb_top": bbox_top,
+                "bb_w": bbox_width,
+                "bb_h": bbox_height,
+                "score": confidence_score
+            })
+
+            detections_vect.append([frame_id, bbox_left, bbox_top, bbox_width, bbox_height, confidence_score])
+
+    return detections, detections_vect

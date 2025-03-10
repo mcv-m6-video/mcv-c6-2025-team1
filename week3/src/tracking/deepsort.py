@@ -1,94 +1,100 @@
-from deep_sort_realtime.deepsort_tracker import DeepSort
 import cv2
 import numpy as np
-import ptlflow
-from ptlflow.utils.io_adapter import IOAdapter
+import argparse
+import time
 
-def compute_optical_flow(img1, img2):
-    img1_rgb = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
-    img2_rgb = cv2.cvtColor(img2, cv2.COLOR_BGR2RGB)
+from src.tracking.utils import write_results_to_txt, read_detections_from_txt
+from boxmot import DeepOCSORT  # Import DeepOCSORT from boxmot
+from src.optical_flow.of import OpticalFlow
 
-    model_ptlflow = ptlflow.get_model('rapidflow', ckpt_path='things')
-    io_adapter = IOAdapter(model_ptlflow, img1_rgb.shape[:2])
-    inputs = io_adapter.prepare_inputs([img1_rgb, img2_rgb])
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="DeepOCSORT tracking with Optical Flow.")
+    parser.add_argument("-d", "--detection_file_path", required=True, type=str, help="Path to the object detections TXT file.")
+    parser.add_argument("-v", "--video_path", required=True, type=str, help="Path to the video file.")
+    parser.add_argument("-ov", "--output_video_path", required=True, type=str, help="Path to the output video.")
+    parser.add_argument("-o", "--output_path", required=True, type=str, help="Path to TXT file where the results will be stored")
+    parser.add_argument("-m", "--of_model", default="rpknet", type=str, choices=["pyflow", "diclflow", "memflow", "rapidflow", "rpknet", "dip"], help="Optical flow model to use.")
+    args = parser.parse_args()
 
-    predictions = model_ptlflow(inputs)
-    flow = predictions['flows'][0, 0].permute(1, 2, 0)
+    # Cargar detecciones desde el archivo
+    detections, detections_vect = read_detections_from_txt(args.detection_file_path)
 
-    u = flow[:, :, 0].detach().numpy()
-    v = flow[:, :, 1].detach().numpy()
+    # Inicializar DeepOCSORT
+    tracker = DeepOCSORT()
 
-    return np.dstack((u, v))
+    # Abrir el video
+    cap = cv2.VideoCapture(args.video_path)
 
-def read_detections_from_txt(file_path):
-    detections = []
-    with open(file_path, 'r') as file:
-        for line in file:
-            data = line.strip().split(',')
-            frame_id = int(data[0])
-            x1 = float(data[2])
-            y1 = float(data[3])
-            w = float(data[4])
-            h = float(data[5])
-            score = float(data[6])
-            detections.append([frame_id, x1, y1, x1 + w, y1 + h, score])
-    return detections
+    # Obtener información del video
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-def write_results_to_txt(track_eval_format, output_path):
-    with open(output_path, 'w') as file:
-        file.writelines(track_eval_format)
-    print(f"Results written to {output_path}")
+    # Preparar el writer para el video de salida
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    out = cv2.VideoWriter(args.output_video_path, fourcc, fps, (frame_width, frame_height))
 
-detections_vect = read_detections_from_txt('/ghome/c5mcv01/mcv-c6-2025-team1/week3/src/tracking/detections_yolo.txt')  
-tracker = DeepSort(max_age=30, n_init=3, max_cosine_distance=0.3)
+    # Inicializar Optical Flow
+    prev_frame = None
+    optical_flow = OpticalFlow(args.of_model)
 
-cap = cv2.VideoCapture("/ghome/c5mcv01/mcv-c6-2025-team1/data/AICity_data/train/S03/c010/vdo.avi")
-fps = cap.get(cv2.CAP_PROP_FPS)
-frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    # Procesar cada frame
+    track_eval_format = []
+    while cap.isOpened():
+        ret, frame_bgr = cap.read()
+        if not ret:
+            break
 
-fourcc = cv2.VideoWriter_fourcc(*'XVID')
-out = cv2.VideoWriter('kf_deepsort.avi', fourcc, fps, (frame_width, frame_height))
+        frame_gray = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2GRAY)
+        frame_number = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
+        print(f"Processing frame {frame_number}")
 
-prev_frame = None
-track_eval_format = []
+        # Obtener detecciones del frame actual
+        actual_bb = [detection[1:5] for detection in detections_vect if detection[0] == frame_number]
+        actual_scores = [detection[5] for detection in detections_vect if detection[0] == frame_number]
 
-while cap.isOpened():
-    ret, frame = cap.read()
-    if not ret:
-        break
+        # Convertir detecciones al formato DeepOCSORT [x1, y1, x2, y2]
+        actual_bb = np.array(actual_bb)
+        if len(actual_bb) > 0:
+            actual_bb[:, 2] += actual_bb[:, 0]  # x2 = x1 + w
+            actual_bb[:, 3] += actual_bb[:, 1]  # y2 = y1 + h
 
-    frame_number = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
-    actual_bb = [[float(d[1]), float(d[2]), float(d[1] + d[3]), float(d[2] + d[4]), float(d[5])] for d in detections_vect if d[0] == frame_number]
+            # Aplicar Optical Flow para ajustar bounding boxes
+            if prev_frame is not None:
+                flow = optical_flow.compute_flow(prev_frame, frame_gray)
+                for i, bbox in enumerate(actual_bb):
+                    x1, y1, _, _ = bbox
+                    flow_x = flow[int(y1), int(x1)][0]  # Componente x del flujo óptico
+                    flow_y = flow[int(y1), int(x1)][1]  # Componente y del flujo óptico
+                    actual_bb[i, 0] += flow_x
+                    actual_bb[i, 1] += flow_y
 
-    print(actual_bb)
+            # Preparar detecciones en el formato (x1, y1, x2, y2, confidence, class)
+            detections_for_tracker = np.hstack([actual_bb, np.array(actual_scores).reshape(-1, 1), np.zeros((len(actual_bb), 1))])  # Assume class = 0 for all
 
-    if prev_frame is not None:
-        flow = compute_optical_flow(prev_frame, frame)
-        for i, bbox in enumerate(actual_bb):
-            x1, y1, w, h = bbox
-            flow_x = flow[int(y1), int(x1)][0]  # Horizontal flow component at top-left corner
-            flow_y = flow[int(y1), int(x1)][1]  # Vertical flow component at top-left corner
-            actual_bb[i, 0] += flow_x  # Update x-coordinate based on flow
-            actual_bb[i, 1] += flow_y  # Update y-coordinate based on flow
+            # Actualizar el tracker con las detecciones
+            tracker_outputs = tracker.update(detections_for_tracker, frame_bgr)
 
-    if len(actual_bb) > 0:
-        tracked_objects = tracker.update_tracks(actual_bb, frame=frame)
-    else:
-        tracked_objects = tracker.update_tracks((np.empty((0, 5))), frame=frame)
+        else:
+            tracker_outputs = tracker.update(np.empty((0, 6)), frame_bgr)
 
-    for obj in tracked_objects:
-        track_id, x1, y1, x2, y2 = obj
-        cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
-        cv2.putText(frame, f"ID: {track_id}", (int(x1), int(y1) - 10), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
-        track_eval_format.append(f"{frame_number}, {track_id}, {int(x1)}, {int(y1)}, {int(x2-x1)}, {int(y2-y1)}, -1, -1, -1, -1\n")
+        # Dibujar bounding boxes y track IDs
+        for obj in tracker_outputs:
+            x1, y1, x2, y2, track_id, _, _ = map(int, obj)  # Unpack the output
+            cv2.rectangle(frame_bgr, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            cv2.putText(frame_bgr, f"ID: {track_id}", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
 
-    out.write(frame)
-    prev_frame = frame
+            # Guardar tracking info en formato de evaluación
+            track_eval_format.append(f"{frame_number}, {track_id}, {x1}, {y1}, {x2-x1}, {y2-y1}, -1, -1, -1, -1\n")
 
-cap.release()
-out.release()
-write_results_to_txt(track_eval_format, 's03_with_deepsort.txt')
+        # Guardar frame con anotaciones
+        out.write(frame_bgr)
+        prev_frame = frame_gray
 
-print("Tracking completed with DeepSORT and optical flow.")
+    # Liberar recursos
+    cap.release()
+    out.release()
+
+    # Guardar los resultados en TXT
+    write_results_to_txt(track_eval_format, args.output_path)
+    print("Annotated video with DeepOCSORT and Optical Flow saved.")

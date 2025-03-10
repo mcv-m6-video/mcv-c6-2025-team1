@@ -43,14 +43,14 @@ def write_results_to_txt(track_eval_format, output_path):
 
 
 
-detections, detections_vect = read_detections_from_txt('/ghome/c3mcv02/mcv-c6-2025-team1/week2/src/tracking/detections_yolo.txt')  
+detections, detections_vect = read_detections_from_txt('/ghome/c5mcv01/mcv-c6-2025-team1/week3/src/multi_target_tracking/detections_yolo_2_1/detections_c001.txt')  
 #print(f"Detections: {detections}")
 
 # Create instance of the SORT tracker (default params: max_age=1, min_hits=3, iou_threshold=0.3)
 mot_tracker = Sort(max_age = 21, min_hits=3, iou_threshold=0.1) 
 
 # Open the video
-cap = cv2.VideoCapture("/ghome/c3mcv02/mcv-c6-2025-team1/data/AICity_data/train/S03/c010/vdo.avi")
+cap = cv2.VideoCapture("/ghome/c5mcv01/mcv-c6-2025-team1/data/train/S01/c001/vdo.avi")
 
 # Get video information (frame size, fps, etc.)
 fps = cap.get(cv2.CAP_PROP_FPS)
@@ -59,7 +59,7 @@ frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
 # Prepare the output video writer
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
-out = cv2.VideoWriter("/ghome/c3mcv02/mcv-c6-2025-team1/week2/src/tracking/kf.avi", fourcc, fps, (frame_width, frame_height))
+out = cv2.VideoWriter("/ghome/c5mcv01/mcv-c6-2025-team1/week3/src/multi_target_tracking/videos/c001.avi", fourcc, fps, (frame_width, frame_height))
 
 # Process each frame of the video
 track_eval_format = []
@@ -114,7 +114,7 @@ while cap.isOpened():
 cap.release()
 out.release()
 
-write_results_to_txt(track_eval_format, '/ghome/c3mcv02/mcv-c6-2025-team1/week2/src/tracking/TrackEval/data/trackers/mot_challenge/week2-train/kalman/data/s03.txt')
+write_results_to_txt(track_eval_format, '/ghome/c5mcv01/mcv-c6-2025-team1/week3/src/multi_target_tracking/tracking_results/c001')
 
 print(f"Annotated video with bounding boxes and track IDs saved")
 

@@ -5,6 +5,7 @@ week2/src/tracking/job
 
 # Data folders
 data/
+detections/
 src/output_videos
 src/output_videos_adaptive
 src/output_videos_adaptive_opt
