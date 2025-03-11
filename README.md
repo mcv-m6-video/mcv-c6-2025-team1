@@ -125,6 +125,10 @@ The contents of the first week are in the folder `week1`. The `README` file can 
 
 The contents of the second week are in the folder `week2`. The `README` file can be found in [here](week2/README.md).
 
+<h2>WEEK 3</h2>
+
+The contents of the third week are in the folder `week3`. The `README` file can be found in [here](week3/README.md).
+
 ## Team Members
 
 This project was developed by the following team members:
