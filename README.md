@@ -20,6 +20,7 @@ Link Final Presentation:
 - [Project Structure](#project-structure)
 - [WEEK 1](#week-1)
 - [WEEK 2](#week-2)
+- [WEEK 3](#week-3)
 - [Team Members](#team-members)
 - [License](#license)
 
