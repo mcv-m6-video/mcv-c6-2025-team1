@@ -4,6 +4,7 @@ import time
 import argparse
 import pyflow
 import ptlflow
+import torch.nn as nn
 
 from src.optical_flow.plots import hsv_plot, visualize_arrow
 from src.optical_flow.utils import calculate_msen, calculate_pepn, read_png_file
@@ -63,6 +64,7 @@ class OpticalFlow:
             img1_rgb = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)  # expects RGB images
             img2_rgb = cv2.cvtColor(img2, cv2.COLOR_BGR2RGB)
             
+            #self.model = nn.DataParallel(self.model) # To check if it works for multi-GPU support
             self.model.to("cuda")
             fp16 = False
             if self.model_name != "dicl":

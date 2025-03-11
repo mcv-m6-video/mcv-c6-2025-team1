@@ -118,7 +118,7 @@ def run(args):
             tracker.update(np.empty((0, 6)), frame)
         """
         
-        if prev_frame is not None:
+        if prev_frame is not None and args.alpha < 1.0:
             # Use optical flow to track motion between frames
             init_time_of = time.time()
             flow = optical_flow.compute_flow(prev_frame, gray_frame)
