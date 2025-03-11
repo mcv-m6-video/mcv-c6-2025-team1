@@ -80,44 +80,6 @@ def run(args):
         frame_detections = [detection[1:5] for detection in detections_vect if detection[0] == frame_number]
         actual_bb = np.array(frame_detections)
         
-        """
-        if len(frame_detections) > 0:
-            # TODO: Convert to the format expected by BoxMOT
-            # BoxMOT expects [x1, y1, x2, y2, conf, class_id]
-            dets_for_tracker = np.array(frame_detections)
-            dets_for_tracker_xyxy = np.copy(dets_for_tracker)
-            # Convert from [x, y, w, h] to [x1, y1, x2, y2]
-            dets_for_tracker_xyxy[:, 2] = dets_for_tracker_xyxy[:, 0] + dets_for_tracker_xyxy[:, 2]
-            dets_for_tracker_xyxy[:, 3] = dets_for_tracker_xyxy[:, 1] + dets_for_tracker_xyxy[:, 3]
-            
-            # TODO: Add confidence scores (using 0.9 as default) and class_id (0 for vehicles)
-            conf = np.ones((dets_for_tracker_xyxy.shape[0], 1)) * 0.9
-            class_id = np.zeros((dets_for_tracker_xyxy.shape[0], 1))
-            dets_for_tracker_xyxy = np.hstack((dets_for_tracker_xyxy, conf, class_id))
-            
-            # Run the tracker
-            init_time_track = time.time()
-            tracker_outputs = tracker.update(dets_for_tracker_xyxy, frame)  # frame is needed for some trackers
-            print(f"Tracking processed in {time.time() - init_time_track} seconds.")
-            
-            # tracker_outputs contains [x1, y1, x2, y2, track_id, class_id, conf]
-            for output in tracker_outputs:
-                x1, y1, x2, y2, track_id = int(output[0]), int(output[1]), int(output[2]), int(output[3]), int(output[4])
-                w, h = x2 - x1, y2 - y1
-                
-                # Draw bounding box
-                cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 255), 2)
-                cv2.putText(frame, f"ID: {track_id}", (x1, y1 - 10), 
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
-                
-                # Store tracking information for output (in MOTChallenge format)
-                track_eval_format.append(f"{frame_number},{track_id},{x1},{y1},{w},{h},1,-1,-1,-1\n")
-                
-        else:
-            # If no detections, still call update with empty detection array
-            tracker.update(np.empty((0, 6)), frame)
-        """
-        
         if prev_frame is not None and args.alpha < 1.0:
             # Use optical flow to track motion between frames
             init_time_of = time.time()
