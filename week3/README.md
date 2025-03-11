@@ -56,7 +56,9 @@ To interpret optical flow visualizations, we use a color wheel where:
 - **Saturation (S)** → Set to maximum for vivid colors.  
 - **Value (V)** → Motion magnitude (brighter = faster movement).  
 
-![optical_flow_color_wheel](https://github.com/user-attachments/assets/36cf2142-53fe-4f0b-bae1-7dc41fdf04b1)
+<div align="center">
+    <img src="https://github.com/user-attachments/assets/36cf2142-53fe-4f0b-bae1-7dc41fdf04b1" alt="optical_flow_color_wheel">
+</div>
 
 The resulting RGB image provides an intuitive optical flow visualization.
 
