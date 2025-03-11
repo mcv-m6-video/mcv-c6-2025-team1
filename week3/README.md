@@ -86,10 +86,22 @@ SORT-specific parameters can be tuned via:
 The script integrates SORT's Kalman filtering with optical flow estimation, using weighted Gaussian, mean, median or max averaging for improved motion prediction. This hybrid approach helps maintain tracking consistency through occlusions and missed detections. 
 
 ## Task 2: Multi-Target Single-Camera Tracking
-In this task, we evaluate the performance of two different tracking algorithms in the AI City Challenge, specifically focusing on SEQ01 and SEQ03. We will assess the effectiveness of both the tracking algorithm from Week 2 (SORT combined with the Kalman Filter) and the best algorithm developed this week
+In this task, we evaluate the performance of two different tracking algorithms in the AI City Challenge, specifically focusing on SEQ01 and SEQ03. We will assess the effectiveness of both the tracking algorithm from Week 2 (SORT combined with the Kalman Filter) and the best algorithm developed this week.
 
 ### Task 2.1: Evaluate Your Best Tracking Algorithm in SEQ01 of AI City Challenge
 
+| Camera | Tracking Algorithm | HOTA  | IDF1  | IDs / IDs_GT | Det / Det_GT |
+|--------|--------------------|-------|-------|--------------|--------------|
+| c001   | SORT + Kalman Filter | 23.19 | 26.93 | 139 / 77     | 11247 / 2946 |
+| c002   | SORT + Kalman Filter | 24.78 | 26.93 | 170 / 74     | 13647 / 4358 |
+| c003   | SORT + Kalman Filter | 27.68 | 29.69 | 187 / 82     | 13892 / 4897 |
+| c004   | SORT + Kalman Filter | 30.32 | 39.43 | 187 / 82     | 12240 / 5006 |
+| c005   | SORT + Kalman Filter | 13.98 | 8.46  | 213 / 94     | 20157 / 3565 |
+| c001   | StrongSORT          | 21.32 | 25.34 | 165 / 77     | 11548 / 2946 |
+| c002   | StrongSORT          | 23.29 | 23.94 | 188 / 74     | 14419 / 4358 |
+| c003   | StrongSORT          | 27.29 | 29.45 | 226 / 82     | 14540 / 4897 |
+| c004   | StrongSORT          | 30.17 | 40.39 | 206 / 82     | 13406 / 5006 |
+| c005   | StrongSORT          | 12.06 | 7.09  | 242 / 94     | 21142 / 3565 |
 ### Task 2.2: Evaluate Your Best Tracking Algorithm in SEQ03 of AI City Challenge
 
 ### Evaluation Method:
