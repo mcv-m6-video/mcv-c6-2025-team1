@@ -50,6 +50,40 @@ python optical_flow/of.py -m <METHOD> -gt <GT_PATH> -im1 <PATH_TO_FIRST_IMG> -im
 ```
 
 ### Task 1.2: Improve Tracking with Optical Flow
+This script performs multi-object tracking using BoxMOT trackers with offline detections and optical flow integration. The tracker processes video frames, combining pre-computed detections with optical flow estimates to generate tracked object trajectories.
+
+To run the tracker, use the following command:
+
+```bash
+python -m src.tracking.tracking_boxmot -d /path/to/detections.txt -v /path/to/video.mp4 -ov /path/to/output_video.mp4 -o /path/to/output_tracks.txt
+```
+
+Required arguments are the detection file path `-d`, input video path `-v`, output video path `-ov`, and output tracking results path `-o`. The detection file should follow the format: `<frame_number> <x> <y> <width> <height>` per line.
+
+Additional options allow customization of the tracking process. The tracking method can be specified with `-m` (defaults to "deepocsort"), with support for deepocsort, botsort, strongsort, ocsort, and bytetrack. The optical flow model can be selected using `--of_model` (defaults to "rpknet"), supporting various models like pyflow, diclflow, memflow, rapidflow, rpknet, and dip.
+
+Fine-tuning parameters include the IoU threshold (--iou_threshold), detection-prediction fusion weight (--alpha), optical flow prediction method `--pred_method`, and Gaussian weighting sigma `--sigma`. For GPU acceleration, use `--device cuda` and optionally enable half-precision inference with `--half`.
+
+In order to pass additional configuration settings for the SORT variation algorithm, you will have to set up a configuration file similar to the ones in [here](https://github.com/mcv-m6-video/mcv-c6-2025-team1/tree/main/week3/configs). The pass the configuration to the script, use the option `-c`.
+
+The script outputs both an annotated video showing tracked objects with their IDs and a text file containing tracking results in MOTChallenge format: `<frame_id>,<track_id>,<x>,<y>,<w>,<h>,1,-1,-1,-1`. 
+
+#### Using SORT with Optical Flow Integration
+
+The SORT (Simple Online and Realtime Tracking) implementation extends the base tracker by incorporating optical flow information to improve tracking stability. Run it using:
+
+```bash
+python -m src.tracking.tracking_kf -d /path/to/detections.txt -v /path/to/video.mp4 -ov /path/to/output_video.mp4 -o /path/to/output_tracks.txt
+```
+
+SORT-specific parameters can be tuned via:
+```bash
+--max_age 21        # Maximum frames to keep alive a track without associated detections
+--min_hit 2         # Minimum hits to start a track
+--iou_threshold 0.2 # Minimum IoU for match
+```
+
+The script integrates SORT's Kalman filtering with optical flow estimation, using weighted Gaussian averaging for improved motion prediction. This hybrid approach helps maintain tracking consistency through occlusions and missed detections. 
 
 ## Task 2: Multi-Target Single-Camera Tracking
 In this task, we evaluate the performance of two different tracking algorithms in the AI City Challenge, specifically focusing on SEQ01 and SEQ03. We will assess the effectiveness of both the tracking algorithm from Week 2 (SORT combined with the Kalman Filter) and the best algorithm developed this week
