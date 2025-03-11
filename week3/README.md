@@ -88,6 +88,21 @@ The script integrates SORT's Kalman filtering with optical flow estimation, usin
 ## Task 2: Multi-Target Single-Camera Tracking
 In this task, we evaluate the performance of two different tracking algorithms in the AI City Challenge, specifically focusing on SEQ01 and SEQ03. We will assess the effectiveness of both the tracking algorithm from Week 2 (SORT combined with the Kalman Filter) and the best algorithm developed this week.
 
+#### Evaluation Method:
+
+In this task, we will evaluate the performance of the best tracking algorithm using the **TrackEval** framework. We will calculate two important metrics:
+
+- **HOTA (Higher Order Tracking Accuracy)**: This metric captures both the quality of tracking (how well objects are tracked) and the quality of object detection (how well objects are detected).
+- **IDF1 (Identification F1 Score)**: This metric measures the ability of the algorithm to correctly identify and associate objects across frames.
+
+#### Evaluation Command Explanation
+
+The command to evaluate your tracking algorithm is as follows:
+
+```bash
+python multi_target_tracking/TrackEval/scripts/run_mot_challenge.py --GT_FOLDER /ghome/c5mcv01/mcv-c6-2025-team1/week3/src/multi_target_tracking/TrackEval/data/gt/mot_challenge --TRACKERS_FOLDER /ghome/c5mcv01/mcv-c6-2025-team1/week3/src/multi_target_tracking/TrackEval/data/trackers/mot_challenge --BENCHMARK week3 --SEQ_INFO c001 c002 c003 c004 c005 --DO_PREPROC=False
+```
+
 ### Task 2.1: Evaluate Your Best Tracking Algorithm in SEQ01 of AI City Challenge
 
 | Camera | Tracking Algorithm | HOTA  | IDF1  | IDs / IDs_GT | Det / Det_GT |
@@ -102,20 +117,22 @@ In this task, we evaluate the performance of two different tracking algorithms i
 | c003   | StrongSORT          | 27.29 | 29.45 | 226 / 82     | 14540 / 4897 |
 | c004   | StrongSORT          | 30.17 | 40.39 | 206 / 82     | 13406 / 5006 |
 | c005   | StrongSORT          | 12.06 | 7.09  | 242 / 94     | 21142 / 3565 |
+
 ### Task 2.2: Evaluate Your Best Tracking Algorithm in SEQ03 of AI City Challenge
+| Camera | Tracking Algorithm  | HOTA  | IDF1  | IDs / IDs_GT | Det / Det_GT |
+|--------|---------------------|-------|-------|--------------|--------------|
+| c010   | SORT + Kalman Filter | 18.99 | 16.77 | 124 / 14     | 15719 / 1856 |
+| c011   | SORT + Kalman Filter | 6.64  | 3.35  | 127 / 17     | 32101 / 899  |
+| c012   | SORT + Kalman Filter | 5.22  | 1.83  | 56 / 17      | 16490 / 153  |
+| c013   | SORT + Kalman Filter | 14.22 | 9.54  | 66 / 17      | 8433 / 753   |
+| c014   | SORT + Kalman Filter | 16.89 | 14.95 | 53 / 14      | 16949 / 2496 |
+| c015   | SORT + Kalman Filter | 1.48  | 0.12  | 68 / 1       | 28289 / 17   |
+| c010   | StrongSORT           | 17.95 | 16.55 | 186 / 14     | 16576 / 1856 |
+| c011   | StrongSORT           | 7.41  | 3.99  | 164 / 17     | 33321 / 899  |
+| c012   | StrongSORT           | 5.11  | 1.78  | 68 / 17      | 16724 / 153  |
+| c013   | StrongSORT           | 15.13 | 11.29 | 71 / 17      | 8779 / 753   |
+| c014   | StrongSORT           | 18.09 | 17.27 | 70 / 14      | 33669 / 2496 |
+| c015   | StrongSORT           | 1.44  | 0.12  | 87 / 1       | 29039 / 17   |
 
-### Evaluation Method:
 
-In this task, we will evaluate the performance of the best tracking algorithm using the **TrackEval** framework. We will calculate two important metrics:
-
-- **HOTA (Higher Order Tracking Accuracy)**: This metric captures both the quality of tracking (how well objects are tracked) and the quality of object detection (how well objects are detected).
-- **IDF1 (Identification F1 Score)**: This metric measures the ability of the algorithm to correctly identify and associate objects across frames.
-
-### Evaluation Command Explanation
-
-The command to evaluate your tracking algorithm is as follows:
-
-```bash
-python multi_target_tracking/TrackEval/scripts/run_mot_challenge.py --GT_FOLDER /ghome/c5mcv01/mcv-c6-2025-team1/week3/src/multi_target_tracking/TrackEval/data/gt/mot_challenge --TRACKERS_FOLDER /ghome/c5mcv01/mcv-c6-2025-team1/week3/src/multi_target_tracking/TrackEval/data/trackers/mot_challenge --BENCHMARK week3 --SEQ_INFO c001 c002 c003 c004 c005 --DO_PREPROC=False
-```
 
