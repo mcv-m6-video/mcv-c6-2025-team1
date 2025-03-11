@@ -49,6 +49,32 @@ To run any of the above methods, use the following command:
 python optical_flow/of.py -m <METHOD> -gt <GT_PATH> -im1 <PATH_TO_FIRST_IMG> -im2 <PATH_TO_SECOND_IMG> 
 ```
 
+#### Optical Flow Color Wheel
+To interpret optical flow visualizations, we use a color wheel where:
+
+- **Hue (H)** → Motion direction (e.g., pink/magenta = up-right, orange/yellow = up-left, green = down-left, blue = down-right).  
+- **Saturation (S)** → Set to maximum for vivid colors.  
+- **Value (V)** → Motion magnitude (brighter = faster movement).  
+
+![optical_flow_color_wheel](https://github.com/user-attachments/assets/36cf2142-53fe-4f0b-bae1-7dc41fdf04b1)
+
+The resulting RGB image provides an intuitive optical flow visualization.
+
+#### Example (DICL):
+
+```bash
+python -m src.optical_flow.of --model dicl -gt "/ghome/c5mcv01/mcv-c6-2025-team1/data/data_stereo_flow/training/flow_noc/000045_10.png" -im1 "/ghome/c5mcv01/mcv-c6-2025-team1/data/data_stereo_flow/training/image_0/000045_10.png" -im2 "/ghome/c5mcv01/mcv-c6-2025-team1/data/data_stereo_flow/training/image_0/000045_11.png"
+```
+
+| Sequences 45 | GT | DICL |
+|---|---|---|
+| 000045_10.png | arrow_GT.png | arrow_dicl.png |
+| ![000045_10](https://github.com/user-attachments/assets/cc39ade7-7fc0-4e90-b60f-5df61678d578) | ![arrow_GT](https://github.com/user-attachments/assets/cb5cd38b-1dd8-4dc9-a244-514a47b0e0c1) |  ![arrow_dicl](https://github.com/user-attachments/assets/3c1f35cf-01b5-4d26-b7c3-162eb7c473dc) |
+| 000045_11.png | magnitude_GT.png | magnitude_dicl.png |
+| ![000045_11](https://github.com/user-attachments/assets/ce863677-c70a-4cb5-ae81-007f435dc584) | ![magnitude_GT](https://github.com/user-attachments/assets/4dfe43b0-d380-4200-9331-7b5e5ac72213)| ![magnitude_dicl](https://github.com/user-attachments/assets/a83055f7-a097-4736-8d75-6256ca1da0bb) |
+
+
+
 ### Task 1.2: Improve Tracking with Optical Flow
 This script performs multi-object tracking using BoxMOT trackers with offline detections and optical flow integration. The tracker processes video frames, combining pre-computed detections with optical flow estimates to generate tracked object trajectories.
 
