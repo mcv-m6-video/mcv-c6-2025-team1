@@ -52,8 +52,24 @@ python optical_flow/of.py -m <METHOD> -gt <GT_PATH> -im1 <PATH_TO_FIRST_IMG> -im
 ### Task 1.2: Improve Tracking with Optical Flow
 
 ## Task 2: Multi-Target Single-Camera Tracking
+In this task, we evaluate the performance of two different tracking algorithms in the AI City Challenge, specifically focusing on SEQ01 and SEQ03. We will assess the effectiveness of both the tracking algorithm from Week 2 (SORT combined with the Kalman Filter) and the best algorithm developed this week
 
 ### Task 2.1: Evaluate Your Best Tracking Algorithm in SEQ01 of AI City Challenge
 
 ### Task 2.2: Evaluate Your Best Tracking Algorithm in SEQ03 of AI City Challenge
+
+### Evaluation Method:
+
+In this task, we will evaluate the performance of the best tracking algorithm using the **TrackEval** framework. We will calculate two important metrics:
+
+- **HOTA (Higher Order Tracking Accuracy)**: This metric captures both the quality of tracking (how well objects are tracked) and the quality of object detection (how well objects are detected).
+- **IDF1 (Identification F1 Score)**: This metric measures the ability of the algorithm to correctly identify and associate objects across frames.
+
+### Evaluation Command Explanation
+
+The command to evaluate your tracking algorithm is as follows:
+
+```bash
+python multi_target_tracking/TrackEval/scripts/run_mot_challenge.py --GT_FOLDER /ghome/c5mcv01/mcv-c6-2025-team1/week3/src/multi_target_tracking/TrackEval/data/gt/mot_challenge --TRACKERS_FOLDER /ghome/c5mcv01/mcv-c6-2025-team1/week3/src/multi_target_tracking/TrackEval/data/trackers/mot_challenge --BENCHMARK week3 --SEQ_INFO c001 c002 c003 c004 c005 --DO_PREPROC=False
+```
 
