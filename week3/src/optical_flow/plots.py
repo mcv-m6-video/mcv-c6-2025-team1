@@ -78,3 +78,34 @@ def visualize_arrow(im1_path: str, flow: np.ndarray, filename: str): # Team 6 20
     output_path = f'./results/arrow_{filename}.png'
     plt.savefig(output_path, dpi=300, bbox_inches='tight', pad_inches=0)
     plt.close()
+
+
+def generate_optical_flow_color_wheel(size=256):
+    """Generates an HSV-based optical flow color wheel.
+    
+    Args:
+        size (int): Size of the output image (size x size).
+        
+    Returns:
+        np.ndarray: RGB image of the color wheel.
+    """
+    radius = size // 2
+    y, x = np.meshgrid(np.linspace(-1, 1, size), np.linspace(-1, 1, size))
+    
+    # Convert cartesian coordinates to polar
+    mag = np.sqrt(x**2 + y**2)
+    ang = np.arctan2(y, x)  # Angle in radians
+    
+    # Normalize angle to [0, 180] for OpenCV HSV
+    hsv = np.zeros((size, size, 3), dtype=np.uint8)
+    hsv[..., 0] = ((ang + np.pi) * 180 / np.pi / 2).astype(np.uint8)  # Hue
+    hsv[..., 1] = 255  # Saturation is max
+    hsv[..., 2] = (cv2.normalize(mag, None, 0, 255, cv2.NORM_MINMAX)).astype(np.uint8)  # Value based on magnitude
+    
+    rgb = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+    
+    return rgb
+
+# Save the color wheel
+color_wheel = generate_optical_flow_color_wheel(256)
+cv2.imwrite('optical_flow_color_wheel.png', color_wheel)

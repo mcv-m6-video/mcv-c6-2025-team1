@@ -20,6 +20,7 @@ week2/yolo_finetuning_results
 week2/yolo*
 
 # To avoid including videos and images
+videos/
 *.avi
 *.mp4
 *.gif
