@@ -147,6 +147,19 @@ SORT-specific parameters can be tuned via:
 
 The script integrates SORT's Kalman filtering with optical flow estimation, using weighted Gaussian, mean, median or max averaging for improved motion prediction. This hybrid approach helps maintain tracking consistency through occlusions and missed detections. 
 
+#### Quantitative results
+
+HOTA & IDF1 results obtained over different alpha values for OF-Strong-SORT with rapidflow and OF+SORT with rpknet. 
+
+| OF-Strong-SORT      | OF+SORT  | 
+|------------|--------|
+| ![hota_heatmap_sort](https://github.com/user-attachments/assets/2d363a6d-456d-40e3-8ce4-d944f5adfe7d) | ![hota_heatmap](https://github.com/user-attachments/assets/378e65a0-e47d-4615-b767-bb767156ba59) |
+| ![idf1_heatmap-sort](https://github.com/user-attachments/assets/61a9e914-bda5-43d5-806f-376f2fd94552) | ![idf1_heatmap](https://github.com/user-attachments/assets/50689ccb-dd59-4da7-aa4e-75c90c2e6770) |
+
+#### Qualitative results
+
+
+
 ## Task 2: Multi-Target Single-Camera Tracking
 In this task, we evaluate the performance of two different tracking algorithms in the AI City Challenge, specifically focusing on SEQ01 and SEQ03. We will assess the effectiveness of both the tracking algorithm from Week 2 (SORT combined with the Kalman Filter) and the best algorithm developed this week.
 
