@@ -68,6 +68,14 @@ The resulting RGB image provides an intuitive optical flow visualization.
 python -m src.optical_flow.of --model dicl -gt "/ghome/c5mcv01/mcv-c6-2025-team1/data/data_stereo_flow/training/flow_noc/000045_10.png" -im1 "/ghome/c5mcv01/mcv-c6-2025-team1/data/data_stereo_flow/training/image_0/000045_10.png" -im2 "/ghome/c5mcv01/mcv-c6-2025-team1/data/data_stereo_flow/training/image_0/000045_11.png"
 ```
 
+Result:
+```bash
+Model: dicl
+MSEN: 0.7697
+PEPN: 4.84%
+Inference Time: 1.17 seconds
+```
+
 | Sequences 45 | GT | DICL |
 |---|---|---|
 | 000045_10.png | arrow_GT.png | arrow_dicl.png |
