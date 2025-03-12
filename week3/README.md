@@ -68,13 +68,17 @@ The resulting RGB image provides an intuitive optical flow visualization.
 python -m src.optical_flow.of --model dicl -gt "/ghome/c5mcv01/mcv-c6-2025-team1/data/data_stereo_flow/training/flow_noc/000045_10.png" -im1 "/ghome/c5mcv01/mcv-c6-2025-team1/data/data_stereo_flow/training/image_0/000045_10.png" -im2 "/ghome/c5mcv01/mcv-c6-2025-team1/data/data_stereo_flow/training/image_0/000045_11.png"
 ```
 
-Result:
+**Result: MSEN (Mean Square Error in Non-occluded areas), PEPN (% of Erroneous Pixels in Non-occluded areas) & Runtime**
 ```bash
 Model: dicl
 MSEN: 0.7697
 PEPN: 4.84%
 Inference Time: 1.17 seconds
 ```
+
+#### Qualitative results
+
+Below, we present a qualitative comparison of the **DICL-Flow** model against the ground truth (**GT**) on Sequence 45 of the KITTI 2012 dataset. The arrows and magnitude maps illustrate motion estimation results. This allows us to visually assess how well the model captures motion patterns compared to the ground truth.
 
 | Sequences 45 | GT | DICL |
 |---|---|---|
@@ -83,7 +87,29 @@ Inference Time: 1.17 seconds
 | 000045_11.png | magnitude_GT.png | magnitude_dicl.png |
 | ![000045_11](https://github.com/user-attachments/assets/ce863677-c70a-4cb5-ae81-007f435dc584) | ![magnitude_GT](https://github.com/user-attachments/assets/4dfe43b0-d380-4200-9331-7b5e5ac72213)| ![magnitude_dicl](https://github.com/user-attachments/assets/a83055f7-a097-4736-8d75-6256ca1da0bb) |
 
+#### Quantitative results
 
+The evaluation of Optical Flow methods on Sequence 45 of the KITTI 2012 dataset is measured using three metrics:  
+- **MSEN** (Mean Square Error in Non-occluded areas): Measures the average squared error in regions without occlusions.  
+- **PEPN** (% of Erroneous Pixels in Non-occluded areas): Percentage of pixels with significant error.  
+- **Runtime**: Inference time in seconds.  
+
+| Method      | MSEN ↓  | PEPN (%) ↓ | Runtime (s) ↓ |
+|------------|--------|------------|--------------|
+| PyFlow     | 1.02   | 8.14%      | 2.15         |
+| MemFlow    | 0.67   | 3.83%      | 1.03         |
+| RAPIDFlow  | 1.02   | 5.73%      | 0.97         |
+| RPKNet     | 0.67   | 4.83%      | 1.27         |
+| DICL-Flow  | 0.77   | 4.85%      | 1.26         |
+| DIP        | 0.70   | 5.01%      | 1.15         |
+
+🟢 **Best Performance**:  
+- **Lowest error (MSEN & PEPN)** → *MemFlow* (0.67 MSEN, 3.83% PEPN).  
+- **Fastest inference time** → *RAPIDFlow* (0.97s).  
+
+🔴 **Worst Performance**:  
+- **Highest error** → *PyFlow* (1.02 MSEN, 8.14% PEPN).  
+- **Slowest inference time** → *PyFlow* (2.15s).  
 
 ### Task 1.2: Improve Tracking with Optical Flow
 This script performs multi-object tracking using BoxMOT trackers with offline detections and optical flow integration. The tracker processes video frames, combining pre-computed detections with optical flow estimates to generate tracked object trajectories.
