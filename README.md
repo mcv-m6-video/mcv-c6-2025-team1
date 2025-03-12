@@ -20,6 +20,7 @@ Link Final Presentation:
 - [Project Structure](#project-structure)
 - [WEEK 1](#week-1)
 - [WEEK 2](#week-2)
+- [WEEK 3](#week-3)
 - [Team Members](#team-members)
 - [License](#license)
 
@@ -124,6 +125,10 @@ The contents of the first week are in the folder `week1`. The `README` file can 
 <h2>WEEK 2</h2>
 
 The contents of the second week are in the folder `week2`. The `README` file can be found in [here](week2/README.md).
+
+<h2>WEEK 3</h2>
+
+The contents of the third week are in the folder `week3`. The `README` file can be found in [here](week3/README.md).
 
 ## Team Members
 
