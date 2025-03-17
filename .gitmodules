@@ -10,3 +10,6 @@
 [submodule "week3/src/multi_target_tracking/TrackEval"]
 	path = week3/src/multi_target_tracking/TrackEval
 	url = https://github.com/JonathonLuiten/TrackEval.git
+[submodule "week4/src/tracking/TrackEval"]
+	path = week4/src/tracking/TrackEval
+	url = https://github.com/JonathonLuiten/TrackEval.git

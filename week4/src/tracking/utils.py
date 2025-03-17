@@ -198,23 +198,4 @@ def load_calibration(calibration_file_path):
         return homography_matrix, None
 
 
-def transform_bboxes(bboxes, homography_matrix, distortion_coeffs=None):
-    """Apply distortion correction and homography transformation to bounding boxes."""
-    if len(bboxes) == 0:
-        return np.empty((0, 4))
 
-    # Convert bbox corners to float32
-    bbox_corners = np.array([[[x1, y1], [x2, y2]] for x1, y1, x2, y2 in bboxes], dtype=np.float32)
-
-    # Apply distortion correction if needed
-    if distortion_coeffs is not None:
-        K = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])  # Dummy camera matrix
-        bbox_corners = cv2.undistortPoints(bbox_corners, K, distortion_coeffs)
-
-    # Apply homography transformation
-    transformed_corners = cv2.perspectiveTransform(bbox_corners, homography_matrix)
-
-    # Convert back to bounding box format [x1, y1, x2, y2]
-    transformed_bboxes = np.array([[x1, y1, x2, y2] for [[x1, y1], [x2, y2]] in transformed_corners])
-
-    return transformed_bboxes

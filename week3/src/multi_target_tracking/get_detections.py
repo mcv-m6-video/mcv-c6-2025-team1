@@ -6,15 +6,15 @@ from ultralytics import YOLO
 
 # Paths
 # TODO: Aquests paths segurament s'han de canviar, fer que siguin modificables amb argparse
-base_path = "/ghome/c5mcv01/mcv-c6-2025-team1/data/train/S04"
-output_dir = "/ghome/c5mcv01/mcv-c6-2025-team1/week3/src/multi_target_tracking/detections_yolo_2_3"
+base_path = "/ghome/c5mcv01/mcv-c6-2025-team1/data/mct_data/train/S01"
+output_dir = "/ghome/c5mcv01/mcv-c6-2025-team1/week4/src/detections_S01"
 
 # Create output directory if it doesn't exist
 os.makedirs(output_dir, exist_ok=True)
 
 # Load YOLO model
 # TODO: Canviar a yolov11x
-model = YOLO('yolo11x.pt')
+model = YOLO('/ghome/c5mcv01/mcv-c6-2025-team1/week4/src/detections/finetune/train/weights/best.pt')
 
 # Classes to detect
 class_names = model.names

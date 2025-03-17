@@ -175,3 +175,24 @@ def read_detections_from_txt(file_path: str) -> tuple[dict, list]:
             detections_vect.append([frame_id, bbox_left, bbox_top, bbox_width, bbox_height, confidence_score])
 
     return detections, detections_vect
+
+
+def load_calibration(calibration_file_path):
+    # Read the calibration file
+    with open(calibration_file_path, 'r') as f:
+        lines = f.readlines()
+        print(lines)
+        
+    # Parsing the homography matrix (first 3x3 matrix)
+    homography_matrix = np.array([list(map(float, line.split())) for line in lines[:3]])
+
+    # Checking if there are distortion coefficients (i.e., a 4th line)
+    if len(lines) > 3:
+        distortion_coeffs = np.array([float(val) for val in lines[3].split()])
+        return homography_matrix, distortion_coeffs
+    else:
+        # If no distortion coefficients, return None
+        return homography_matrix, None
+    
+    
+print(load_calibration('/ghome/c5mcv01/mcv-c6-2025-team1/data/mct_data/train/S01/c002/calibration.txt'))
