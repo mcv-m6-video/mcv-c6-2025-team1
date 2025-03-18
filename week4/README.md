@@ -14,7 +14,7 @@ To perform fine-tuning of detections, we divided sequences S01, S03, and S04 int
 - **Test Set**: 6 cameras from S03, totaling 13,517 frames.
 
 ### Annotation format
-To use the data with YOLO, we converted the annotations provided by the** AI CITY Challenge** into YOLO format. The conversion process involved:
+To use the data with YOLO, we converted the annotations provided by the **AI CITY Challenge** into YOLO format. The conversion process involved:
 1. Reading the annotations from the Ground Truth file.
 2. Normalizing the bounding box coordinates based on image dimensions.
 3. Writing the results into label files in YOLO format.
