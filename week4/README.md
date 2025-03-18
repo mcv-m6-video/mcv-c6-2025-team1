@@ -58,6 +58,18 @@ StrongSORT is a powerful tracking algorithm designed to track multiple objects (
 In the **BoxMot** implementation, the StrongSORT is already integrated into the tracking pipeline. By running the tracking script with the detection results, we obtain continuous tracking of vehicles across the video frames.
 To execute the multi-target single-camera tracking, we simply need to provide the detection results from the fine-tuned YOLO model, and StrongSORT will handle the tracking process.
 
+To execute the multi-target tracking with the StrongSORT algorithm in BoxMOT, the following command is used:
+```bash
+python3 -m src.tracking.tracking_boxmot \
+            -d /path/to/detections.txt \
+            -v /path/to/video.avi \
+            -ov /path/to/output_video.avi \
+            -o /path/to/output_tracking_results.txt \
+            --device cuda --tracking_method=strongsort \
+            --reid_model 'clip_vehicleid.pt' \
+            -c /path/to/strongsort.yaml
+```
+For the ReID Model, we used the [CLIP-ReID model](https://github.com/Syliz517/CLIP-ReID), an innovative approach that levergaes Vision-Language Pretraining for image re-identification without relying on explicit textual labels. This model was pre-trained on [VehicleID](https://www.pkuml.org/resources/pku-vehicleid.html) dataset,which comprises images captured from multiple surveillance cameras in a small Chinese city, totaling 221,763 images of 26,267 vehicles. 
 
 ## Re-identification algorithm
 
