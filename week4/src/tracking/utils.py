@@ -1,7 +1,7 @@
 import numpy as np
 
 from lxml import etree
-import cv2
+
 
 def mean_avg_precision(gt, pred, iou_threshold=0.5):
     """Calculate the mean average precision for a given ground truth and prediction. From Team 5-2024 (slightly modified).
@@ -84,6 +84,25 @@ def iou(boxA, boxB):
     
     # Calculate the IoU
     return interArea / unionArea
+
+
+def compute_iou(boxA, boxB):
+    """
+    Compute Intersection over Union (IoU) of two boxes.
+    Boxes are expected in [x1, y1, x2, y2] format.
+    """
+    xA = max(boxA[0], boxB[0])
+    yA = max(boxA[1], boxB[1])
+    xB = min(boxA[2], boxB[2])
+    yB = min(boxA[3], boxB[3])
+    interW = max(0, xB - xA)
+    interH = max(0, yB - yA)
+    interArea = interW * interH
+
+    boxAArea = (boxA[2] - boxA[0]) * (boxA[3] - boxA[1])
+    boxBArea = (boxB[2] - boxB[0]) * (boxB[3] - boxB[1])
+    iou = interArea / float(boxAArea + boxBArea - interArea + 1e-6)
+    return iou
 
 
 def read_annotations(annotations_path: str):
@@ -197,5 +216,20 @@ def load_calibration(calibration_file_path):
         # If no distortion coefficients are provided, return None
         return homography_matrix, None
 
+def box_to_corners(box):
+    """
+    Convert a box from [x, y, w, h] to [x1, y1, x2, y2].
+    """
+    x, y, w, h = box
+    return [x, y, x + w, y + h]
+
+def corners_to_box(corners):
+    """
+    Convert a box from [x1, y1, x2, y2] to [x, y, w, h].
+    """
+    x1, y1, x2, y2 = corners
+    w = x2 - x1
+    h = y2 - y1
+    return [x1, y1, w, h]
 
 

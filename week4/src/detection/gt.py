@@ -2,6 +2,7 @@ import cv2
 import os
 import argparse
 
+
 def get_video_resolution(video_path):
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():

@@ -2,16 +2,14 @@ import cv2
 import numpy as np
 import argparse
 import time
-from pathlib import Path
-
 import torch
+
+from pathlib import Path
 from boxmot import TRACKERS
 from boxmot.tracker_zoo import create_tracker
 from boxmot.utils import TRACKER_CONFIGS
 
-from src.tracking.utils import write_results_to_txt, read_detections_from_txt
-from src.tracking.tracking_kf import compute_weights, box_to_corners, match_and_fuse
-
+from src.tracking.utils import write_results_to_txt, read_detections_from_txt, box_to_corners
 
 
 def run(args):
@@ -62,7 +60,6 @@ def run(args):
         if not ret:
             break
         
-        
         # Get the current frame number
         frame_number = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
         print("-" * 50)
@@ -72,8 +69,7 @@ def run(args):
         # Get detections for current frame
         frame_detections = [detection[1:5] for detection in detections_vect if detection[0] == frame_number]
         actual_bb = np.array(frame_detections)
-        
-            
+
         # Fuse predicted and detected 2DBB
         if len(actual_bb):
             fused_bb = [box_to_corners(box) for box in actual_bb]

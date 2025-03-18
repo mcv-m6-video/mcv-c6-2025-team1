@@ -9,8 +9,72 @@ from boxmot import TRACKERS
 from boxmot.tracker_zoo import create_tracker
 from boxmot.utils import TRACKER_CONFIGS
 
-from src.tracking.utils import write_results_to_txt, read_detections_from_txt
-from src.tracking.tracking_kf import compute_weights, box_to_corners, match_and_fuse
+from src.tracking.utils import write_results_to_txt, read_detections_from_txt, box_to_corners, compute_iou
+
+
+def fuse_box(pred_box, det_box, alpha=0.5):
+    """
+    Fuse two boxes (predicted and detected) using a weighted average.
+    Each box is in [x1, y1, x2, y2] format.
+    alpha is the weight for the detection.
+    """
+    fused = alpha * np.array(det_box) + (1 - alpha) * np.array(pred_box)
+    return fused
+
+def match_and_fuse(pred_boxes, det_boxes, iou_threshold=0.3, alpha=0.5):
+    """
+    Match predicted boxes with detection boxes and fuse them if IoU exceeds threshold.
+    Assumes input boxes are in [x, y, w, h] format.
+    Returns fused boxes in [x1, y1, x2, y2] format.
+    """
+    # Convert boxes to [x1, y1, x2, y2] format.
+    pred_corners = [box_to_corners(box) for box in pred_boxes]
+    det_corners = [box_to_corners(box) for box in det_boxes]
+
+    fused_boxes = []
+    used_det = set()
+    # For each predicted box, find the best matching detection.
+    for i, pred in enumerate(pred_corners):
+        best_iou = 0
+        best_det = None
+        best_j = -1
+        for j, det in enumerate(det_corners):
+            iou = compute_iou(pred, det)
+            if iou > best_iou:
+                best_iou = iou
+                best_det = det
+                best_j = j
+        if best_iou >= iou_threshold and best_j not in used_det:
+            fused_box = fuse_box(pred, best_det, alpha)
+            fused_boxes.append(fused_box)
+            used_det.add(best_j)
+        # else:
+        # No good detection found; use predicted box.
+        #   fused_boxes.append(pred)
+
+    # Optionally, add any detection that was not matched.
+    for j, det in enumerate(det_corners):
+        if j not in used_det:
+            fused_boxes.append(det)
+    return np.array(fused_boxes)
+
+def compute_weights(roi_bb, sigma_factor):
+    """
+    Compute Gaussian weights based on the distance from the center of the ROI (2DBB area).
+    Weights decrease as the distance from the center increases, following a Gaussian distribution.
+    """
+    h, w = roi_bb[:2]
+    # Create a grid of (x, y) coordinates
+    y_indices, x_indices = np.indices((h, w))
+    # Calculate the center coordinates
+    x_c, y_c = w / 2, h / 2
+    # Compute the squared Euclidean distance from the center
+    sq_dist = (x_indices - x_c) ** 2 + (y_indices - y_c) ** 2
+    # Compute the std dev. for the Gaussian function
+    sigma = np.sqrt(h**2 + w**2) / sigma_factor
+    # Compute the Gaussian weights
+    weights = np.exp(-sq_dist / (2 * sigma**2))
+    return weights
 
 def run(args):
     # Read offline detections

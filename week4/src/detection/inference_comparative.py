@@ -3,6 +3,7 @@ import time
 import os
 from ultralytics import YOLO
 
+
 # Argument parser setup
 parser = argparse.ArgumentParser(description="Run YOLO inference on a single image.")
 parser.add_argument("--model", type=str, required=True, help="Path to the YOLO model.")

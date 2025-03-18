@@ -1,6 +1,6 @@
 import argparse
-import time
 from ultralytics import YOLO
+
 
 # Argument parser setup
 parser = argparse.ArgumentParser(description="Validate a YOLO model.")
@@ -11,10 +11,8 @@ args = parser.parse_args()
 model = YOLO(args.m) 
 DATASET_PATH = "/ghome/c5mcv01/mcv-c6-2025-team1/week4/src/detection/data/data.yaml"
 
-
 # Run validation
 results = model.val(data=DATASET_PATH)
-
 
 # Print specific metrics
 print("Average precision for all classes:", results.box.all_ap)
