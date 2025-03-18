@@ -13,9 +13,6 @@ To perform fine-tuning of detections, we divided sequences S01, S03, and S04 int
 - **Validation Set**: 6 cameras from S01 & S04, totaling 4,094 frames.
 - **Test Set**: 6 cameras from S03, totaling 13,517 frames.
 
-### Detector Selection
-We selected YOLO11x as our detector and trained the entire network using the training set.
-
 ### Annotation format
 To use the data with YOLO, we converted the annotations provided by the** AI CITY Challenge** into YOLO format. The conversion process involved:
 1. Reading the annotations from the Ground Truth file.
@@ -30,4 +27,11 @@ python gt.py --video path/to/video.mp4 \
                           --output_images path/to/images \
                           --output_labels path/to/labels \
                           --fps 10
+```
+### Training the Detector
+We fine-tuned the **YOLO11x** model using the Ultralytics implementation. The model was loaded from the pre-trained weights file yolo11x.pt. The training process involved 50 epochs with an early stopping mechanism (patience=5) to avoid overfitting. 
+
+To execute the fine-tuning process, use the following command:
+```bash
+python finetune.py
 ```
