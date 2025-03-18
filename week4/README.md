@@ -14,16 +14,16 @@ To perform fine-tuning of detections, we divided sequences S01, S03, and S04 int
 - **Test Set**: 6 cameras from S03, totaling 13,517 frames.
 
 ### Detector Selection
-We chose YOLO11x as our detector and we trained the entire network using the training set.
+We selected YOLO11x as our detector and trained the entire network using the training set.
 
 ### Annotation format
-To use the data with YOLO, we converted the annotations provided by the AI CITY Challenge into YOLO format. This process involves:
+To use the data with YOLO, we converted the annotations provided by the** AI CITY Challenge** into YOLO format. The conversion process involved:
 1. Reading the annotations from the Ground Truth file.
 2. Normalizing the bounding box coordinates based on image dimensions.
 3. Writing the results into label files in YOLO format.
 4. Extracting frames from videos at a specific FPS rate.
 
-To run the script for converting annotations, run:
+To run the annotation conversion script, use the following command:
 ```bash
 python gt.py --video path/to/video.mp4 \
                           --gt path/to/ground_truth.txt \
