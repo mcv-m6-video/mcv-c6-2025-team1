@@ -42,6 +42,7 @@ The following command is used to run the detection script:
 ```bash
 python get_detections.py --base_path /path/to/videos --output_dir /path/to/output
 ```
+## Multi-Target Single-Camera Tracking
 ## Re-identification algorithm
 
 ### Overview
