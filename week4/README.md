@@ -3,6 +3,7 @@
 ## Table of Contents
 
 - [Fine-tuning detections](#fine-tuning-detections)
+- [Multi-Target Single-Camera Tracking](#multi-target-single-camera-tracking)
 
 
 ## Fine-tuning detections 
