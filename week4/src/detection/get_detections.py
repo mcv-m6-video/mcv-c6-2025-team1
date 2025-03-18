@@ -1,20 +1,34 @@
 import cv2
 import os
-
+import argparse
 from ultralytics import YOLO
 
+# Set up argument parser
+parser = argparse.ArgumentParser(description="Run detection on videos")
+parser.add_argument(
+    '--base_path', 
+    type=str, 
+    required=True, 
+    help="Path to the directory containing video folders"
+)
+parser.add_argument(
+    '--output_dir', 
+    type=str, 
+    default="./", 
+    help="Directory to save the output detections"
+)
+
+# Parse arguments
+args = parser.parse_args()
 
 # Paths
-# TODO: Aquests paths segurament s'han de canviar, fer que siguin modificables amb argparse
-# base_path = "/ghome/c5mcv01/mcv-c6-2025-team1/data/mct_data/train/S04"
-base_path = "/home/yeray142/Documents/projects/mcv-c6-2025-team1/data/mct_data/S03"
-output_dir = "./"
+base_path = args.base_path
+output_dir = args.output_dir
 
 # Create output directory if it doesn't exist
 os.makedirs(output_dir, exist_ok=True)
 
 # Load YOLO model
-# TODO: Canviar a yolov11x
 model = YOLO('/models/yolo_best.pt')
 
 # Classes to detect
@@ -69,3 +83,4 @@ for folder in sorted(os.listdir(base_path)):
     cap.release()
 
 print("🎯 Detection completed for all videos.")
+
