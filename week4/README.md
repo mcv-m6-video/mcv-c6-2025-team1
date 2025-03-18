@@ -38,7 +38,7 @@ python finetune.py
 ```
 Once the model is fine-tuned, we used it to perform the detections for all the three sequences. To do so, we implemented a detection script that applies the trained model to video frames and outputs the detected objects (such as cars and trucks) along with their bounding boxes and confidence scores.
 
-The following command is uded to run the detection script:
+The following command is used to run the detection script:
 ```bash
 python get_detections.py --base_path /path/to/videos --output_dir /path/to/output
 ```
