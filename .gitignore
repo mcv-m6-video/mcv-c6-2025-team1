@@ -7,6 +7,8 @@ week2/src/tracking/job
 data/
 detections/
 results/
+single_tracks/
+dets/
 src/output_videos
 src/output_videos_adaptive
 src/output_videos_adaptive_opt

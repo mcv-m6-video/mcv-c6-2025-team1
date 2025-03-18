@@ -6,7 +6,7 @@ class Detection:
     confidence score, camera ID, and feature vectors.
     """
 
-    def __init__(self, frame_num, track_id, x, y, width, height, confidence, camera_id=None):
+    def __init__(self, frame_num, track_id, x, y, width, height, confidence, timestamp = -1.0, camera_id=None):
         """
         Initialize a Detection object.
 
@@ -22,10 +22,15 @@ class Detection:
         """
         self.frame_num = frame_num
         self.track_id = track_id
+        self.timestamp = timestamp
+
+        # For bounding box
         self.x = x
         self.y = y
         self.width = width
         self.height = height
+
+        # For confidence and camera ID
         self.confidence = confidence
         self.camera_id = camera_id
         self.features = []
@@ -40,11 +45,12 @@ class Detection:
         self.features.append(feature_vector)
 
     @classmethod
-    def from_string(cls, detection_str, camera_id=None):
+    def from_string(cls, detection_str, timestamp=-1.0, camera_id=None):
         """
         Create a Detection object from a string representation.
 
         Args:
+            timestamp: Timestamp of the detection
             detection_str (str): String with detection parameters (comma-separated)
             camera_id (str, optional): ID of the camera
 
@@ -60,7 +66,7 @@ class Detection:
         height = int(parts[5])
         confidence = float(parts[6])
 
-        return cls(frame_num, track_id, x, y, width, height, confidence, camera_id)
+        return cls(frame_num, track_id, x, y, width, height, confidence, timestamp, camera_id)
 
     def get_bbox(self):
         """

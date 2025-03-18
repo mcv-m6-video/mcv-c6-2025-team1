@@ -10,7 +10,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 from src.algoritm_features.classes import Detection
 from src.algoritm_features.feature_extractor import FeatureExtractor
 
-SIMILARITY_THRESHOLD = 0.94  # Adjust based on experimentation
+SIMILARITY_THRESHOLD = 0.92  # Adjust based on experimentation
+TIMESTAMP_THRESHOLD = 10 # Maximum time difference for matching tracks
 
 
 def re_identify_objects(detections_by_camera):
@@ -37,8 +38,7 @@ def re_identify_objects(detections_by_camera):
 		for detection in detections:
 			if detection.features:
 				# Use the first feature vector for matching (can be extended to use multiple)
-				# TODO: Maybe reshaping it to a 1D array may also work instead of taking the first one.
-				detection.global_feature = detection.features.reshape(1, -1)
+				detection.global_feature = detection.features[0]
 				all_detections_with_features.append(detection)
 	print(f"Found {len(all_detections_with_features)} detections with features")
 
@@ -66,6 +66,10 @@ def re_identify_objects(detections_by_camera):
 			feature_vectors = [d.global_feature for d in detections_with_features]
 			avg_feature = np.mean(feature_vectors, axis=0)
 
+			# Compute average timestamp for the track
+			timestamp_vector = [d.timestamp for d in detections_with_features]
+			avg_timestamp = np.mean(timestamp_vector, axis=0)
+
 			# Use middle detection as representative
 			middle_idx = len(detections_with_features) // 2
 			representative = detections_with_features[middle_idx]
@@ -74,6 +78,7 @@ def re_identify_objects(detections_by_camera):
 			track_representatives.append({
 				'camera_id': camera_id,
 				'track_id': track_id,
+				"timestamp": avg_timestamp,
 				'representative': representative
 			})
 	print(f"Created {len(track_representatives)} track representatives")
@@ -95,6 +100,9 @@ def re_identify_objects(detections_by_camera):
 		current_group = [i]
 		processed.add(i)
 
+		# Group potential matches by camera to find the best match per camera
+		camera_best_matches = {}  # camera_id -> (index, similarity, time_diff)
+
 		# Find all matches above threshold
 		for j in range(len(track_representatives)):
 			if j in processed or i == j:
@@ -104,11 +112,29 @@ def re_identify_objects(detections_by_camera):
 			if track_representatives[i]['camera_id'] == track_representatives[j]['camera_id']:
 				continue
 
-			if similarities[i, j] > SIMILARITY_THRESHOLD:
-				current_group.append(j)
-				processed.add(j)
+			# Calculate time difference
+			time_diff = abs(track_representatives[i]['timestamp'] - track_representatives[j]['timestamp'])
 
-		track_groups.append(current_group)
+			# Prune by timestamp difference
+			if time_diff > TIMESTAMP_THRESHOLD:
+				continue
+
+			if similarities[i, j] > SIMILARITY_THRESHOLD:
+				camera_j = track_representatives[j]['camera_id']
+
+				# If this is the first match for this camera, or it has a smaller time difference
+				if camera_j not in camera_best_matches or time_diff < camera_best_matches[camera_j][2]:
+					camera_best_matches[camera_j] = (j, similarities[i, j], time_diff)
+
+		# Add only the best match from each camera to the current group
+		for camera_id, (j, similarity, time_diff) in camera_best_matches.items():
+			print(f"  Matched tracks {track_representatives[i]['track_id']} / {track_representatives[i]['timestamp']} at camera {track_representatives[i]['camera_id']} "
+			      f"with tracks {track_representatives[j]['track_id']} / {track_representatives[j]['timestamp']} at camera {camera_id} with similarity {similarity}")
+			current_group.append(j)
+			processed.add(j)
+
+		if len(current_group) > 1:
+			track_groups.append(current_group)
 
 	# Assign global IDs to each group
 	for group in track_groups:
@@ -120,13 +146,14 @@ def re_identify_objects(detections_by_camera):
 			track_id = track_representatives[idx]['track_id']
 			global_id_mapping[(camera_id, track_id)] = global_id
 
-	# TODO: Handle tracks that weren't matched (assign unique IDs)
+	# TODO: Handle tracks that weren't matched (assign global_id = -1?)
 	# In here maybe we can remove the tracks that weren't matched
 	for camera_id, track_dict in camera_track_groups.items():
 		for track_id in track_dict:
 			if (camera_id, track_id) not in global_id_mapping:
-				global_id_mapping[(camera_id, track_id)] = next_global_id
-				next_global_id += 1
+				print("Track not matched:", camera_id, track_id)
+				global_id_mapping[(camera_id, track_id)] = -1
+				# next_global_id += 1
 
 	# Update all detections with global IDs
 	for camera_id, detections in detections_by_camera.items():
@@ -135,6 +162,7 @@ def re_identify_objects(detections_by_camera):
 				detection.global_id = global_id_mapping[(camera_id, detection.track_id)]
 			else:
 				# This shouldn't happen if all track IDs are properly processed
+				print(f"Warning: No global ID found for detection in camera {camera_id} with track ID {detection.track_id}")
 				detection.global_id = -1
 	print(f"Re-identification complete. Assigned {next_global_id-1} global IDs.")
 
@@ -144,13 +172,14 @@ def re_identify_objects(detections_by_camera):
 	print("Objects detected per camera (after re-ID):")
 	for camera_id, count in camera_counts.items():
 		print(f"  Camera {camera_id}: {count} unique objects")
-
 	return detections_by_camera
 
 
 def load_detections_and_extract_features(
 		detections_folder: str,
 		videos_folder: str,
+		camera_offsets: Dict[str, float] = None,
+		camera_fps: Dict[str, float] = None,
 		camera_ids: List[str] = None
 ) -> Dict[str, List[Detection]]:
 	"""
@@ -201,7 +230,13 @@ def load_detections_and_extract_features(
 		# Group detections by frame to efficiently process the video
 		frame_to_detections = {}
 		for line in lines:
-			detection = Detection.from_string(line, camera_id)
+			# Get the frame number and timestamp
+			parts = line.strip().split(',')
+			frame_num = int(parts[0])
+			timestamp = camera_offsets[camera_id] + (frame_num / camera_fps[camera_id])
+
+			# Create Detection object
+			detection = Detection.from_string(line, timestamp, camera_id)
 			frame_num = detection.frame_num
 			if frame_num not in frame_to_detections:
 				frame_to_detections[frame_num] = []
@@ -257,14 +292,68 @@ def load_detections_and_extract_features(
 		print("-" * 50)
 	return all_detections
 
+
+def save_detections_with_global_ids(detections_by_camera, output_folder):
+	"""
+	Save detections with global IDs to text files, one file per camera.
+
+	Args:
+		detections_by_camera: Dictionary mapping camera IDs to lists of Detection objects
+		output_folder: Path to the folder where output files will be saved
+	"""
+	import os
+
+	# Create output folder if it doesn't exist
+	os.makedirs(output_folder, exist_ok=True)
+	print(f"Saving detections with global IDs to {output_folder}...")
+
+	# Process each camera
+	for camera_id, detections in detections_by_camera.items():
+		output_file = os.path.join(output_folder, f"{camera_id}.txt")
+
+		# Sort detections by frame number
+		sorted_detections = sorted(detections, key=lambda d: d.frame_num)
+
+		# Count valid detections (those with positive global IDs)
+		valid_detections = [d for d in sorted_detections if hasattr(d, 'global_id') and d.global_id > 0]
+
+		with open(output_file, 'w') as f:
+			for detection in valid_detections:
+				# Format: FRAME_ID, GLOBAL_TRACK_ID, X, Y, WIDTH, HEIGHT, confidence, -1, -1, -1
+				line = f"{detection.frame_num},{detection.global_id},{detection.x},{detection.y},"
+				line += f"{detection.width},{detection.height},{detection.confidence},-1,-1,-1\n"
+				f.write(line)
+		print(f"  Saved {len(sorted_detections)} detections to {output_file}")
+	print("All detections saved successfully.")
+
+
 if __name__ == "__main__":
 	# Load detections and extract features for all cameras
 	detections_by_camera = load_detections_and_extract_features(
 	    detections_folder="/home/yeray142/Documents/projects/mcv-c6-2025-team1/week4/single_tracks",
 	    videos_folder="/home/yeray142/Documents/projects/mcv-c6-2025-team1/week4/videos",
+		camera_offsets={
+		    "c010": 8.715,
+		    "c011": 8.457,
+		    "c012": 5.879,
+		    "c013": 0.0,
+		    "c014": 5.042,
+		    "c015": 8.492
+		},
+		camera_fps={
+		    "c010": 10.0,
+		    "c011": 10.0,
+		    "c012": 10.0,
+		    "c013": 10.0,
+		    "c014": 10.0,
+		    "c015": 8.0  # c015 in S03 has 8 FPS
+		},
 	    camera_ids=["c010", "c011", "c012", "c013", "c014", "c015"]
 	)
 
 	# Perform re-identification
 	detections_by_camera = re_identify_objects(detections_by_camera)
 
+	# Save detections with global IDs
+	output_folder = "/home/yeray142/Documents/projects/mcv-c6-2025-team1/week4/src/algoritm_features/results"
+	save_detections_with_global_ids(detections_by_camera, output_folder)
