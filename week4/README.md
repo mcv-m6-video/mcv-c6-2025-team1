@@ -45,6 +45,19 @@ python get_detections.py --base_path /path/to/videos --output_dir /path/to/outpu
 ## Multi-Target Single-Camera Tracking
 After obtaining the detections for each camera, we applied **Multi-Target Single-Camera Tracking** using the StrongSORT algorithm, which is implemented in the **BoxMot** [repository](https://github.com/mikel-brostrom/boxmot). 
 
+### StrongSORT Algorithm Overview
+StrongSORT is a powerful tracking algorithm designed to track multiple objects (i.e., vehicles, pedestrians, etc.) across frames in a video. It builds upon the SORT (Simple Online and Realtime Tracking) algorithm, which uses Kalman Filters and the Hungarian algorithm for object association. StrongSORT, however, introduces improvements, including the use of appearance features for more robust tracking. Here's a breakdown of how the algorithm works:
+
+1. Kalman Filter: The Kalman Filter is used to estimate the state of an object (position and velocity) in each frame. It makes predictions about the object's state even if no detection is made in the current frame, providing smoother tracking.
+2. Detection Association: The algorithm associates the current frame's detections with previously tracked objects using the Hungarian algorithm, which solves the assignment problem of matching detections with existing tracks.
+3. Appearance Features: StrongSORT enhances the original SORT algorithm by integrating appearance features. These are learned representations of the objects (e.g., appearance embeddings) that help in distinguishing objects of similar size or in cluttered scenes. This is done through a deep learning model, which makes the tracker more resilient to occlusions and misdetections.
+4. Re-ID (Re-Identification): This feature is crucial for tracking objects that temporarily leave the camera's field of view and re-enter later. The appearance features allow StrongSORT to identify objects even after they have been lost for a short time.
+5. Output: The result of applying StrongSORT is a unique ID for each object across frames, along with its position and trajectory, enabling reliable multi-object tracking over time.
+
+### Using StrongSORT in BoxMot
+In the **BoxMot** implementation, the StrongSORT is already integrated into the tracking pipeline. By running the tracking script with the detection results, we obtain continuous tracking of vehicles across the video frames.
+To execute the multi-target single-camera tracking, we simply need to provide the detection results from the fine-tuned YOLO model, and StrongSORT will handle the tracking process.
+
 
 ## Re-identification algorithm
 
