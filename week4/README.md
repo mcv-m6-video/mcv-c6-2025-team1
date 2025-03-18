@@ -28,6 +28,7 @@ python gt.py --video path/to/video.mp4 \
                           --output_labels path/to/labels \
                           --fps 10
 ```
+
 ### Training the Detector
 We fine-tuned the **YOLO11x** model using the Ultralytics implementation. The model was loaded from the pre-trained weights file yolo11x.pt. The training process involved 50 epochs with an early stopping mechanism (patience=5) to avoid overfitting. 
 
@@ -35,7 +36,12 @@ To execute the fine-tuning process, use the following command:
 ```bash
 python finetune.py
 ```
+Once the model is fine-tuned, we used it to perform the detections for all the three sequences. To do so, we implemented a detection script that applies the trained model to video frames and outputs the detected objects (such as cars and trucks) along with their bounding boxes and confidence scores.
 
+The following command is uded to run the detection script:
+```bash
+python get_detections.py --base_path /path/to/videos --output_dir /path/to/output
+```
 ## Re-identification algorithm
 
 ### Overview
