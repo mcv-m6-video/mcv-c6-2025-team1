@@ -35,3 +35,69 @@ To execute the fine-tuning process, use the following command:
 ```bash
 python finetune.py
 ```
+
+## Re-identification algorithm
+
+### Overview
+
+The re-identification algorithm in `algorithm.py` is designed to match and track individuals across multiple camera views. It uses appearance features extracted from a CNN model to establish identity correspondences between camera views while accounting for timestamp offsets.
+
+### Algorithm Type
+
+This is a feature-based multi-camera tracking (MCT) algorithm that utilizes:
+
+1. Deep learning feature extraction
+2. Cosine similarity matching
+3. Temporal constraints
+4. Camera synchronization
+
+### Process Description
+
+The re-identification algorithm works through a sequential pipeline that transforms individual per-camera detections into globally consistent identities across multiple viewpoints:
+
+The process begins with **Feature Extraction**, where the system processes each detection across all cameras by loading its corresponding video frame, extracting the precise region defined by the bounding box, and passing this region through a ResNet-50 feature extractor. This produces a distinctive feature vector that characterizes the appearance of each detection, which is then stored alongside the detection metadata.
+
+Rather than comparing individual detections directly, the algorithm implements **Track Representation** by grouping detections that belong to the same track ID within each camera. For each track, it computes an average feature vector from all its constituent detections, creating a more robust representation that mitigates issues with individual poor-quality frames. Simultaneously, it calculates the average timestamp for each track to facilitate temporal alignment.
+
+The core of the algorithm is the **Cross-Camera Association** process, which forms connections between tracks from different cameras. This works by computing pairwise cosine similarity between all track features across cameras, then filtering potential matches using both a similarity threshold (defaulting to 0.9) and a temporal constraint that limits the maximum time difference between tracks (defaulting to 10 seconds). The algorithm explicitly prevents matching tracks from the same camera, and when multiple candidate matches exist from a single camera, it selects the one with the smallest temporal difference to ensure temporal coherence.
+
+Once track associations are established, the **Global ID Assignment** phase assigns a unique global identifier to each cluster of associated tracks. All detections belonging to tracks within a cluster inherit this global ID, creating a consistent identity across multiple cameras. Tracks that couldn't be confidently matched to any others receive a global ID of -1, effectively filtering them out of the final results.
+
+Finally, during **Output Generation**, the algorithm produces detection files containing only the positively identified matches (those with global IDs > 0). Each line in these output files follows the format: `frame_num,global_id,x,y,width,height,confidence,-1,-1,-1`, providing all necessary information for downstream multi-camera tracking applications.
+
+### CLI Usage
+
+```bash
+python algorithm.py --detections_folder PATH_TO_DETECTIONS \
+                    --videos_folder PATH_TO_VIDEOS \
+                    --output_folder PATH_TO_OUTPUT \
+                    --camera_offsets PATH_TO_OFFSETS \
+                    [--similarity_threshold THRESHOLD] \
+                    [--timestamp_threshold SECONDS]
+```
+
+#### Required Parameters
+
+- `--detections_folder`: Directory containing detection files (one per camera, named by camera ID)
+- `--videos_folder`: Directory containing video files (one per camera, named by camera ID)
+- `--output_folder`: Directory where output files with global IDs will be saved
+- `--camera_offsets`: Path to a text file containing camera timestamp offsets in format:
+  ```
+  camera_id offset_value
+  ```
+
+#### Optional Parameters
+
+- `--similarity_threshold`: Minimum cosine similarity value to consider a match (default: 0.90)
+- `--timestamp_threshold`: Maximum allowed time difference in seconds between tracks (default: 10)
+
+### Performance Considerations
+
+The algorithm's performance depends on several factors:
+
+- Quality of extracted features
+- Accuracy of camera synchronization
+- Distinctiveness of appearance across views
+- Visibility and quality of detections
+
+Modifying the similarity and timestamp thresholds can balance between precision (avoiding false matches) and recall (finding more true matches) based on specific deployment conditions.
