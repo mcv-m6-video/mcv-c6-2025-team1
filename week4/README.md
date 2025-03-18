@@ -43,6 +43,9 @@ The following command is used to run the detection script:
 python get_detections.py --base_path /path/to/videos --output_dir /path/to/output
 ```
 ## Multi-Target Single-Camera Tracking
+After obtaining the detections for each camera, we applied **Multi-Target Single-Camera Tracking** using the StrongSORT algorithm, which is implemented in the **BoxMot** [repository](https://github.com/mikel-brostrom/boxmot). 
+
+
 ## Re-identification algorithm
 
 ### Overview
