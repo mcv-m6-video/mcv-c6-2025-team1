@@ -198,6 +198,7 @@ Finally, during **Output Generation**, the algorithm produces detection files co
 ### CLI Usage
 
 ```bash
+cd week4/src/algoritm_features/
 python algorithm.py --detections_folder PATH_TO_DETECTIONS \
                     --videos_folder PATH_TO_VIDEOS \
                     --output_folder PATH_TO_OUTPUT \
