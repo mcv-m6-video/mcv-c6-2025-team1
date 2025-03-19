@@ -134,7 +134,7 @@ StrongSORT is a powerful tracking algorithm designed to track multiple objects (
 In the **BoxMot** implementation, the StrongSORT is already integrated into the tracking pipeline. By running the tracking script with the detection results, we obtain continuous tracking of vehicles across the video frames.
 To execute the multi-target single-camera tracking, we simply need to provide the detection results from the fine-tuned YOLO model, and StrongSORT will handle the tracking process.
 
-To execute the multi-target tracking with the StrongSORT algorithm in BoxMOT, the following command is used:
+To execute the multi-target tracking with the **StrongSORT** algorithm in **BoxMOT**, the following command is used:
 ```bash
 cd week4/src/tracking/
 python3 -m src.tracking.tracking_boxmot \
@@ -147,6 +147,25 @@ python3 -m src.tracking.tracking_boxmot \
             -c /path/to/strongsort.yaml
 ```
 For the ReID Model, we used the [CLIP-ReID model](https://github.com/Syliz517/CLIP-ReID), an innovative approach that levergaes Vision-Language Pretraining for image re-identification without relying on explicit textual labels. This model was pre-trained on [VehicleID](https://www.pkuml.org/resources/pku-vehicleid.html) dataset,which comprises images captured from multiple surveillance cameras in a small Chinese city, totaling 221,763 images of 26,267 vehicles. 
+
+#### Example:
+
+For a specific example with data from a camera, you can use the following command:
+
+```bash
+python3 tracking_boxmot.py \
+            -d /mcv-c6-2025-team1/week4/src/detection/results_detections/S03/detections_c010.txt \
+            -v /mcv-c6-2025-team1/data/mct_data/train/S03/c010/vdo.avi \
+            -ov /mcv-c6-2025-team1/week4/src/tracking/results_tracking/S03/tracking_S03_c010.avi \
+            -o /mcv-c6-2025-team1/week4/src/tracking/results_tracking/S03/tracking_S03_c010_results.txt \
+            --device cuda --tracking_method=strongsort \
+            --reid_model 'clip_vehicleid.pt' \
+            -c /mcv-c6-2025-team1/week4/src/tracking/configs/strongsort.yaml
+```
+
+You can watch the example tracking video at the following Google Drive link:  
+[tracking_S03_c010.avi](https://drive.google.com/file/d/1wNUwlbY453TlgVQi4OgrDGGoWbtI4hUZ/view?usp=sharing)
+
 
 ## Re-identification algorithm
 
