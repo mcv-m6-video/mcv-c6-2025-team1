@@ -4,8 +4,7 @@
 
 - [Fine-tuning detections](#fine-tuning-detections)
 - [Multi-Target Single-Camera Tracking](#multi-target-single-camera-tracking)
-- [Re-identification algorithm](#re-identification-algorithm)
-
+- [Multi-Target Multi-Camera Tracking: Re-identification algorithm](#multi-target-multi-camera-tracking-re-identification-algorithm)
 
 ## Fine-tuning detections 
 
@@ -167,7 +166,7 @@ You can watch the example tracking video at the following Google Drive link:
 [tracking_S03_c010.avi](https://drive.google.com/file/d/1wNUwlbY453TlgVQi4OgrDGGoWbtI4hUZ/view?usp=sharing)
 
 
-## Re-identification algorithm
+## Multi-Target Multi-Camera Tracking: Re-identification algorithm
 
 ### Overview
 
