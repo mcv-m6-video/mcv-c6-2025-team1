@@ -232,3 +232,65 @@ The algorithm's performance depends on several factors:
 - Visibility and quality of detections
 
 Modifying the similarity and timestamp thresholds can balance between precision (avoiding false matches) and recall (finding more true matches) based on specific deployment conditions.
+
+### 2 Different Approaches
+
+First, we use the `tracking_boxmot.py` script explained in the previous section to extract the detections in `.txt` format from each camera in the sequence S03. We save them in the folder `mcv-c6-2025-team1/week4/src/algoritm_features/S03/single_tracks_s03`. Additionally, we copy the videos from the dataset and save them in the folder `mcv-c6-2025-team1/week4/src/algoritm_features/S03/videos`.
+
+The structure looks like this:
+
+```bash
+mcv-c6-2025-team1/week4/src/algoritm_features/S03/single_tracks_s03
+    c010.txt
+    c011.txt
+    c012.txt
+    c013.txt
+    c014.txt
+    c015.txt
+
+mcv-c6-2025-team1/week4/src/algoritm_features/S03/videos
+    c010.avi
+    c011.avi
+    c012.avi
+    c013.avi
+    c014.avi
+    c015.avi
+
+```
+
+#### 1. Feature Extractor Model (ResNet) + Cosine Similarity Measure
+
+Example:
+
+```bash
+python algorithm.py --detections_folder /ghome/c5mcv01/mcv-c6-2025-team1/week4/src/algoritm_features/S03/single_tracks_s03\
+                    --videos_folder /ghome/c5mcv01/mcv-c6-2025-team1/week4/src/algoritm_features/S03/videos\
+                    --output_folder /ghome/c5mcv01/mcv-c6-2025-team1/week4/src/algoritm_features/S03/ap1_results_time10_score90\
+                    --camera_offsets /ghome/c5mcv01/mcv-c6-2025-team1/data/mct_data/cam_timestamp/S03.txt\
+                    --similarity_threshold 0.9\
+                    --timestamp_threshold 10\
+                    --pickle_file /ghome/c5mcv01/mcv-c6-2025-team1/week4/src/algoritm_features/S03/ap1_results_time10_score90/data/detections_by_camera.pkl
+                    --feature_extractor resnet
+                    --similarity_type similarity
+```
+
+#### 2. Feature extractor model (resnext) + Manhattan distance measure
+
+Example:
+
+```bash
+python algorithm.py --detections_folder /ghome/c5mcv01/mcv-c6-2025-team1/week4/src/algoritm_features/S03/single_tracks_s03\
+                    --videos_folder /ghome/c5mcv01/mcv-c6-2025-team1/week4/src/algoritm_features/S03/videos\
+                    --output_folder /ghome/c5mcv01/mcv-c6-2025-team1/week4/src/algoritm_features/S03/ap2_results_time10_score90\
+                    --camera_offsets /ghome/c5mcv01/mcv-c6-2025-team1/data/mct_data/cam_timestamp/S03.txt\
+                    --similarity_threshold 0.9\
+                    --timestamp_threshold 10\
+                    --pickle_file /ghome/c5mcv01/mcv-c6-2025-team1/week4/src/algoritm_features/S03/ap1_results_time10_score90/data/detections_by_camera.pkl
+                    --feature_extractor resnext
+                    --similarity_type distance
+```
+
+
+
+
+
