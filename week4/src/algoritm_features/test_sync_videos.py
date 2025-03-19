@@ -1,8 +1,9 @@
 import cv2
 import numpy as np
+import math
 
 
-def synchronize_videos(video_paths, delays, output_path="synchronized_output.avi", target_fps=10):
+def synchronize_videos(video_paths, delays, output_path="synchronized_output_s04_3.avi", target_fps=10):
 	"""
 	Synchronize multiple videos based on their starting delays.
 
@@ -21,7 +22,6 @@ def synchronize_videos(video_paths, delays, output_path="synchronized_output.avi
 	print(fps_values)
 	widths = [int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)) for cap in caps]
 	heights = [int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)) for cap in caps]
-	raise NotImplementedError
 
 	# Calculate frame delays
 	frame_delays = [int(delay * fps) for delay, fps in zip(delays, fps_values)]
@@ -32,8 +32,10 @@ def synchronize_videos(video_paths, delays, output_path="synchronized_output.avi
 
 	# Calculate output video dimensions
 	# Assuming we'll create a grid layout
-	rows = 2
-	cols = 3
+	#rows = 2
+	#cols = 3
+	cols = math.ceil(math.sqrt(len(video_paths)))
+	rows = math.ceil(len(video_paths) / cols)
 	output_width = max(widths) * cols
 	output_height = max(heights) * rows
 
@@ -100,19 +102,22 @@ def synchronize_videos(video_paths, delays, output_path="synchronized_output.avi
 def main():
 	# Example usage
 	video_paths = [
-		'/home/yeray142/Documents/projects/mcv-c6-2025-team1/data/mct_data/S03/c010/vdo.avi',
-		'/home/yeray142/Documents/projects/mcv-c6-2025-team1/data/mct_data/S03/c011/vdo.avi',
-		'/home/yeray142/Documents/projects/mcv-c6-2025-team1/data/mct_data/S03/c012/vdo.avi',
-		'/home/yeray142/Documents/projects/mcv-c6-2025-team1/data/mct_data/S03/c013/vdo.avi',
-		'/home/yeray142/Documents/projects/mcv-c6-2025-team1/data/mct_data/S03/c014/vdo.avi',
-		'/home/yeray142/Documents/projects/mcv-c6-2025-team1/data/mct_data/S03/c015/vdo.avi'
+		'/ghome/c5mcv01/mcv-c6-2025-team1/week4/src/approach2_c010.avi',
+		'/ghome/c5mcv01/mcv-c6-2025-team1/week4/src/approach2_c011.avi',
+		'/ghome/c5mcv01/mcv-c6-2025-team1/week4/src/approach2_c012.avi',
+		'/ghome/c5mcv01/mcv-c6-2025-team1/week4/src/approach2_c013.avi',
+		'/ghome/c5mcv01/mcv-c6-2025-team1/week4/src/approach2_c014.avi',
+		'/ghome/c5mcv01/mcv-c6-2025-team1/week4/src/approach2_c015.avi'
 	]
 
 	# Delays in seconds from the provided data
 	delays = [8.715, 8.457, 5.879, 0, 5.042, 8.492]
+	#delays = [0, 1.640, 2.049, 2.177, 2.235]
+	#delays = [0, 14.318, 29.955, 26.979, 25.905, 39.973, 49.422, 45.716]
+	#delays = [125.199, 150.893, 140.218, 165.568, 170.797, 170.567, 175.426, 175.644, 175.838]
 
 	# Call the synchronization function
-	synchronize_videos(video_paths, delays)
+	synchronize_videos(video_paths, delays, output_path="synchronized_output_s03_ap2.avi")
 
 
 if __name__ == "__main__":

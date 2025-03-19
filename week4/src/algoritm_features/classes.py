@@ -1,5 +1,3 @@
-
-
 class Detection:
     """
     A class to store object detection information including bounding box,

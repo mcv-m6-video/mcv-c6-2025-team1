@@ -9,7 +9,7 @@ class FeatureExtractor:
     """
     Class to extract features from a frame using a pre-trained model
     """
-    def __init__(self, model_path = "/home/yeray142/Documents/projects/mcv-c6-2025-team1/week4/models/resnext101_ibn_a_2.pth"):
+    def __init__(self, model_path = "/ghome/c5mcv01/mcv-c6-2025-team1/week4/src/algoritm_features/model_reid/resnext101_ibn_a_2.pth"):
         """
         Initializes the feature extractor
         Args:

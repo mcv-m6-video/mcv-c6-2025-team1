@@ -29,7 +29,7 @@ output_dir = args.output_dir
 os.makedirs(output_dir, exist_ok=True)
 
 # Load YOLO model
-model = YOLO('/models/yolo_best.pt')
+model = YOLO('/ghome/c5mcv01/mcv-c6-2025-team1/week4/src/detection/models/yolo_best.pt')
 
 # Classes to detect
 class_names = model.names

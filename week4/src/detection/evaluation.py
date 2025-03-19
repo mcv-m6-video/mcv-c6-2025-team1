@@ -27,4 +27,13 @@ print("Mean recall:", results.box.mr)
 print("Precision:", results.box.p)
 print("Recall:", results.box.r)
 
+# Definir nombres de clases (deben coincidir con el data.yaml)
+class_names = {0: "person", 1: "bicycle", 2: "car"}
+
+# Mostrar AP para cada clase
+print("Average Precision per class:")
+for class_id, ap in enumerate(results.box.all_ap[0]):  # results.box.all_ap es una lista dentro de otra lista
+    class_name = class_names.get(class_id, f"Class {class_id}")  # Si hay más clases, muestra el ID
+    print(f"  {class_name}: {ap:.4f}")
+
 

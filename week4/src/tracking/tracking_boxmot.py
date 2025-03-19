@@ -9,7 +9,7 @@ from boxmot import TRACKERS
 from boxmot.tracker_zoo import create_tracker
 from boxmot.utils import TRACKER_CONFIGS
 
-from src.tracking.utils import write_results_to_txt, read_detections_from_txt, box_to_corners
+from utils import write_results_to_txt, read_detections_from_txt, box_to_corners
 
 
 def run(args):

@@ -22,6 +22,8 @@ week2/yolo_finetuning_results
 week2/yolo*
 
 # To avoid including videos and images
+results_*/
+S0*/
 videos/
 *.avi
 *.mp4

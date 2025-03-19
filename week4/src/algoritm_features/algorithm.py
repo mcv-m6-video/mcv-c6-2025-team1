@@ -2,6 +2,7 @@ import os
 import cv2
 import numpy as np
 import argparse
+import pickle
 
 from PIL import Image
 from pathlib import Path
@@ -9,7 +10,9 @@ from typing import Dict, List
 from sklearn.metrics.pairwise import cosine_similarity
 
 from src.algoritm_features.classes import Detection
-from src.algoritm_features.feature_extractor import FeatureExtractor
+from src.algoritm_features.feature_extractor_finetuned import FeatureExtractor as ResNeXtExtractor
+from src.algoritm_features.feature_extractor import FeatureExtractor as ResNetExtractor
+from scipy.spatial.distance import pdist, squareform
 
 
 def re_identify_objects(detections_by_camera, **kwargs):
@@ -83,7 +86,16 @@ def re_identify_objects(detections_by_camera, **kwargs):
 
     # Create feature matrix for efficient computation
     feature_matrix = np.array([rep['representative'].avg_feature for rep in track_representatives])
-    similarities = cosine_similarity(feature_matrix)
+    if kwargs.get("similarity_type") == "similarity":
+        similarities = cosine_similarity(feature_matrix)
+    elif kwargs.get("similarity_type") == "distance":
+        dists = squareform(pdist(feature_matrix, metric='cityblock'))
+        min_vals = dists.min(axis=1, keepdims=True)
+        max_vals = dists.max(axis=1, keepdims=True)
+        distances = (dists - min_vals) / (max_vals - min_vals)
+    else:
+        raise ValueError("Invalid similarity type")
+
 
     # Process similarities to group tracks
     processed = set()
@@ -117,12 +129,22 @@ def re_identify_objects(detections_by_camera, **kwargs):
             if time_diff > kwargs.get("timestamp_threshold", 10):
                 continue
 
-            if similarities[i, j] > kwargs.get("similarity_threshold", 0.9):
-                camera_j = track_representatives[j]['camera_id']
+            if kwargs.get("similarity_type") == "similarity":
+                if similarities[i, j] > kwargs.get("similarity_threshold", 0.9):
+                    camera_j = track_representatives[j]['camera_id']
 
-                # If this is the first match for this camera, or it has a smaller time difference
-                if camera_j not in camera_best_matches or time_diff < camera_best_matches[camera_j][2]:
-                    camera_best_matches[camera_j] = (j, similarities[i, j], time_diff)
+                    # If this is the first match for this camera, or it has a smaller time difference
+                    if camera_j not in camera_best_matches or time_diff < camera_best_matches[camera_j][2]:
+                        camera_best_matches[camera_j] = (j, similarities[i, j], time_diff)
+            elif kwargs.get("similarity_type") == "distance":
+                if distances[i, j] < kwargs.get("similarity_threshold", 0.9):
+                    camera_j = track_representatives[j]['camera_id']
+
+                    # If this is the first match for this camera, or it has a smaller time difference
+                    if camera_j not in camera_best_matches or time_diff < camera_best_matches[camera_j][2]:
+                        camera_best_matches[camera_j] = (j, distances[i, j], time_diff)
+            else:
+                raise ValueError("Invalid similarity type")
 
         # Add only the best match from each camera to the current group
         for camera_id, (j, similarity, time_diff) in camera_best_matches.items():
@@ -177,7 +199,8 @@ def load_detections_and_extract_features(
         detections_folder: str,
         videos_folder: str,
         camera_offsets: Dict[str, float] = None,
-        camera_ids: List[str] = None
+        camera_ids: List[str] = None,
+        feature_extractor: str = "resnext"
 ) -> Dict[str, List[Detection]]:
     """
     Load detections from txt files and extract features from video frames.
@@ -191,6 +214,10 @@ def load_detections_and_extract_features(
         Dictionary mapping camera IDs to lists of Detection objects with features
     """
     # Initialize feature extractor
+    if feature_extractor == "resnext":
+        FeatureExtractor = ResNeXtExtractor
+    elif feature_extractor == "resnet":
+        FeatureExtractor = ResNetExtractor
     feature_extractor = FeatureExtractor()
 
     # Dictionary to store detections by camera ID
@@ -349,6 +376,12 @@ if __name__ == "__main__":
                         help="Threshold for cosine similarity")
     parser.add_argument("--timestamp_threshold", type=int, default=10, required=False,
                         help="Threshold for timestamp difference")
+    parser.add_argument("--pickle_file", type=str, default=None, required=False,
+                   help="Path to pickle file with detections_by_camera dictionary")
+    parser.add_argument("--similarity_type", type=str, default=None, required=False, choices=["similarity", "distance"],
+                   help="Cosine similarity or manhattan distance measure ('similarity' or 'distance')")
+    parser.add_argument("--feature_extractor", type=str, default="resnext", required=False, choices=["resnet", "resnext"],
+                        help="Feature extractor model (resnet or resnext)")
     args = parser.parse_args()
 
     # Get the camera offsets from a TXT file
@@ -367,17 +400,31 @@ if __name__ == "__main__":
     print(f"Found camera IDs: {camera_ids}")
 
     # Load detections and extract features for all cameras
-    detections_by_camera = load_detections_and_extract_features(
-        detections_folder=args.detections_folder,
-        videos_folder=args.videos_folder,
-        camera_offsets=camera_offsets,
-        camera_ids=camera_ids
-    )
+    if args.pickle_file and os.path.exists(args.pickle_file):
+        print(f"Loading detections from pickle file: {args.pickle_file}")
+        with open(args.pickle_file, 'rb') as f:
+            detections_by_camera = pickle.load(f)
+    else:
+        detections_by_camera = load_detections_and_extract_features(
+            detections_folder=args.detections_folder,
+            videos_folder=args.videos_folder,
+            camera_offsets=camera_offsets,
+            camera_ids=camera_ids,
+            feature_extractor=args.feature_extractor
+        )
+        
+        # Save the detections to pickle for future use
+        pickle_path = os.path.join(args.output_folder, 'detections_by_camera.pkl')
+        os.makedirs(args.output_folder, exist_ok=True)
+        print(f"Saving detections to pickle file: {pickle_path}")
+        with open(pickle_path, 'wb') as f:
+            pickle.dump(detections_by_camera, f)
 
     # Define re-identification parameters
     kwargs = {
 		"similarity_threshold": args.similarity_threshold,
-		"timestamp_threshold": args.timestamp_threshold
+		"timestamp_threshold": args.timestamp_threshold,
+        "similarity_type": args.similarity_type
 	}
 
     # Perform re-identification
