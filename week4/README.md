@@ -39,6 +39,7 @@ To use the data with YOLO, we converted the annotations provided by the **AI CIT
 
 To run the annotation conversion script, use the following command:
 ```bash
+cd week4/src/detection/
 python gt.py --video path/to/video.mp4 \
                           --gt path/to/ground_truth.txt \
                           --output_images path/to/images \
@@ -135,6 +136,7 @@ To execute the multi-target single-camera tracking, we simply need to provide th
 
 To execute the multi-target tracking with the StrongSORT algorithm in BoxMOT, the following command is used:
 ```bash
+cd week4/src/tracking/
 python3 -m src.tracking.tracking_boxmot \
             -d /path/to/detections.txt \
             -v /path/to/video.avi \
