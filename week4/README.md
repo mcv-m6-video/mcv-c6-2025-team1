@@ -71,6 +71,34 @@ The following command is used to run the detection script:
 ```bash
 python get_detections.py --base_path /path/to/videos --output_dir /path/to/output
 ```
+
+#### Example:
+```bash
+python get_detections.py --base_path /mcv-c6-2025-team1/data/mct_data/train/S03 --output_dir /mcv-c6-2025-team1/week4/src/detection/results_detections/S03
+```
+
+#### Output Format
+The detection results are stored in `.txt` files, with each file corresponding to a processed video. The output files are named following this pattern:
+
+`detections_<camera_id>.txt`
+
+For example, if processing **camera c001**, the output file will be:
+
+`detections_c001.txt`
+
+Each line in the file represents a detected object in a specific frame and follows this format:
+
+`<frame_id>, -1, <x1>, <y1>, <width>, <height>, <confidence>`
+
+
+Where:
+- **`frame_id`** → Frame number where the detection occurs.
+- **`-1`** → Placeholder for an object ID (used for tracking, but remains `-1` in detection-only mode).
+- **`x1, y1`** → Coordinates of the top-left corner of the bounding box.
+- **`width, height`** → Dimensions of the bounding box.
+- **`confidence`** → Detection confidence score (between 0 and 1).
+
+
 ## Multi-Target Single-Camera Tracking
 After obtaining the detections for each camera, we applied **Multi-Target Single-Camera Tracking** using the StrongSORT algorithm, which is implemented in the **BoxMot** [repository](https://github.com/mikel-brostrom/boxmot). 
 
