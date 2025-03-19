@@ -290,6 +290,40 @@ python algorithm.py --detections_folder /ghome/c5mcv01/mcv-c6-2025-team1/week4/s
                     --similarity_type distance
 ```
 
+## Results
+
+We used [**TrackEval**](https://github.com/JonathonLuiten/TrackEval) to quantitatively evaluate our multi-camera tracking results. After generating the output files (with global IDs) using our re-identification algorithm, we ran TrackEval to compare our predictions against the ground truth. We focused on two main metrics:
+
+- **IDF1** (ID F1 Score): Measures how consistently the same IDs are assigned to the same targets across frames.
+- **HOTA** (Higher Order Tracking Accuracy): Combines detection accuracy and association accuracy, offering a balanced view of overall tracking performance.
+
+Below is a sample comparison table for two approaches:
+
+## Approach 1 (ResNet-50 + Cosine Similarity)
+
+| Sequence | Score | Timestamp | Best CAM | Best CAM HOTA | Best CAM IDF1 | Worst CAM | Worst CAM HOTA | Worst CAM IDF1 | Avg. #Cams (HOTA) | Avg. #Cams (IDF1) |
+|----------|-------|-----------|----------|---------------|---------------|-----------|----------------|----------------|-------------------|-------------------|
+| S01      | 0.80  | 8         | c004     | 85.82         | 94.29         | c001      | 73.79          | 81.55          | 80.07 (5 cams)    | 89.72 (5 cams)    |
+| S03      | 0.91  | 10        | c010     | 66.53         | 77.92         | c015      | 5.71           | 1.32           | 45.77 (6 cams)    | 48.92 (6 cams)    |
+| S04      | 0.85  | 13        | c021     | 87.23         | 95.78         | c017      | 44.62          | 45.84          | 74.29 (25 cams)   | 83.01 (25 cams)   |
+
+---
+
+## Approach 2 (ResNeXt-101 + Manhattan Distance)
+
+| Sequence | Score | Timestamp | Best CAM | Best CAM HOTA | Best CAM IDF1 | Worst CAM | Worst CAM HOTA | Worst CAM IDF1 | Avg. #Cams (HOTA) | Avg. #Cams (IDF1) |
+|----------|-------|-----------|----------|---------------|---------------|-----------|----------------|----------------|-------------------|-------------------|
+| S01      | 0.48  | 7         | c004     | 78.53         | 94.56         | c001      | 72.41          | 79.50          | 79.87 (5 cams)    | 89.56 (5 cams)     |
+| S03      | 0.9   | 3         | c011     | 61.61         | 80.02         | c015      | 6.8            | 1.87           | 38.27 (6 cams)    | 37.51 (6 cams)     |
+| S04      | 0.67  | 7         | c021     | 87.23         | 95.78         | c017      | 37.64          | 34.98          | 71.67 (25 cams)   | 79.95 (25 cams)    |
+
+
+
+> **Note**:  
+> - **Score** and **Timestamp** refer to the `--similarity_threshold` and `--timestamp_threshold` parameters.  
+> - “Best CAM” and “Worst CAM” indicate the highest- and lowest-performing cameras, respectively.  
+
+Overall, **Approach 1** (ResNet-50 + Cosine Similarity) tends to achieve higher HOTA and IDF1 scores, suggesting that its feature representation and similarity metric align better with the dataset. In contrast, **Approach 2** (ResNeXt-101 + Manhattan Distance) yields slightly lower scores, possibly due to the distance metric’s sensitivity to variations in appearance. Adjusting thresholds for similarity and time windows helps balance precision and recall for each method.
 
 
 
