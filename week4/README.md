@@ -12,8 +12,13 @@
 ### Dataset Splitting
 To perform fine-tuning of detections, we divided sequences S01, S03, and S04 into training, validation, and test sets, ensuring an 80%-20% split between training and validation:
 - **Training Set**: 22 cameras from S01 & S04, totaling 16,957 frames.
+  - Cameras from S01: `c001, c003, c004, c005`
+  - Cameras from S04: `c016, c018, c019, c020, c021, c022, c023, c025, c026, c027, c028, c029, c030,c031, c032, c033, c035, c036, c038, c039`
 - **Validation Set**: 6 cameras from S01 & S04, totaling 4,094 frames.
+  - Cameras from S01: `c002`
+  - Cameras from S04: `c017, c024, c034, c037, c040`
 - **Test Set**: 6 cameras from S03, totaling 13,517 frames.
+  - Cameras from S03: `c010, c011, c012, c013, c014, c015`
 
 ### Annotation format
 To use the data with YOLO, we converted the annotations provided by the **AI CITY Challenge** into YOLO format. The conversion process involved:
