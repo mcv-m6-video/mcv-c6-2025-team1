@@ -290,7 +290,7 @@ python algorithm.py --detections_folder /ghome/c5mcv01/mcv-c6-2025-team1/week4/s
                     --similarity_type distance
 ```
 
-## Results
+## Quantitative Results
 
 We used [**TrackEval**](https://github.com/JonathonLuiten/TrackEval) to quantitatively evaluate our multi-camera tracking results. After generating the output files (with global IDs) using our re-identification algorithm, we ran TrackEval to compare our predictions against the ground truth. We focused on two main metrics:
 
@@ -325,6 +325,14 @@ Below is a sample comparison table for two approaches:
 
 Overall, **Approach 1** (ResNet-50 + Cosine Similarity) tends to achieve higher HOTA and IDF1 scores, suggesting that its feature representation and similarity metric align better with the dataset. In contrast, **Approach 2** (ResNeXt-101 + Manhattan Distance) yields slightly lower scores, possibly due to the distance metric’s sensitivity to variations in appearance. Adjusting thresholds for similarity and time windows helps balance precision and recall for each method.
 
+## **Qualitative Results**
 
+To better visualize the differences between both approaches, we provide synchronized output videos for **Sequence S03**. These videos allow for a direct comparison of how each method tracks objects across multiple cameras and how they align with the ground truth.
+
+- **Approach 1 (ResNet-50 + Cosine Similarity):** [Watch here](https://youtu.be/At6RkiV7OxU?si=D0TCDiJ0_nWiJ2vN)  
+- **Approach 2 (ResNeXt-101 + Manhattan Distance):** [Watch here](https://youtu.be/bXI_TBh7APo?si=58J2lzj_0ZgNRCJL)  
+- **Ground Truth for Sequence S03:** [Watch here](https://youtu.be/xF-BFkBK9XA?si=efgoW20XEL9q7Vxt)  
+
+These qualitative results complement our quantitative analysis, showcasing differences in ID consistency, object association, and overall tracking robustness.
 
 
