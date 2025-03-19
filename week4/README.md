@@ -4,6 +4,7 @@
 
 - [Fine-tuning detections](#fine-tuning-detections)
 - [Multi-Target Single-Camera Tracking](#multi-target-single-camera-tracking)
+- [Re-identification algorithm](#re-identification-algorithm)
 
 
 ## Fine-tuning detections 
