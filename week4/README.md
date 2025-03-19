@@ -46,6 +46,18 @@ python gt.py --video path/to/video.mp4 \
                           --fps 10
 ```
 
+#### Example:
+
+To convert the video from camera `c001` in sequence `S01`, use the following command:
+
+```bash
+python gt.py --video /mcv-c6-2025-team1/data/mct_data/train/S01/c001/vdo.avi \
+                        --gt /mcv-c6-2025-team1/data/mct_data/train/S01/c001/gt/gt.txt \
+                        --output_images /mcv-c6-2025-team1/week4/src/detection/data/images/train/c001 \
+                        --output_labels /mcv-c6-2025-team1/week4/src/detection/data/labels/train/c001 \
+                        --fps 10
+```
+
 ### Training the Detector
 We fine-tuned the **YOLO11x** model using the Ultralytics implementation. The model was loaded from the pre-trained weights file yolo11x.pt. The training process involved 50 epochs with an early stopping mechanism (patience=5) to avoid overfitting. 
 
