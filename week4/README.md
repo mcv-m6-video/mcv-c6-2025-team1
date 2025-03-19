@@ -9,8 +9,18 @@
 
 ## Fine-tuning detections 
 
+### Dataset Download
+
+The dataset can be downloaded from the following link:  
+[AIC19 Track1 MTMC Train](https://imatge.upc.edu/web/sites/default/files/projects/teaching/mcv-m6-video/aic19-track1-mtmc-train.zip)  
+
+Once downloaded, it should be placed in the following directory: 
+
+`/mcv-c6-2025-team1/data/mct_data`
+
 ### Dataset Splitting
-To perform fine-tuning of detections, we divided sequences S01, S03, and S04 into training, validation, and test sets, ensuring an 80%-20% split between training and validation:
+To perform fine-tuning of detections, we divided sequences **S01, S03, and S04** into training, validation, and test sets, ensuring an 80%-20% split between training and validation:
+
 - **Training Set**: 22 cameras from S01 & S04, totaling 16,957 frames.
   - Cameras from S01: `c001, c003, c004, c005`
   - Cameras from S04: `c016, c018, c019, c020, c021, c022, c023, c025, c026, c027, c028, c029, c030,c031, c032, c033, c035, c036, c038, c039`
