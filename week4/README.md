@@ -5,6 +5,9 @@
 - [Fine-tuning detections](#fine-tuning-detections)
 - [Multi-Target Single-Camera Tracking](#multi-target-single-camera-tracking)
 - [Multi-Target Multi-Camera Tracking: Re-identification algorithm](#multi-target-multi-camera-tracking-re-identification-algorithm)
+- [Quantitative Results](#quantitative-results)
+- [Qualitative Results](#qualitative-results)
+
 
 ## Fine-tuning detections 
 
