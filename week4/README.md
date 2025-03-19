@@ -98,6 +98,24 @@ Where:
 - **`width, height`** → Dimensions of the bounding box.
 - **`confidence`** → Detection confidence score (between 0 and 1).
 
+### Evaluating the YOLO Detector  
+
+To assess the quantitative performance of the fine-tuned YOLO model, run the following command:  
+
+```bash
+python evaluation.py --m /mcv-c6-2025-team1/week4/src/detection/models/yolo_best.pt
+```
+
+Result:
+
+```bash
+Average Precision per class:
+  person: 0.9167
+  bicycle: 0.9144
+  car: 0.9104
+```
+
+This evaluation provides the Average Precision (AP) for each class in the dataset, measuring the model’s ability to detect objects accurately.
 
 ## Multi-Target Single-Camera Tracking
 After obtaining the detections for each camera, we applied **Multi-Target Single-Camera Tracking** using the StrongSORT algorithm, which is implemented in the **BoxMot** [repository](https://github.com/mikel-brostrom/boxmot). 
