@@ -10,7 +10,10 @@
   </p>
 </p>
 
-Link Final Presentation: 
+
+> [!IMPORTANT]
+> The final presentation is available [here](https://docs.google.com/presentation/d/1Qbxnnqear_4xCycYvNFZWbpnvOAXVVJ_aQJnRVKDvvQ/edit?usp=sharing). If for some reason you don't have permissions to access it, contact any of the administrators of this repository.
+
 ## Table of Contents
 
 - [Introduction](#introduction)
