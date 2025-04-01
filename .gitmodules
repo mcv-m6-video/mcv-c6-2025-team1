@@ -13,3 +13,6 @@
 [submodule "week4/src/tracking/TrackEval"]
 	path = week4/src/tracking/TrackEval
 	url = https://github.com/JonathonLuiten/TrackEval.git
+[submodule "week5/mcv-c6-team1-project2"]
+	path = week5/mcv-c6-team1-project2
+	url = https://github.com/yeray142/mcv-c6-team1-project2.git
