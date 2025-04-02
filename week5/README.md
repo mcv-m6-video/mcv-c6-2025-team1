@@ -44,6 +44,8 @@ We explored various architectures and modifications to improve the baseline perf
 - **3D-R18**
 - **3D-R18 + LSTM + Attention**
 - **3D-R18 + LSTM + Attention + Focal Loss**
+- **3D-R18 + LSTM + Attention + Stride5**
+- **3D-R18 + LSTM + Attention + 1.5x Image Size + Stride5**
 - **mViT**
 - **x3D_S**
 - **x3D_M (Frozen)**
@@ -56,6 +58,7 @@ We explored various architectures and modifications to improve the baseline perf
 - **x3D_M + LSTM + Attention + L2 Regularization (1e-4)**
 - **x3D_M + LSTM + Attention + Label Smoothing**
 - **x3D_M + LSTM + Attention + 1.5× Image Size**
+- **x3D_M + LSTM + Attention + 1.5× Image Size + Stride5**
 
 ## Training Details
 - **Loss Function**: Binary Cross-Entropy (BCE) for multi-label classification.
@@ -102,8 +105,8 @@ The results table includes:
   - The last two categories (GOAL and FREE KICK) are rare, so they are not considered in mAP@10.
 
 ### Best Results
-- **3D ResNet-18 + LSTM + Attention**
-- **X3D-M + LSTM + Attention (Stride 4)**
+- **3D-R18 + LSTM + Attention + Stride5**
+- **x3D_M + LSTM + Attention + 1.5× Image Size + Stride5**
 
 ## References
 Repository: [github.com/arturxe2/CVMasterActionRecognitionSpotting](https://github.com/arturxe2/CVMasterActionRecognitionSpotting)
