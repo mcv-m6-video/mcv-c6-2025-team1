@@ -1,5 +1,9 @@
 <h2 align="center">WEEK 5: Task 1 - Ball Action Classification</h2>
 
+> [!IMPORTANT]
+> This week of the project has been uploaded in a fork repository in a different place. In order to access the code and model settings, please use this command to pull the data from that repository:
+> `git submodule update --init --recursive`
+
 ## Table of Contents
 - [Introduction](#introduction)
 - [Dataset and Pre-processing](#dataset-and-pre-processing)
