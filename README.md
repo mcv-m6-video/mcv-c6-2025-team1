@@ -27,6 +27,7 @@
 - [WEEK 4](#week-4)
 - [WEEK 5](#week-5)
 - [WEEK 6](#week-6)
+- [WEEK 7](#week-7)
 - [Team Members](#team-members)
 - [License](#license)
 
@@ -142,11 +143,15 @@ The contents of the fourth week are in the folder `week4`. The `README` file can
 
 <h2>WEEK 5</h2>
 
-The contents of the fourth week are in the folder `week5`. The `README` file can be found in [here](week5/README.md).
+The contents of the fifth week are in the folder `week5`. The `README` file can be found in [here](week5/README.md).
 
 <h2>WEEK 6</h2>
 
-The contents of the fourth week are in the folder `week6`. The `README` file can be found in [here](week6/README.md).
+The contents of the sixth week are in the folder `week6`. The `README` file can be found in [here](week6/README.md).
+
+<h2>WEEK 7</h2>
+
+The contents of the seventh week are in the folder `week7`. The `README` file can be found in [here](week7/README.md).
 
 ## Team Members
 
