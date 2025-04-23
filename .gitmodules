@@ -19,6 +19,6 @@
 [submodule "week6/mcv-c6-team1-project3"]
 	path = week6/mcv-c6-team1-project3
 	url = https://github.com/yeray142/mcv-c6-team1-project3.git
-[submodule "week7/week7/mcv-c6-team1-project3"]
-	path = week7/week7/mcv-c6-team1-project3
+[submodule "week7/mcv-c6-team1-project3"]
+	path = week7/mcv-c6-team1-project3
 	url = https://github.com/yeray142/mcv-c6-team1-project3.git
